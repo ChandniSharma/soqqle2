@@ -1,0 +1,6 @@
+framework module Pods_SoqqleTests {
+  umbrella header "Pods-SoqqleTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

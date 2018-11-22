@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -495,21 +496,32 @@
                         <viewLayoutGuide key="safeArea" id="znL-o8-mch"/>
                     </view>
                     <navigationItem key="navigationItem" id="K7a-KF-W7u">
-                        <barButtonItem key="leftBarButtonItem" image="chaticon" id="Jf7-BJ-Hd7">
-                            <color key="tintColor" red="0.28933131694793701" green="0.0" blue="0.33440223336219788" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <connections>
-                                <action selector="onMessage:" destination="613-Rj-PlT" id="fQG-hO-tUQ"/>
-                            </connections>
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="8B1-1x-lKv">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JyX-3Z-Gz6">
+                                <rect key="frame" x="16" y="11" width="76" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <inset key="imageEdgeInsets" minX="-50" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <state key="normal" image="chaticon"/>
+                                <connections>
+                                    <action selector="onMessage:" destination="613-Rj-PlT" eventType="touchUpInside" id="iAM-Oo-M57"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="menu_icon" id="xnk-Ul-lri">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <connections>
-                                <action selector="onMenu:" destination="613-Rj-PlT" id="wEC-fN-ZUn"/>
-                            </connections>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="aUT-Nc-PsS">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="CPq-9M-NrX">
+                                <rect key="frame" x="336" y="11" width="23" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="menu_icon"/>
+                                <connections>
+                                    <action selector="onMenu:" destination="613-Rj-PlT" eventType="touchUpInside" id="qMG-HU-rqv"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="btnLeftChat" destination="JyX-3Z-Gz6" id="BCu-Ul-mP4"/>
                         <outlet property="btnLike" destination="oKU-od-2pC" id="Fg2-ow-RcA"/>
+                        <outlet property="btnRightMenu" destination="CPq-9M-NrX" id="FGZ-E5-ONC"/>
                         <outlet property="btnUnlike" destination="dVk-GR-zLM" id="Eo0-d7-4oz"/>
                         <outlet property="iCarouselVW" destination="zZ3-zN-Ep3" id="bGV-FB-rVO"/>
                     </connections>
@@ -592,4 +604,5 @@
         <image name="tab_icon_story" width="20" height="20"/>
         <image name="tab_icon_task" width="23.5" height="18.5"/>
     </resources>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>

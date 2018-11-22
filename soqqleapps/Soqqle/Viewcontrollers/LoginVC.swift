@@ -19,8 +19,9 @@ class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         txtEmail.setLeftPaddingPoints(20)
-         txtPassword.setLeftPaddingPoints(20)
+        txtPassword.setLeftPaddingPoints(20)
         // Do any additional setup after loading the view.
     }
     
@@ -29,7 +30,7 @@ class LoginVC: UIViewController {
         showThemeColor()
     }
     
-    
+
     func showThemeColor(){
         
         if let theme = appCurrentTheme{

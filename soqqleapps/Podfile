@@ -1,0 +1,23 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'Soqqle' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+  pod 'Alamofire'
+  pod 'AlamofireObjectMapper'
+  pod 'SDWebImage'
+  pod 'NVActivityIndicatorView'
+  # Pods for Soqqle
+
+  target 'SoqqleTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'SoqqleUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

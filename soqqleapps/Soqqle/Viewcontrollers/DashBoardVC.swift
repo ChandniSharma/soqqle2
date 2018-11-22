@@ -14,10 +14,26 @@ class DashBoardVC: UIViewController {
     @IBOutlet weak var btnUnlike: UIButton!
     @IBOutlet weak var btnLike: UIButton!
     @IBOutlet weak var iCarouselVW: iCarousel!
+
+    @IBOutlet weak var btnLeftChat: UIButton!
+    @IBOutlet weak var btnRightMenu: UIButton!
+    
+    
+    var stories: [StoryMappingResponse]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // set tint color for two bar button items.
         self.navigationController?.isNavigationBarHidden = false
+        
+        self.btnLeftChat.tintColor = UIColor(displayP3Red: 74/255, green: 0/255, blue: 85/255, alpha: 1.0)
+         self.btnLeftChat.imageView?.image =  self.btnRightMenu.imageView?.image?.withRenderingMode(.alwaysTemplate)
+        
+        self.btnRightMenu.tintColor = UIColor.white
+        self.btnRightMenu.imageView?.image =  self.btnRightMenu.imageView?.image?.withRenderingMode(.alwaysTemplate)
+        
+        self.stories = AppState.shared.stories
         loadCarouselVW()
         
         // Do any additional setup after loading the view.
@@ -59,13 +75,15 @@ class DashBoardVC: UIViewController {
     
     //When meesage icon tapped this method trigger
     @IBAction func onMessage(_ sender: Any) {
-        
+       
     }
     
     
     //When menu icon tapped this method trigger
     @IBAction func onMenu(_ sender: Any) {
-        
+        if let delegate = UIApplication.shared.delegate as? AppDelegate, let rootViewController = delegate.window?.rootViewController as? UINavigationController {
+           rootViewController.popViewController(animated: true)
+        }
     }
     
     /*
@@ -82,7 +100,7 @@ class DashBoardVC: UIViewController {
 
 extension DashBoardVC : iCarouselDelegate, iCarouselDataSource{
     func numberOfItems(in carousel: iCarousel) -> Int {
-        return 4
+        return self.stories?.count ?? 0
     }
     
     func carousel(_ carousel: iCarousel, viewForItemAt index: Int, reusing view: UIView?) -> UIView {
@@ -99,12 +117,11 @@ extension DashBoardVC : iCarouselDelegate, iCarouselDataSource{
             carouserlVw?.frame.origin.x = 0
             
         }
+        
         if let theme = appCurrentTheme{
-              theme.setHorizantalGradient(vw: self.view)
-             theme.setBg(vw: carouserlVw!)
             
-          //  carouserlVw?.backgroundColor = .red
-                //hexToColor(theme.carousel_bg!)
+            theme.setHorizantalGradient(vw: self.view)
+             theme.setBg(vw: carouserlVw!)
             
             carouserlVw?.lblInfo.textColor = hexToColor(theme.general!)
             carouserlVw?.lblToken.textColor = hexToColor(theme.carousel_lbl_text!)
@@ -115,11 +132,16 @@ extension DashBoardVC : iCarouselDelegate, iCarouselDataSource{
             
             carouserlVw?.lblWeekly.textColor = hexToColor(theme.carousel_lbl_text!)
             carouserlVw?.lblWeekly.backgroundColor = hexToColor(theme.carousel_lbl_bg!)
-              carouserlVw?.vwOverlay.backgroundColor = hexToColor(theme.mainTheme!).withAlphaComponent(0.5)
+            carouserlVw?.vwOverlay.backgroundColor = hexToColor(theme.mainTheme!).withAlphaComponent(0.5)
+            
         }
       
         carouserlVw?.vwOverlay.isHidden = false
-        carouserlVw?.imgVW.image = UIImage(named: "samp_image")
+       
+        
+        if let story = self.stories?[index] {
+            carouserlVw?.binding(story: story)
+        }
         
         return carouserlVw!
     }

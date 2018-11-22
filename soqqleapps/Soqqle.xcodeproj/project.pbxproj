@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4080F0E7151B3AF5618613F9 /* Pods_SoqqleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7FAD7FC6A00EC0297B5551 /* Pods_SoqqleTests.framework */; };
+		468781AA4340A81368216A45 /* Pods_SoqqleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2276F94DD38811ED6781422F /* Pods_SoqqleUITests.framework */; };
 		51BF5A2C218F1873008E16E1 /* Soqqle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BF5A2B218F1873008E16E1 /* Soqqle+Extensions.swift */; };
 		51E2D1D7218DCA5C00F3C7EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E2D1D6218DCA5C00F3C7EB /* AppDelegate.swift */; };
 		51E2D1D9218DCA5C00F3C7EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E2D1D8218DCA5C00F3C7EB /* ViewController.swift */; };
@@ -36,6 +38,14 @@
 		51E2D236218EF24600F3C7EB /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51E2D22C218EF24400F3C7EB /* OpenSans-Italic.ttf */; };
 		51E2D237218EF24600F3C7EB /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51E2D22D218EF24500F3C7EB /* OpenSans-Light.ttf */; };
 		51E2D239218EF2CA00F3C7EB /* Unique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51E2D238218EF2CA00F3C7EB /* Unique.ttf */; };
+		6CFD06D121A2534100DB927D /* RootAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06D021A2534100DB927D /* RootAPI.swift */; };
+		6CFD06F021A2534600DB927D /* DataSocketResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06E221A2534600DB927D /* DataSocketResponse.swift */; };
+		6CFD06F221A2534600DB927D /* GenericResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06E421A2534600DB927D /* GenericResponse.swift */; };
+		6CFD06F421A2541700DB927D /* StoryMappingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06F321A2541700DB927D /* StoryMappingResponse.swift */; };
+		6CFD06F621A25B0600DB927D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06F521A25B0500DB927D /* AppState.swift */; };
+		6CFD06F821A2653000DB927D /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06F721A2653000DB927D /* RootViewController.swift */; };
+		6CFD06FA21A2656800DB927D /* RootIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD06F921A2656800DB927D /* RootIndicatorView.swift */; };
+		EC1540C48B48152A83230313 /* Pods_Soqqle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C43AE39BAB46E330B41A3376 /* Pods_Soqqle.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +66,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A7FAD7FC6A00EC0297B5551 /* Pods_SoqqleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SoqqleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1EA5E837083BFEB1FBF16094 /* Pods-SoqqleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqqleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SoqqleTests/Pods-SoqqleTests.release.xcconfig"; sourceTree = "<group>"; };
+		2276F94DD38811ED6781422F /* Pods_SoqqleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SoqqleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3935ADC2A733475182F3E5BD /* Pods-SoqqleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqqleUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SoqqleUITests/Pods-SoqqleUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		51BF5A2B218F1873008E16E1 /* Soqqle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Soqqle+Extensions.swift"; sourceTree = "<group>"; };
 		51E2D1D3218DCA5C00F3C7EB /* Soqqle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Soqqle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51E2D1D6218DCA5C00F3C7EB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -93,6 +107,18 @@
 		51E2D22C218EF24400F3C7EB /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Italic.ttf"; sourceTree = "<group>"; };
 		51E2D22D218EF24500F3C7EB /* OpenSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		51E2D238218EF2CA00F3C7EB /* Unique.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Unique.ttf; sourceTree = "<group>"; };
+		5E3A7D4818AF7D0E2160F101 /* Pods-Soqqle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Soqqle.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Soqqle/Pods-Soqqle.debug.xcconfig"; sourceTree = "<group>"; };
+		6CFD06D021A2534100DB927D /* RootAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootAPI.swift; sourceTree = "<group>"; };
+		6CFD06E221A2534600DB927D /* DataSocketResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSocketResponse.swift; sourceTree = "<group>"; };
+		6CFD06E421A2534600DB927D /* GenericResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericResponse.swift; sourceTree = "<group>"; };
+		6CFD06F321A2541700DB927D /* StoryMappingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryMappingResponse.swift; sourceTree = "<group>"; };
+		6CFD06F521A25B0500DB927D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		6CFD06F721A2653000DB927D /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		6CFD06F921A2656800DB927D /* RootIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootIndicatorView.swift; sourceTree = "<group>"; };
+		9372C6636E5C9258016E4A25 /* Pods-SoqqleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqqleUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SoqqleUITests/Pods-SoqqleUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C43AE39BAB46E330B41A3376 /* Pods_Soqqle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Soqqle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E144827E59ECE57EF24CC52A /* Pods-Soqqle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Soqqle.release.xcconfig"; path = "Pods/Target Support Files/Pods-Soqqle/Pods-Soqqle.release.xcconfig"; sourceTree = "<group>"; };
+		F7FF7ADE93C2AA65B973B702 /* Pods-SoqqleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoqqleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SoqqleTests/Pods-SoqqleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC1540C48B48152A83230313 /* Pods_Soqqle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4080F0E7151B3AF5618613F9 /* Pods_SoqqleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,12 +142,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				468781AA4340A81368216A45 /* Pods_SoqqleUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		203FBCFB428FC802CA7FD346 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C43AE39BAB46E330B41A3376 /* Pods_Soqqle.framework */,
+				1A7FAD7FC6A00EC0297B5551 /* Pods_SoqqleTests.framework */,
+				2276F94DD38811ED6781422F /* Pods_SoqqleUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		51E2D1CA218DCA5C00F3C7EB = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +166,8 @@
 				51E2D1EA218DCA5F00F3C7EB /* SoqqleTests */,
 				51E2D1F5218DCA5F00F3C7EB /* SoqqleUITests */,
 				51E2D1D4218DCA5C00F3C7EB /* Products */,
+				79C628DEC876B1F15E225C2C /* Pods */,
+				203FBCFB428FC802CA7FD346 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -143,9 +184,14 @@
 		51E2D1D5218DCA5C00F3C7EB /* Soqqle */ = {
 			isa = PBXGroup;
 			children = (
+				6CFD06D221A2534600DB927D /* Models */,
+				6CFD06CF21A2534100DB927D /* Networks */,
 				51E2D1D6218DCA5C00F3C7EB /* AppDelegate.swift */,
 				51E2D221218E29BE00F3C7EB /* Constants.swift */,
 				51E2D20C218DE9B300F3C7EB /* Soqqle-Bridging-Header.h */,
+				6CFD06F721A2653000DB927D /* RootViewController.swift */,
+				6CFD06F921A2656800DB927D /* RootIndicatorView.swift */,
+				6CFD06F521A25B0500DB927D /* AppState.swift */,
 				51E2D21D218E201F00F3C7EB /* Theme.plist */,
 				51E2D223218EF23200F3C7EB /* Fonts */,
 				51E2D214218DF36300F3C7EB /* Cells */,
@@ -243,6 +289,53 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		6CFD06CF21A2534100DB927D /* Networks */ = {
+			isa = PBXGroup;
+			children = (
+				6CFD06D021A2534100DB927D /* RootAPI.swift */,
+			);
+			path = Networks;
+			sourceTree = "<group>";
+		};
+		6CFD06D221A2534600DB927D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6CFD06D321A2534600DB927D /* Local */,
+				6CFD06E121A2534600DB927D /* Remote */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6CFD06D321A2534600DB927D /* Local */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		6CFD06E121A2534600DB927D /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				6CFD06E221A2534600DB927D /* DataSocketResponse.swift */,
+				6CFD06E421A2534600DB927D /* GenericResponse.swift */,
+				6CFD06F321A2541700DB927D /* StoryMappingResponse.swift */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
+		79C628DEC876B1F15E225C2C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5E3A7D4818AF7D0E2160F101 /* Pods-Soqqle.debug.xcconfig */,
+				E144827E59ECE57EF24CC52A /* Pods-Soqqle.release.xcconfig */,
+				F7FF7ADE93C2AA65B973B702 /* Pods-SoqqleTests.debug.xcconfig */,
+				1EA5E837083BFEB1FBF16094 /* Pods-SoqqleTests.release.xcconfig */,
+				3935ADC2A733475182F3E5BD /* Pods-SoqqleUITests.debug.xcconfig */,
+				9372C6636E5C9258016E4A25 /* Pods-SoqqleUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -250,9 +343,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 51E2D1FB218DCA5F00F3C7EB /* Build configuration list for PBXNativeTarget "Soqqle" */;
 			buildPhases = (
+				E64EAD614807F9AC06A6EF23 /* [CP] Check Pods Manifest.lock */,
 				51E2D1CF218DCA5C00F3C7EB /* Sources */,
 				51E2D1D0218DCA5C00F3C7EB /* Frameworks */,
 				51E2D1D1218DCA5C00F3C7EB /* Resources */,
+				5CA151D642C5C8924538D836 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -267,6 +362,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 51E2D1FE218DCA5F00F3C7EB /* Build configuration list for PBXNativeTarget "SoqqleTests" */;
 			buildPhases = (
+				A14654B27F4ABBFA24A21F47 /* [CP] Check Pods Manifest.lock */,
 				51E2D1E3218DCA5F00F3C7EB /* Sources */,
 				51E2D1E4218DCA5F00F3C7EB /* Frameworks */,
 				51E2D1E5218DCA5F00F3C7EB /* Resources */,
@@ -285,6 +381,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 51E2D201218DCA5F00F3C7EB /* Build configuration list for PBXNativeTarget "SoqqleUITests" */;
 			buildPhases = (
+				6F75FFB5769BC7C94E89751C /* [CP] Check Pods Manifest.lock */,
 				51E2D1EE218DCA5F00F3C7EB /* Sources */,
 				51E2D1EF218DCA5F00F3C7EB /* Frameworks */,
 				51E2D1F0218DCA5F00F3C7EB /* Resources */,
@@ -382,18 +479,124 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5CA151D642C5C8924538D836 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Soqqle/Pods-Soqqle-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Soqqle/Pods-Soqqle-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6F75FFB5769BC7C94E89751C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SoqqleUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A14654B27F4ABBFA24A21F47 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SoqqleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E64EAD614807F9AC06A6EF23 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Soqqle-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		51E2D1CF218DCA5C00F3C7EB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				51E2D211218DEEF600F3C7EB /* CarouselModalVW.swift in Sources */,
+				6CFD06F821A2653000DB927D /* RootViewController.swift in Sources */,
 				51E2D209218DE96700F3C7EB /* iCarousel.m in Sources */,
+				6CFD06F421A2541700DB927D /* StoryMappingResponse.swift in Sources */,
+				6CFD06FA21A2656800DB927D /* RootIndicatorView.swift in Sources */,
+				6CFD06F021A2534600DB927D /* DataSocketResponse.swift in Sources */,
+				6CFD06D121A2534100DB927D /* RootAPI.swift in Sources */,
 				51E2D21A218DF39A00F3C7EB /* LoginVC.swift in Sources */,
 				51E2D220218E28F300F3C7EB /* AppTheme.swift in Sources */,
 				51E2D1D9218DCA5C00F3C7EB /* ViewController.swift in Sources */,
+				6CFD06F221A2534600DB927D /* GenericResponse.swift in Sources */,
 				51E2D222218E29BF00F3C7EB /* Constants.swift in Sources */,
 				51E2D216218DF37900F3C7EB /* TCellChooseHero.swift in Sources */,
+				6CFD06F621A25B0600DB927D /* AppState.swift in Sources */,
 				51E2D1D7218DCA5C00F3C7EB /* AppDelegate.swift in Sources */,
 				51E2D21C218DF3C600F3C7EB /* TabBarVC.swift in Sources */,
 				51BF5A2C218F1873008E16E1 /* Soqqle+Extensions.swift in Sources */,
@@ -570,16 +773,20 @@
 		};
 		51E2D1FC218DCA5F00F3C7EB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5E3A7D4818AF7D0E2160F101 /* Pods-Soqqle.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 75MQ3T7GNR;
 				INFOPLIST_FILE = Soqqle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Soqqle;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scoville.cinemapopcorn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Cinema Popcorn Dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soqqle/Soqqle-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -588,16 +795,20 @@
 		};
 		51E2D1FD218DCA5F00F3C7EB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E144827E59ECE57EF24CC52A /* Pods-Soqqle.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 75MQ3T7GNR;
 				INFOPLIST_FILE = Soqqle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Soqqle;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scoville.cinemapopcorn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Cinema Popcorn Dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soqqle/Soqqle-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -606,6 +817,7 @@
 		};
 		51E2D1FF218DCA5F00F3C7EB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F7FF7ADE93C2AA65B973B702 /* Pods-SoqqleTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -626,6 +838,7 @@
 		};
 		51E2D200218DCA5F00F3C7EB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1EA5E837083BFEB1FBF16094 /* Pods-SoqqleTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -646,6 +859,7 @@
 		};
 		51E2D202218DCA5F00F3C7EB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3935ADC2A733475182F3E5BD /* Pods-SoqqleUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -665,6 +879,7 @@
 		};
 		51E2D203218DCA5F00F3C7EB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9372C6636E5C9258016E4A25 /* Pods-SoqqleUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

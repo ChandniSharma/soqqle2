@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: RootViewController {
     @IBOutlet weak var lblUnderLine: UILabel!
     @IBOutlet weak var btnDownArro: UIButton!
     @IBOutlet weak var vwChooseHero: UIView!
@@ -24,7 +24,18 @@ class ViewController: UIViewController {
         arrHeroList = ["superhero with #mad robot and Al skills","superhero with #cybergenetic biotech powers","superhero with unique business analystical abilities","superhero with unique business analystical abilities"]
         tblVw.tableFooterView = UIView()
         tblVw.isHidden = false
+        
+    
+        getStoriesData()
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    func getStoriesData() {
+        self.showLoading()
+        RootAPI.shared.getAllStories{ (stories) in
+            self.hideLoading()
+            AppState.shared.stories = stories
+        }
     }
   
     override func viewWillAppear(_ animated: Bool) {
