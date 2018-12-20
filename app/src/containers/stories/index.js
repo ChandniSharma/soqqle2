@@ -3,7 +3,7 @@ import {
     StyleSheet, Text, View, Platform, StatusBar,
     Image, SafeAreaView, Dimensions, ScrollView
 } from 'react-native';
-import { Font, Video } from 'expo';
+// import { Font, Video } from 'expo';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../../constants';
 import { STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../../endpoints';
@@ -139,9 +139,9 @@ export default class Stories extends Component {
     }
 
     async componentDidMount() {
-        await Font.loadAsync({
-            'open-sans': require('./../../../fonts/OpenSans-Regular.ttf'),
-        });
+        // await Font.loadAsync({
+        //     'open-sans': require('./../../../fonts/OpenSans-Regular.ttf'),
+        // });
         this.setState({ loading: false });
     }
 
@@ -196,16 +196,16 @@ export default class Stories extends Component {
                                 resizeMode='cover'
                             />
                         )} */}
-                    <Video
-                        source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={false}
-                        resizeMode="cover"
-                        useNativeControls
-                        style={styles.storyItemVideo}
-                        ref={this._handleVideoRef}
-                    />
+                    {/*<Video*/}
+                        {/*source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}*/}
+                        {/*rate={1.0}*/}
+                        {/*volume={1.0}*/}
+                        {/*isMuted={false}*/}
+                        {/*resizeMode="cover"*/}
+                        {/*useNativeControls*/}
+                        {/*style={styles.storyItemVideo}*/}
+                        {/*ref={this._handleVideoRef}*/}
+                    {/*/>*/}
                     <View style={styles.storyContent}>
                         <CustomText loading={this.state.loading}
                             styles={styles.storyItemText}

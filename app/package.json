@@ -1,17 +1,20 @@
 {
+  "name": "SoqqleApp",
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios"
   },
   "dependencies": {
-    "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "@babel/runtime": "7.0.0-beta.55",
+    "react": "^16.6.3",
+    "react-native": "^0.57.8",
+    "react-native-gesture-handler": "^1.0.12",
     "react-native-responsive-screen": "^1.2.0",
-    "react-native-snap-carousel": "^3.7.5"
-  },
-  "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
+    "react-native-snap-carousel": "^3.7.5",
+    "react-navigation": "^3.0.9",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1"
   },
   "private": true
 }
