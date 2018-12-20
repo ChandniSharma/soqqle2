@@ -3,9 +3,12 @@ import {
     StyleSheet, Text, View, Platform, StatusBar,
     Image, SafeAreaView, Dimensions, ScrollView
 } from 'react-native';
-import { Font } from 'expo';
-import CustomText from './../../components/CustomText';
+import { Font, Video } from 'expo';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../../constants';
+import { STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../../endpoints';
+import Carousel from 'react-native-snap-carousel';
+import CustomText from './../../components/CustomText';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 var width = Dimensions.get('window').width; //full width
@@ -48,6 +51,11 @@ const styles = StyleSheet.create({
         width: '100%',
         height: hp('35%'),
     },
+    storyItemVideo: {
+        alignSelf: 'center',
+        width: '100%',
+        height: hp('35%'),
+    },
     storyContent: {
         paddingHorizontal: wp('5%'),
         paddingVertical: hp('2.5%'),
@@ -56,6 +64,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         textAlign: 'center',
         fontSize: wp('4.6%'),
+        minHeight: 80,
     },
     storyTagContainer: {
         flexDirection: 'row',
@@ -113,20 +122,144 @@ const styles = StyleSheet.create({
     }
 });
 
+let playbackObject = {}
+
 export default class Stories extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            loading: true
+            loading: true,
+            stories: [],
         }
     }
 
-    async componentWillMount() {
+    componentWillMount() {
+        this.getStories();
+    }
+
+    async componentDidMount() {
         await Font.loadAsync({
             'open-sans': require('./../../../fonts/OpenSans-Regular.ttf'),
         });
         this.setState({ loading: false });
+    }
+
+    getStories() {
+        return fetch(STORIES_LIST_API)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.mapStoriesWithVideo(responseJson);
+            })
+            .catch((error) => {
+                return [];
+            });
+    }
+
+    mapStoriesWithVideo(stories) {
+        const results = stories.map(async story => {
+            return fetch(STORY_HAS_VIDEO_API.replace('{}', story._id))
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    return { ...story, ...{ 'has_video': true } }
+                })
+                .catch((error) => {
+                    return { ...story, ...{ 'has_video': false } }
+                });
+        })
+        Promise.all(results).then((completed) => this.setState({ stories: completed }));
+    }
+
+    _handleVideoRef = component => {
+        playbackObject = component;
+        playbackObject.setStatusAsync({ shouldPlay: false, positionMillis: 0 })
+    }
+
+    _renderItem = ({ item, index }) => {
+        return (
+            <View>
+                <View style={styles.storyContainer}>
+                    {/* {item.has_video ? (
+                        <Video
+                            source={{ uri: STORY_VIDEO_BASE_URL.replace('{}', item._id) }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            useNativeControls
+                            style={styles.storyItemVideo}
+                        />
+                    ) : (
+                            <Image
+                                source={{ uri: STORY_IMAGE_BASE_URL.replace('{}', item._id) }}
+                                style={styles.storyItemImage}
+                                resizeMode='cover'
+                            />
+                        )} */}
+                    <Video
+                        source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="cover"
+                        useNativeControls
+                        style={styles.storyItemVideo}
+                        ref={this._handleVideoRef}
+                    />
+                    <View style={styles.storyContent}>
+                        <CustomText loading={this.state.loading}
+                            styles={styles.storyItemText}
+                            numberOfLines={3}
+                            font='open-sans'>
+                            {item.description}
+                        </CustomText>
+                        <View style={styles.storyTagContainer}>
+                            {item._objective ? (
+                                <CustomText loading={this.state.loading}
+                                    styles={styles.storyTag}
+                                    font='open-sans'>
+                                    {`${item._objective.value} ${item._objective.name.toUpperCase()}`}
+                                </CustomText>
+                            ) : null}
+                            <CustomText loading={this.state.loading}
+                                styles={styles.storyTag}
+                                font='open-sans'>
+                                {`0/${item.quota || 0} ${item.refresh.toUpperCase()}`}
+                            </CustomText>
+                            {item.reward ? (
+                                <CustomText loading={this.state.loading}
+                                    styles={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}
+                                    font='open-sans'>
+                                    {`${item.reward.value} ${item.reward.type.toUpperCase()}`}
+                                </CustomText>
+                            ) : null}
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.storyActionsContainer}>
+                    <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
+                        <Image
+                            source={require('./../../../images/thumbs_up.png')}
+                            style={styles.storyActionIcon}
+                        />
+                    </View>
+                    <View style={{ ...styles.storyActionBlock, ...{ 'borderColor': '#171a54' } }}>
+                        <Image
+                            source={require('./../../../images/thubms_down.png')}
+                            style={styles.storyActionIcon}
+                        />
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
+    handleSnapChange(slideIndex) {
+        if (playbackObject) {
+            console.log(slideIndex, playbackObject.props);
+            playbackObject.setStatusAsync({ shouldPlay: false, positionMillis: 0 })
+            // playbackObject.stopAsync();
+        }
     }
 
     render() {
@@ -144,52 +277,14 @@ export default class Stories extends Component {
                 </View>
                 <View showsVerticalScrollIndicator={false} style={styles.bodyScrollView}>
                     <View>
-                        <View style={styles.storyContainer}>
-                            <Image
-                                source={require('./../../../images/story_item_1.png')}
-                                style={styles.storyItemImage}
-                                resizeMode='cover'
-                            />
-                            <View style={styles.storyContent}>
-                                <CustomText loading={this.state.loading}
-                                    styles={styles.storyItemText}
-                                    numberOfLines={3}
-                                    font='open-sans'>
-                                    Cyberattacks are occuring often in the digi-space! Find out what the top 10 ways hackers want your data!
-                                </CustomText>
-                                <View style={styles.storyTagContainer}>
-                                    <CustomText loading={this.state.loading}
-                                        styles={styles.storyTag}
-                                        font='open-sans'>
-                                        10 {'illuminates'.toUpperCase()}
-                                    </CustomText>
-                                    <CustomText loading={this.state.loading}
-                                        styles={styles.storyTag}
-                                        font='open-sans'>
-                                        1/5 {'weekly'.toUpperCase()}
-                                    </CustomText>
-                                    <CustomText loading={this.state.loading}
-                                        styles={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}
-                                        font='open-sans'>
-                                        20 {'Tokens'.toUpperCase()}
-                                    </CustomText>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.storyActionsContainer}>
-                            <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
-                                <Image
-                                    source={require('./../../../images/thumbs_up.png')}
-                                    style={styles.storyActionIcon}
-                                />
-                            </View>
-                            <View style={{ ...styles.storyActionBlock, ...{ 'borderColor': '#171a54' } }}>
-                                <Image
-                                    source={require('./../../../images/thubms_down.png')}
-                                    style={styles.storyActionIcon}
-                                />
-                            </View>
-                        </View>
+                        <Carousel
+                            ref={(c) => { this._carousel = c; }}
+                            data={this.state.stories}
+                            renderItem={this._renderItem}
+                            sliderWidth={width}
+                            itemWidth={wp('90%')}
+                            onBeforeSnapToItem={(slideIndex) => this.handleSnapChange(slideIndex)}
+                        />
                     </View>
                 </View>
                 <View style={styles.footer}>
