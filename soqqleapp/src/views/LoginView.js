@@ -16,6 +16,10 @@ const styles = StyleSheet.create({
 
 export default class LoginView extends Component {
 
+  goToStory = () => {
+    this.props.navigation.navigate({routeName: 'Story'})
+  }
+
   render() {
     console.log(this.props);
     return (
@@ -36,6 +40,7 @@ export default class LoginView extends Component {
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           />
+          <Button title="GO TO STORY" onPress={() => this.goToStory()}/>
           <LoginButton
             onLoginFinished={
               (error, result) => {
