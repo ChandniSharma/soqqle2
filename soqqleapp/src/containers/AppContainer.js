@@ -1,5 +1,9 @@
 import { connect } from 'react-redux';
 import { createAppContainer } from 'react-navigation';
-import AppNavigator from '../views/Navigator';
+import AppView from '../views/AppView';
 
-export default createAppContainer(AppNavigator);
+export default connect(
+  state => ({
+    isReady: state.getIn(['session', 'isReady'])
+  })
+)(AppView);
