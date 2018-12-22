@@ -10,7 +10,7 @@ import { STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../endpoints';
 import Carousel from 'react-native-snap-carousel';
 import CustomText from './../components/CustomText';
 
-const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
+const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
 
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     footerTabIcon: {
-        width: wp('8%'),
-        height: hp('4%'),
+        width: wp('6%'),
+        height: hp('3%'),
     },
     footerTabText: {
         color: '#fff',
