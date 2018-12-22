@@ -134,9 +134,14 @@ android {
             }
         }
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
+    compile project(':react-native-testfairy')
+    compile project(':react-native-fbsdk')
     compile project(':react-native-video')
     compile project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])
