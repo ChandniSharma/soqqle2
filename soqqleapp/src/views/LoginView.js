@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
 import {AccessToken, LoginButton} from 'react-native-fbsdk';
 import {showMessage} from 'react-native-flash-message';
-
-
+import {MAIN_COLOR} from "../constants";
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
@@ -46,7 +45,6 @@ export default class LoginView extends Component {
   }
 
   render() {
-    console.log(this.props);
     const {email, password, name} = this.state;
     return (
       <View
@@ -55,21 +53,21 @@ export default class LoginView extends Component {
         <Text>Hello world!</Text>
         <View>
           <TextInput
-            placeholder="name"
+            placeholder="Name"
             placeholderTextColor="#ffffff"
             value={name}
             onChangeText={name => this.setState({name})}
             style={styles.textInput}
           />
           <TextInput
-            placeholder="email"
+            placeholder="Email"
             placeholderTextColor="#ffffff"
             value={email}
             onChangeText={email => this.setState({email})}
             style={styles.textInput}
           />
           <TextInput
-            placeholder="password"
+            placeholder="Password"
             placeholderTextColor="#ffffff"
             secureTextEntry
             value={password}
@@ -79,7 +77,7 @@ export default class LoginView extends Component {
           <Button
             onPress={this.login}
             title="Login"
-            color="#841584"
+            color={MAIN_COLOR}
             accessibilityLabel="Learn more about this purple button"
           />
           <Button title="GO TO STORY" onPress={() => this.goToStory()}/>
@@ -111,13 +109,17 @@ const styles = StyleSheet.create({
   container: {
     padding: 5,
     paddingTop: statusBarHeight + 5,
+    justifyContent: 'center',
     backgroundColor: '#08091a',
     flex: 1
   },
   textInput: {
+    borderRadius: 4,
+    marginTop: 10,
     height: 40,
+    padding: 5,
     borderColor: 'gray',
     borderWidth: 1,
-    color: "#ffffff"
+    color: MAIN_COLOR
   }
 });
