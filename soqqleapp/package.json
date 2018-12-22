@@ -7,11 +7,14 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "immutable": "^4.0.0-rc.12",
     "react": "16.6.3",
     "react-native": "0.57.8",
     "react-native-fbsdk": "^0.8.0",
+    "react-native-flash-message": "^0.1.10",
     "react-native-gesture-handler": "^1.0.12",
+    "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-responsive-screen": "^1.2.0",
     "react-native-snap-carousel": "^3.7.5",
     "react-native-video": "^4.2.0",

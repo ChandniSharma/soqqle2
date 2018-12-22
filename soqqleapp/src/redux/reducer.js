@@ -1,9 +1,13 @@
 import {Map, fromJS} from 'immutable';
 import {loop, combineReducers} from 'redux-loop-symbol-ponyfill';
 import NavigatorStateReducer from '../navigator/NavigatorState';
+import UserReducer from '../reducers/UserReducer';
+import AppReducer from '../reducers/AppReducer';
 import SessionStateReducer, {RESET_STATE} from '../session/SessionState';
 
 const reducers = {
+  user: UserReducer,
+  app: AppReducer,
   navigatorState: NavigatorStateReducer,
   session: SessionStateReducer
 };

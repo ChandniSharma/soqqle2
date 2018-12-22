@@ -1,27 +1,53 @@
 import React, {Component} from 'react';
-import {Button, Image, Platform, StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
 import {AccessToken, LoginButton} from 'react-native-fbsdk';
+import {showMessage} from 'react-native-flash-message';
 
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 5,
-    paddingTop: statusBarHeight + 5,
-    backgroundColor: '#08091a',
-    flex: 1
-  },
-});
-
 export default class LoginView extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {email: '', password: ''}
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.error && nextProps.error.message) {
+      showMessage({
+        message: nextProps.error.message,
+        type: '#750830'});
+    }
+    if (nextProps.registerSuccess && nextProps.registerSuccess !== this.props.registerSuccess) {
+      showMessage({
+        message: 'Register successful',
+        backgroundColor: '#750830',
+        type: '#750830'});
+      this.props.navigate({routeName: 'LoginScreen'});
+    }
+    if (nextProps.loginSuccess && nextProps.loginSuccess !== this.props.loginSuccess) {
+      showMessage({
+        message: 'Login successful',
+        backgroundColor: '#750830',
+        type: '#750830'});
+        this.props.navigation.navigate({routeName: 'Story'});
+    }
+  }
 
   goToStory = () => {
     this.props.navigation.navigate({routeName: 'Story'})
   }
 
+  login = () => {
+    Keyboard.dismiss();
+    const {userActions} = this.props;
+    userActions.loginRequest(this.state);
+  }
+
   render() {
     console.log(this.props);
+    const {email, password, name} = this.state;
     return (
       <View
         style={styles.container}
@@ -29,13 +55,29 @@ export default class LoginView extends Component {
         <Text>Hello world!</Text>
         <View>
           <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            placeholder="name"
+            placeholderTextColor="#ffffff"
+            value={name}
+            onChangeText={name => this.setState({name})}
+            style={styles.textInput}
           />
           <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            placeholder="email"
+            placeholderTextColor="#ffffff"
+            value={email}
+            onChangeText={email => this.setState({email})}
+            style={styles.textInput}
+          />
+          <TextInput
+            placeholder="password"
+            placeholderTextColor="#ffffff"
+            secureTextEntry
+            value={password}
+            onChangeText={password => this.setState({password})}
+            style={styles.textInput}
           />
           <Button
-            onPress={() => {}}
+            onPress={this.login}
             title="Login"
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
@@ -64,3 +106,18 @@ export default class LoginView extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+    paddingTop: statusBarHeight + 5,
+    backgroundColor: '#08091a',
+    flex: 1
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    color: "#ffffff"
+  }
+});

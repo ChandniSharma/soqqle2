@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import AppNavigator from './Navigator';
+import FlashMessage from 'react-native-flash-message';
 
 
 class NavigatorView extends Component {
@@ -18,7 +19,7 @@ class NavigatorView extends Component {
 
   render() {
     return (
-      <AppNavigator/>
+      [<AppNavigator key="navigator"/>, <FlashMessage key='flash' icon='auto'/>]
     );
   }
 }
