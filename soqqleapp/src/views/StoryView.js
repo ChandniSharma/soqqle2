@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Platform, StatusBar,
-    Image, SafeAreaView, Dimensions, ScrollView
+    Image, SafeAreaView, Dimensions
 } from 'react-native';
 import Video from 'react-native-video'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';

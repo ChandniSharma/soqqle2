@@ -1,51 +1,58 @@
-import React, {Component} from 'react';
-import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
-import {AccessToken, LoginButton} from 'react-native-fbsdk';
-import {showMessage} from 'react-native-flash-message';
-import {MAIN_COLOR} from "../constants";
+import React, { Component } from 'react';
+import { Button, Image, Keyboard, Platform, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AccessToken, LoginButton } from 'react-native-fbsdk';
+import { showMessage } from 'react-native-flash-message';
+import { MAIN_COLOR } from "../constants";
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {email: '', password: ''}
+    this.state = { email: '', password: '' }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.error && nextProps.error.message) {
       showMessage({
         message: nextProps.error.message,
-        type: '#750830'});
+        type: '#750830'
+      });
     }
     if (nextProps.registerSuccess && nextProps.registerSuccess !== this.props.registerSuccess) {
       showMessage({
         message: 'Register successful',
         backgroundColor: '#750830',
-        type: '#750830'});
-      this.props.navigate({routeName: 'LoginScreen'});
+        type: '#750830'
+      });
+      this.props.navigate({ routeName: 'LoginScreen' });
     }
     if (nextProps.loginSuccess && nextProps.loginSuccess !== this.props.loginSuccess) {
       showMessage({
         message: 'Login successful',
         backgroundColor: '#750830',
-        type: '#750830'});
-        this.props.navigation.navigate({routeName: 'Story'});
+        type: '#750830'
+      });
+      this.props.navigation.navigate({ routeName: 'Story' });
     }
   }
 
   goToStory = () => {
-    this.props.navigation.navigate({routeName: 'Story'})
+    this.props.navigation.navigate({ routeName: 'Story' })
   }
 
   login = () => {
     Keyboard.dismiss();
-    const {userActions} = this.props;
+    const { userActions } = this.props;
     userActions.loginRequest(this.state);
   }
 
+  gotToAgenda = () => {
+    this.props.navigation.navigate({ routeName: 'Agenda' })
+  }
+
   render() {
-    const {email, password, name} = this.state;
+    const { email, password, name } = this.state;
     return (
       <View
         style={styles.container}
@@ -56,14 +63,14 @@ export default class LoginView extends Component {
             placeholder="Name"
             placeholderTextColor="#ffffff"
             value={name}
-            onChangeText={name => this.setState({name})}
+            onChangeText={name => this.setState({ name })}
             style={styles.textInput}
           />
           <TextInput
             placeholder="Email"
             placeholderTextColor="#ffffff"
             value={email}
-            onChangeText={email => this.setState({email})}
+            onChangeText={email => this.setState({ email })}
             style={styles.textInput}
           />
           <TextInput
@@ -71,7 +78,7 @@ export default class LoginView extends Component {
             placeholderTextColor="#ffffff"
             secureTextEntry
             value={password}
-            onChangeText={password => this.setState({password})}
+            onChangeText={password => this.setState({ password })}
             style={styles.textInput}
           />
           <Button
@@ -80,7 +87,8 @@ export default class LoginView extends Component {
             color={MAIN_COLOR}
             accessibilityLabel="Learn more about this purple button"
           />
-          <Button title="GO TO STORY" onPress={() => this.goToStory()}/>
+          <Button title="GO TO STORY" onPress={() => this.goToStory()} />
+          <Button title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
           <LoginButton
             onLoginFinished={
               (error, result) => {
@@ -98,7 +106,7 @@ export default class LoginView extends Component {
                 }
               }
             }
-            onLogoutFinished={() => console.log("logout.")}/>
+            onLogoutFinished={() => console.log("logout.")} />
         </View>
       </View>
     );
