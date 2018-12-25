@@ -103,13 +103,18 @@ export default class LoginView extends Component {
           <TextInput
             placeholder="Password"
             placeholderTextColor="#ffffff"
-            secureTextEntry
+            secu       reTextEntry
             value={password}
             onChangeText={password => this.setState({password})}
             style={styles.textInput}
           />
-          {/*<Button title="GO TO STORY" onPress={() => this.goToStory()} />*/}
-          <Text style={styles.button} title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
+          <View style={styles.margin10}>
+          <Button title="GO TO STORY" onPress={() => this.goToStory()} />
+          </View>
+          <View style={styles.margin10}>
+          <Button title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
+          </View>
+          <View style={styles.margin10}>
           <Button
             style={styles.button}
             onPress={this.login}
@@ -117,6 +122,7 @@ export default class LoginView extends Component {
             color={MAIN_COLOR}
             accessibilityLabel="Learn more about this purple button"
           />
+          </View>
           <View style={styles.socialLogin}>
             <Icon.Button name="facebook" style={styles.button} backgroundColor="#3b5998" onPress={this.facebookLogin}>
               Login with Facebook
@@ -149,8 +155,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  margin10: {
+    marginTop: 20,
+  },
   button: {
-    // marginTop: 10,
     width: '90%'
   },
   textInput: {
