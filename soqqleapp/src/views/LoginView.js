@@ -1,16 +1,44 @@
 import React, {Component} from 'react';
-import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput, View, Text} from 'react-native';
+import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput, View} from 'react-native';
 import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
+import LinkedInModal from 'react-native-linkedin';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {showMessage} from 'react-native-flash-message';
 import {MAIN_COLOR} from "../constants";
+const baseApi = 'https://api.linkedin.com/v1/people/'
+var RCTNetworking = require('RCTNetworking')
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {email: '', password: ''};
+  }
+
   static flashMessage = message => {
     showMessage({message, type: MAIN_COLOR});
+  }
+
+  linkedinLogin = async token => {
+    try {
+      const {userActions} = this.props;
+      const params = ['id'];
+      const response = await fetch(
+        `${baseApi}~:(${params.join(',')})?format=json`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        }
+      )
+      const result = await response.json();
+      userActions.linkedinLoginRequest(result.id);
+    } catch (error) {
+      LoginView.flashMessage('Can not fetch your LinkedIn profile')
+    }
   }
 
   facebookLogin = () => {
@@ -20,7 +48,6 @@ export default class LoginView extends Component {
         LoginView.flashMessage('Can not fetch your Facebook profile')
       } else {
         userActions.facebookLoginRequest(result.id);
-        // userActions.facebookLoginRequest('216318469370123');
         console.log('Success fetching data: ', result);
       }
     };
@@ -49,11 +76,6 @@ export default class LoginView extends Component {
       return LoginView.flashMessage('Please enter your name, email and password');
     }
     userActions.loginRequest(this.state);
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {email: '', password: ''};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -127,9 +149,25 @@ export default class LoginView extends Component {
             <Icon.Button name="facebook" style={styles.button} backgroundColor="#3b5998" onPress={this.facebookLogin}>
               Login with Facebook
             </Icon.Button>
-            <Icon.Button name="linkedin" style={styles.button} backgroundColor="#1178B3" onPress={this.facebookLogin}>
-              Login with LinkedIn
-            </Icon.Button>
+              <LinkedInModal
+                ref={ref => { this.modal = ref; }}
+                renderButton={() => <Icon.Button onPress={() => {
+                  RCTNetworking.clearCookies((cleared) => {
+                    this.modal.open()
+                  })
+                }} name="linkedin" style={styles.button} backgroundColor="#1178B3">
+                  Login with LinkedIn
+                </Icon.Button>}
+                clientID="787asa9dt1hpsb"
+                clientSecret="LL6RxKhDAKoE1tDI"
+                onError={error => {
+                  LoginView.flashMessage('LinkedIn Login is cancelled');
+                }}
+                redirectUri="http://localhost:3000/auth/linkedin/callback"
+                onSuccess={token => {
+                  this.linkedinLogin(token.access_token)
+                }}
+              />
           </View>
         </View>
       </View>

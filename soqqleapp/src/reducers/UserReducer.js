@@ -11,6 +11,7 @@ const REGISTER_FAILED = 'UserState/REGISTER_FAILED';
 
 const LOGIN_REQUESTED = 'UserState/LOGIN_REQUESTED';
 const FACEBOOK_LOGIN_REQUESTED = 'UserState/FACEBOOK_LOGIN_REQUESTED';
+const LINKEDIN_LOGIN_REQUESTED = 'UserState/LINKEDIN_LOGIN_REQUESTED';
 const LOGIN_COMPLETED = 'UserState/LOGIN_COMPLETED';
 const LOGIN_FAILED = 'UserState/LOGIN_FAILED';
 const instance = axios.create({
@@ -32,6 +33,13 @@ export function facebookLoginRequest(facebookId) {
   return {
     type: FACEBOOK_LOGIN_REQUESTED,
     payload: facebookId
+  };
+}
+
+export function linkedinLoginRequest(linkedinId) {
+  return {
+    type: LINKEDIN_LOGIN_REQUESTED,
+    payload: linkedinId
   };
 }
 
@@ -85,6 +93,27 @@ export async function facebookLogin(facebookId) {
     return loginFailed({code: 500, message: 'Unexpected error!'});
   }
 }
+
+export async function linkedinLogin(linkedinId) {
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.get(`/mobile/user-profile-by-linkedin?id=${linkedinId}`);
+    store.dispatch(AppStateActions.stopLoading());
+    if (!response.data) {
+      return loginFailed({code: 404, message: 'No Soqqle account associated with your logged LinkedIn account'});
+    }
+    store.dispatch(AppStateActions.loginSuccess(response.data));
+    return loginCompleted(response.data);
+  } catch (error) {
+    console.log("====error====", error)
+    store.dispatch(AppStateActions.stopLoading());
+    if (error.response && error.response.data) {
+      return loginFailed(error.response.data);
+    }
+    return loginFailed({code: 500, message: 'Unexpected error!'});
+  }
+}
+
 
 export function registerRequest(data) {
   return {
@@ -146,6 +175,11 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return loop(
         state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),
         Effects.promise(facebookLogin, action.payload)
+      );
+    case LINKEDIN_LOGIN_REQUESTED:
+      return loop(
+        state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),
+        Effects.promise(linkedinLogin, action.payload)
       );
     case LOGIN_COMPLETED:
       return state.set('user', action.payload).set('loginSuccess', true);
