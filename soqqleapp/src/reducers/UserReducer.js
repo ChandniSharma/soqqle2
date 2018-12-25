@@ -10,6 +10,7 @@ const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
 const REGISTER_FAILED = 'UserState/REGISTER_FAILED';
 
 const LOGIN_REQUESTED = 'UserState/LOGIN_REQUESTED';
+const FACEBOOK_LOGIN_REQUESTED = 'UserState/FACEBOOK_LOGIN_REQUESTED';
 const LOGIN_COMPLETED = 'UserState/LOGIN_COMPLETED';
 const LOGIN_FAILED = 'UserState/LOGIN_FAILED';
 const instance = axios.create({
@@ -24,6 +25,13 @@ export function loginRequest(data) {
   return {
     type: LOGIN_REQUESTED,
     payload: data
+  };
+}
+
+export function facebookLoginRequest(facebookId) {
+  return {
+    type: FACEBOOK_LOGIN_REQUESTED,
+    payload: facebookId
   };
 }
 
@@ -51,6 +59,25 @@ export async function login(data) {
     return loginCompleted(response.data);
   } catch (error) {
     console.log("error=>", error.response)
+    store.dispatch(AppStateActions.stopLoading());
+    if (error.response && error.response.data) {
+      return loginFailed({code: error.response.status, message:  "Login failed ! Please check your email and password"});
+    }
+    return loginFailed({code: 500, message: 'Unexpected error!'});
+  }
+}
+
+export async function facebookLogin(facebookId) {
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.get(`/mobile/user-profile-by-facebook?id=${facebookId}`);
+    store.dispatch(AppStateActions.stopLoading());
+    if (!response.data) {
+      return loginFailed({code: 404, message: 'No Soqqle account associated with your logged Facebook account'});
+    }
+    store.dispatch(AppStateActions.loginSuccess(response.data));
+    return loginCompleted(response.data);
+  } catch (error) {
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
       return loginFailed(error.response.data);
@@ -87,7 +114,6 @@ export async function register(data) {
     console.log("response=>", response)
     store.dispatch(AppStateActions.stopLoading());
     store.dispatch(AppStateActions.loginSuccess(response.data));
-    store.dispatch(AppStateActions.loginSuccess(response.data));
     return registerCompleted(response.data);
   } catch (error) {
     console.log("error=>", error)
@@ -115,6 +141,11 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return loop(
         state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),
         Effects.promise(login, action.payload)
+      );
+    case FACEBOOK_LOGIN_REQUESTED:
+      return loop(
+        state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),
+        Effects.promise(facebookLogin, action.payload)
       );
     case LOGIN_COMPLETED:
       return state.set('user', action.payload).set('loginSuccess', true);

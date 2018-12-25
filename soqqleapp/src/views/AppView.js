@@ -7,6 +7,7 @@ import store from '../redux/store';
 import DeveloperMenu from '../components/DeveloperMenu';
 import NavigatorViewContainer from "../navigator/NavigatorViewContainer";
 import Spinner from 'react-native-loading-spinner-overlay';
+import {MAIN_COLOR} from "../constants";
 
 class AppView extends Component {
 
@@ -46,6 +47,7 @@ class AppView extends Component {
         <StatusBar backgroundColor='#455a64' barStyle='light-content' />
         <NavigatorViewContainer />
         {this.props.loading && <Spinner
+          color={MAIN_COLOR}
           visible={this.props.loading}
         />}
         {__DEV__ && <DeveloperMenu />}

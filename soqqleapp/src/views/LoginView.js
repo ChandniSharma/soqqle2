@@ -1,39 +1,72 @@
-import React, { Component } from 'react';
-import { Button, Image, Keyboard, Platform, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AccessToken, LoginButton } from 'react-native-fbsdk';
-import { showMessage } from 'react-native-flash-message';
-import { MAIN_COLOR } from "../constants";
+import React, {Component} from 'react';
+import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput, View, Text} from 'react-native';
+import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {showMessage} from 'react-native-flash-message';
+import {MAIN_COLOR} from "../constants";
+
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
 
+  static flashMessage = message => {
+    showMessage({message, type: MAIN_COLOR});
+  }
+
+  facebookLogin = () => {
+    const {userActions} = this.props;
+    const getFacebookInfoCallback = (error, result) => {
+      if (error) {
+        LoginView.flashMessage('Can not fetch your Facebook profile')
+      } else {
+        userActions.facebookLoginRequest(result.id);
+        // userActions.facebookLoginRequest('216318469370123');
+        console.log('Success fetching data: ', result);
+      }
+    };
+    LoginManager.logInWithReadPermissions(['public_profile']).then(function (result) {
+        if (result.isCancelled) {
+          LoginView.flashMessage('Facebook login has been canceled')
+        } else {
+          const infoRequest = new GraphRequest(
+            '/me',
+            null,
+            getFacebookInfoCallback,
+          );
+          new GraphRequestManager().addRequest(infoRequest).start();
+        }
+      }, function (error) {
+        LoginView.flashMessage('Unexpected error, please try again!')
+      }
+    );
+  };
+
+  login = () => {
+    Keyboard.dismiss();
+    const { userActions } = this.props;
+    const {email, name, password} = this.state;
+    if (!email || !name || !password) {
+      return LoginView.flashMessage('Please enter your name, email and password');
+    }
+    userActions.loginRequest(this.state);
+  }
+
   constructor(props) {
     super(props);
-    this.state = { email: '', password: '' }
+    this.state = {email: '', password: ''};
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.error && nextProps.error.message) {
-      showMessage({
-        message: nextProps.error.message,
-        type: '#750830'
-      });
+      LoginView.flashMessage(nextProps.error.message);
     }
     if (nextProps.registerSuccess && nextProps.registerSuccess !== this.props.registerSuccess) {
-      showMessage({
-        message: 'Register successful',
-        backgroundColor: '#750830',
-        type: '#750830'
-      });
-      this.props.navigate({ routeName: 'LoginScreen' });
+      LoginView.flashMessage('Register successful');
+      this.props.navigate({routeName: 'LoginScreen'});
     }
     if (nextProps.loginSuccess && nextProps.loginSuccess !== this.props.loginSuccess) {
-      showMessage({
-        message: 'Login successful',
-        backgroundColor: '#750830',
-        type: '#750830'
-      });
-      this.props.navigation.navigate({ routeName: 'Story' });
+      LoginView.flashMessage('Login successful');
+      this.props.navigation.navigate({routeName: 'Story'});
     }
   }
 
@@ -41,36 +74,30 @@ export default class LoginView extends Component {
     this.props.navigation.navigate({ routeName: 'Story' })
   }
 
-  login = () => {
-    Keyboard.dismiss();
-    const { userActions } = this.props;
-    userActions.loginRequest(this.state);
-  }
-
   gotToAgenda = () => {
     this.props.navigation.navigate({ routeName: 'Agenda' })
   }
 
   render() {
-    const { email, password, name } = this.state;
+    const {email, password, name} = this.state;
     return (
       <View
         style={styles.container}
       >
-        <Text>Hello world!</Text>
+        <Image style={styles.logo} source={require('../images/logo.png')}/>
         <View>
           <TextInput
             placeholder="Name"
             placeholderTextColor="#ffffff"
             value={name}
-            onChangeText={name => this.setState({ name })}
+            onChangeText={name => this.setState({name})}
             style={styles.textInput}
           />
           <TextInput
             placeholder="Email"
             placeholderTextColor="#ffffff"
             value={email}
-            onChangeText={email => this.setState({ email })}
+            onChangeText={email => this.setState({email})}
             style={styles.textInput}
           />
           <TextInput
@@ -78,35 +105,26 @@ export default class LoginView extends Component {
             placeholderTextColor="#ffffff"
             secureTextEntry
             value={password}
-            onChangeText={password => this.setState({ password })}
+            onChangeText={password => this.setState({password})}
             style={styles.textInput}
           />
+          {/*<Button title="GO TO STORY" onPress={() => this.goToStory()} />*/}
+          <Text style={styles.button} title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
           <Button
+            style={styles.button}
             onPress={this.login}
             title="Login"
             color={MAIN_COLOR}
             accessibilityLabel="Learn more about this purple button"
           />
-          <Button title="GO TO STORY" onPress={() => this.goToStory()} />
-          <Button title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
-          <LoginButton
-            onLoginFinished={
-              (error, result) => {
-                if (error) {
-                  console.log("login has error: " + JSON.stringify(error));
-                } else if (result.isCancelled) {
-                  console.log("login is cancelled.");
-                } else {
-                  console.log(result);
-                  AccessToken.getCurrentAccessToken().then(
-                    (data) => {
-                      console.log(data.accessToken.toString());
-                    }
-                  );
-                }
-              }
-            }
-            onLogoutFinished={() => console.log("logout.")} />
+          <View style={styles.socialLogin}>
+            <Icon.Button name="facebook" style={styles.button} backgroundColor="#3b5998" onPress={this.facebookLogin}>
+              Login with Facebook
+            </Icon.Button>
+            <Icon.Button name="linkedin" style={styles.button} backgroundColor="#1178B3" onPress={this.facebookLogin}>
+              Login with LinkedIn
+            </Icon.Button>
+          </View>
         </View>
       </View>
     );
@@ -115,11 +133,25 @@ export default class LoginView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 5,
+    padding: 10,
     paddingTop: statusBarHeight + 5,
     justifyContent: 'center',
     backgroundColor: '#08091a',
     flex: 1
+  },
+  logo: {
+    alignSelf: 'center',
+    width: 150,
+    height: 150,
+  },
+  socialLogin: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  button: {
+    // marginTop: 10,
+    width: '90%'
   },
   textInput: {
     borderRadius: 4,

@@ -4,6 +4,7 @@ import AppView from '../views/AppView';
 
 export default connect(
   state => ({
-    isReady: state.getIn(['session', 'isReady'])
+    isReady: state.getIn(['session', 'isReady']),
+    loading: state.getIn(['app', 'loading']),
   })
 )(AppView);
