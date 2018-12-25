@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Platform, StatusBar,
-    Image, SafeAreaView, Dimensions, ScrollView
+    Image, SafeAreaView, Dimensions, ActivityIndicator
 } from 'react-native';
 import Video from 'react-native-video'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -35,10 +35,11 @@ const styles = StyleSheet.create({
         width: wp('8%'),
         height: hp('4%'),
     },
-    bodyScrollView: {
+    storyContainerView: {
         flex: 1,
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         paddingTop: hp('4%'),
         height: hp('82%'),
     },
@@ -137,13 +138,6 @@ export default class StoryView extends Component {
         this.getStories();
     }
 
-    async componentDidMount() {
-        // await Font.loadAsync({
-        //     'open-sans': require('./../../../fonts/OpenSans-Regular.ttf'),
-        // });
-        this.setState({ loading: false });
-    }
-
     getStories() {
         return fetch(STORIES_LIST_API)
             .then((response) => response.json())
@@ -166,7 +160,9 @@ export default class StoryView extends Component {
                     return { ...story, ...{ 'has_video': false } }
                 });
         })
-        Promise.all(results).then((completed) => this.setState({ stories: completed }));
+        Promise.all(results).then((completed) => {
+            this.setState({ stories: completed, loading: false })
+        });
     }
 
     _renderItem = ({ item, index }) => {
@@ -253,17 +249,21 @@ export default class StoryView extends Component {
                         style={styles.headerIcon}
                     />
                 </View>
-                <View showsVerticalScrollIndicator={false} style={styles.bodyScrollView}>
-                    <View>
-                        <Carousel
-                            ref={(c) => { this._carousel = c; }}
-                            data={this.state.stories}
-                            renderItem={this._renderItem}
-                            sliderWidth={width}
-                            itemWidth={wp('90%')}
-                            onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex })}
-                        />
-                    </View>
+                <View style={styles.storyContainerView}>
+                    {this.state.loading ? (
+                        <ActivityIndicator size="large" color="#800094" />
+                    ) : (
+                            <View>
+                                <Carousel
+                                    ref={(c) => { this._carousel = c; }}
+                                    data={this.state.stories}
+                                    renderItem={this._renderItem}
+                                    sliderWidth={width}
+                                    itemWidth={wp('90%')}
+                                    onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex })}
+                                />
+                            </View>
+                        )}
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.footerTab}>
