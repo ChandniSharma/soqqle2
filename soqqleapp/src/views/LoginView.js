@@ -5,6 +5,7 @@ import LinkedInModal from 'react-native-linkedin';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {showMessage} from 'react-native-flash-message';
 import {MAIN_COLOR} from "../constants";
+import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from "../config";
 const baseApi = 'https://api.linkedin.com/v1/people/'
 var RCTNetworking = require('RCTNetworking')
 
@@ -158,12 +159,12 @@ export default class LoginView extends Component {
                 }} name="linkedin" style={styles.button} backgroundColor="#1178B3">
                   Login with LinkedIn
                 </Icon.Button>}
-                clientID="787asa9dt1hpsb"
-                clientSecret="LL6RxKhDAKoE1tDI"
+                clientID={LINKEDIN_LOGIN_APP_ID}
+                clientSecret={LINKEDIN_LOGIN_APP_SECRET}
                 onError={error => {
                   LoginView.flashMessage('LinkedIn Login is cancelled');
                 }}
-                redirectUri="http://localhost:3000/auth/linkedin/callback"
+                redirectUri={LINKEDIN_LOGIN_CALLBACK}
                 onSuccess={token => {
                   this.linkedinLogin(token.access_token)
                 }}
