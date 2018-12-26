@@ -101,6 +101,10 @@ export default class LoginView extends Component {
     this.props.navigation.navigate({ routeName: 'Agenda' })
   }
 
+  goToUserTaskGroups = () => {
+    this.props.navigation.navigate({ routeName: 'UserTaskGroup' })
+  }
+
   render() {
     const {email, password, name} = this.state;
     return (
@@ -136,6 +140,9 @@ export default class LoginView extends Component {
           </View>
           <View style={styles.margin10}>
           <Button title="GO TO AGENDA" onPress={() => this.gotToAgenda()} />
+          </View>
+          <View style={styles.margin10}>
+          <Button title="GO TO USER TASK GROUPS" onPress={() => this.goToUserTaskGroups()} />
           </View>
           <View style={styles.margin10}>
           <Button

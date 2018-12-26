@@ -152,7 +152,7 @@ export default class AgendaView extends Component {
                 }
             })
             .catch((error) => {
-                return [];
+                this.setState({ initialLoading: false, loading: false });
             });
     }
 
@@ -181,7 +181,7 @@ export default class AgendaView extends Component {
                 });
             }
         })
-        this.setState({ agendaItems, initialLoading: false });
+        this.setState({ agendaItems, initialLoading: false, loading: false });
     }
 
     _renderHeader = (section, index) => {
@@ -277,6 +277,7 @@ export default class AgendaView extends Component {
                                 renderHeader={this._renderHeader}
                                 renderContent={this._renderContent}
                                 onChange={this._updateSections}
+                                expandMultiple={true}
                             />
                             {this.state.loading ? (
                                 <View style={styles.listLoader}>
