@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet, Text, View, Platform, StatusBar,
+    StyleSheet, Text, View, Platform, StatusBar, Modal, TouchableOpacity,
     Image, SafeAreaView, Dimensions, ActivityIndicator
 } from 'react-native';
 import Video from 'react-native-video'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
-import { STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../endpoints';
+import Icon from 'react-native-vector-icons/FontAwesome'
 import Carousel from 'react-native-snap-carousel';
+import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
+import { STORIES_LIST_API, STORY_HAS_VIDEO_API, SAVE_USER_TASK_GROUP_API } from './../endpoints';
 import CustomText from './../components/CustomText';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
@@ -120,8 +121,58 @@ const styles = StyleSheet.create({
         paddingTop: hp('1%'),
         fontSize: wp('3.5%'),
         fontWeight: '700',
+    },
+    likeModalView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    likeModalInnerView: {
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        paddingVertical: 25,
+        paddingHorizontal: 10,
+        width: '90%',
+        borderRadius: 5,
+    },
+    likeModalTitle: {
+        fontSize: 20,
+        color: '#000000',
+        marginBottom: 10,
+        textAlign: 'center',
+        fontWeight: 'bold'
+    },
+    likeModalText: {
+        fontSize: 18,
+        color: '#000000',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    likeModalAction: {
+        backgroundColor: '#2C2649',
+        color: '#ffffff',
+        fontSize: 17,
+        paddingTop: 5,
+        paddingBottom: 8,
+        paddingHorizontal: 25,
+        borderRadius: 25,
+        alignSelf: 'center'
+
+    },
+    likeModalClose: {
+        position: 'absolute',
+        padding: 10,
+        right: 5,
+        top: 0
+    },
+    likeModalCloseIcon: {
+        color: '#333333',
+        fontSize: 20,
     }
 });
+
+let selectedItemId = null;
 
 export default class StoryView extends Component {
 
@@ -131,11 +182,45 @@ export default class StoryView extends Component {
             loading: true,
             stories: [],
             currentSlideIndex: 0,
+            modalVisible: false,
+            processing: false
         }
     }
 
     componentWillMount() {
         this.getStories();
+    }
+
+    setModalVisible(visible, itemId) {
+        this.setState({ modalVisible: visible });
+        selectedItemId = itemId;
+    }
+
+    createNewUserTaskGroup() {
+        if (!this.state.processing) {
+            this.setState({ processing: true });
+            let data = {
+                type: 'Story',
+                _typeObject: selectedItemId,
+                _user: this.props.user._id
+            }
+            fetch(SAVE_USER_TASK_GROUP_API, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then((response) => JSON.stringify(response.json()))
+                .then((responseData) => {
+                    this.setState({ processing: false, modalVisible: false });
+                    selectedItemId = null;
+                    this.props.navigation.navigate({ routeName: 'UserTaskGroup' })
+                })
+                .catch((error) => {
+                    this.setState({ processing: false });
+                });
+        }
     }
 
     getStories() {
@@ -164,6 +249,7 @@ export default class StoryView extends Component {
             this.setState({ stories: completed, loading: false })
         });
     }
+
 
     _renderItem = ({ item, index }) => {
         return (
@@ -219,12 +305,14 @@ export default class StoryView extends Component {
                     </View>
                 </View>
                 <View style={styles.storyActionsContainer}>
-                    <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
-                        <Image
-                            source={require('./../../assets/images/thumbs_up.png')}
-                            style={styles.storyActionIcon}
-                        />
-                    </View>
+                    <TouchableOpacity onPress={() => { this.setModalVisible(!this.state.modalVisible, item._id) }}>
+                        <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
+                            <Image
+                                source={require('./../../assets/images/thumbs_up.png')}
+                                style={styles.storyActionIcon}
+                            />
+                        </View>
+                    </TouchableOpacity>
                     <View style={{ ...styles.storyActionBlock, ...{ 'borderColor': '#171a54' } }}>
                         <Image
                             source={require('./../../assets/images/thubms_down.png')}
@@ -300,6 +388,32 @@ export default class StoryView extends Component {
                         </CustomText>
                     </View>
                 </View>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                    }}>
+                    <View style={styles.likeModalView}>
+                        <View style={styles.likeModalInnerView}>
+                            <Text style={styles.likeModalTitle}>You like this!</Text>
+                            <Text style={styles.likeModalText}>But there are no available teams.</Text>
+                            <TouchableOpacity
+                                onPress={() => this.createNewUserTaskGroup()}>
+                                <Text style={styles.likeModalAction}>Start one</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => { this.setModalVisible(!this.state.modalVisible) }}
+                                style={styles.likeModalClose}
+                            >
+                                <View>
+                                    <Icon name='close' style={styles.likeModalCloseIcon} />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </SafeAreaView>
         );
     }
