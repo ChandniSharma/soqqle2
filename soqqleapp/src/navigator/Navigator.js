@@ -1,17 +1,18 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
-import LoginContainer from '../containers/LoginContainer'
-import StoryContainer from '../containers/StoryContainer'
-import AgendaContainer from '../containers/AgendaContainer'
+import LoginContainer from '../containers/LoginContainer';
+import StoryContainer from '../containers/StoryContainer';
+import AgendaContainer from '../containers/AgendaContainer';
+import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
 
 
 const AppNavigator = createStackNavigator({
   Login: { screen: LoginContainer },
   Story: { screen: StoryContainer },
   Agenda: { screen: AgendaContainer },
+  UserTaskGroup: { screen: UserTaskGroupContainer },
 },
   {
-    // initialRouteName: 'Story',
     headerMode: 'none'
   }
 );
