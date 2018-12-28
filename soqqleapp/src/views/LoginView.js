@@ -6,8 +6,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {showMessage} from 'react-native-flash-message';
 import {MAIN_COLOR} from "../constants";
 import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from "../config";
+import {isValidEmail} from "../utils/common";
 const baseApi = 'https://api.linkedin.com/v1/people/'
-var RCTNetworking = require('RCTNetworking')
+var RCTNetworking = require('RCTNetworking');
+const faceBookProfileFields = ['id','email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
+const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
+
+
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
@@ -25,9 +30,8 @@ export default class LoginView extends Component {
   linkedinLogin = async token => {
     try {
       const {userActions} = this.props;
-      const params = ['id'];
       const response = await fetch(
-        `${baseApi}~:(${params.join(',')})?format=json`,
+        `${baseApi}~:(${linkedInProfileFields.join(',')})?format=json`,
         {
           method: 'GET',
           headers: {
@@ -36,7 +40,7 @@ export default class LoginView extends Component {
         }
       )
       const result = await response.json();
-      userActions.linkedinLoginRequest(result.id);
+      userActions.linkedinLoginRequest({...result, accessToken: token});
     } catch (error) {
       LoginView.flashMessage('Can not fetch your LinkedIn profile')
     }
@@ -48,16 +52,16 @@ export default class LoginView extends Component {
       if (error) {
         LoginView.flashMessage('Can not fetch your Facebook profile')
       } else {
-        userActions.facebookLoginRequest(result.id);
-        console.log('Success fetching data: ', result);
+        userActions.facebookLoginRequest(result);
+        console.log('Success fetching data: ', JSON.stringify(result));
       }
     };
-    LoginManager.logInWithReadPermissions(['public_profile']).then(function (result) {
+    LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']).then(function (result) {
         if (result.isCancelled) {
           LoginView.flashMessage('Facebook login has been canceled')
         } else {
           const infoRequest = new GraphRequest(
-            '/me',
+            `me?fields=${faceBookProfileFields.join(',')}`,
             null,
             getFacebookInfoCallback,
           );
@@ -75,6 +79,9 @@ export default class LoginView extends Component {
     const {email, name, password} = this.state;
     if (!email || !name || !password) {
       return LoginView.flashMessage('Please enter your name, email and password');
+    }
+    if (!isValidEmail(email)) {
+      return LoginView.flashMessage('Please enter an valid email');
     }
     userActions.loginRequest(this.state);
   }
@@ -126,7 +133,7 @@ export default class LoginView extends Component {
           <TextInput
             placeholder="Password"
             placeholderTextColor="#ffffff"
-            secu       reTextEntry
+            secureTextEntry
             value={password}
             onChangeText={password => this.setState({password})}
             style={styles.textInput}

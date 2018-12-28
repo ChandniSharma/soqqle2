@@ -75,10 +75,10 @@ export async function login(data) {
   }
 }
 
-export async function facebookLogin(facebookId) {
+export async function facebookLogin(profile) {
   try {
     store.dispatch(AppStateActions.startLoading());
-    const response = await instance.get(`/mobile/user-profile-by-facebook?id=${facebookId}`);
+    const response = await instance.post(`/mobile/facebook-login`, profile);
     store.dispatch(AppStateActions.stopLoading());
     if (!response.data) {
       return loginFailed({code: 404, message: 'No Soqqle account associated with your logged Facebook account'});
@@ -94,10 +94,10 @@ export async function facebookLogin(facebookId) {
   }
 }
 
-export async function linkedinLogin(linkedinId) {
+export async function linkedinLogin(profile) {
   try {
     store.dispatch(AppStateActions.startLoading());
-    const response = await instance.get(`/mobile/user-profile-by-linkedin?id=${linkedinId}`);
+    const response = await instance.post(`/mobile/linkedin-login`, profile);
     store.dispatch(AppStateActions.stopLoading());
     if (!response.data) {
       return loginFailed({code: 404, message: 'No Soqqle account associated with your logged LinkedIn account'});
