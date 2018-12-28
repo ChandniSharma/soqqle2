@@ -12,20 +12,39 @@ import {
   Content,
   Header,
   Icon,
+  Input,
+  Item,
   Left,
   Right,
   Text,
+  Textarea,
   Thumbnail,
-  Title,
-  Input,
-  Item,
-  Textarea
+  Title
 } from "native-base";
 
 export default class ProfileView extends Component {
 
   static flashMessage = message => {
     showMessage({message, type: MAIN_COLOR});
+  };
+  onChange = (field, value) => {
+    const {profile} = this.state;
+    this.setState({profile: {...profile, [field]: value}});
+  };
+  onSave = () => {
+    const {profile} = this.state;
+    const {userActions} = this.props;
+    if (!profile.firstName) {
+      return ProfileView.flashMessage('Please enter your first name!');
+    }
+    if (!profile.lastName) {
+      return ProfileView.flashMessage('Please enter your last name!');
+    }
+    this.setState({isEdit: false});
+    userActions.saveProfileRequest(profile);
+  };
+  goBack = () => {
+    this.props.navigation.pop();
   };
 
   constructor(props) {
@@ -41,38 +60,16 @@ export default class ProfileView extends Component {
     const {userActions} = this.props;
     const {profile} = this.state;
     if (profile && profile.email) {
-      userActions.getCompaniesRequest(profile.email.toLowerCase())
+      userActions.getCompaniesRequest(profile.email.toLowerCase());
     }
-  }
-
-  onChange = (field, value) => {
-    const {profile} = this.state;
-    this.setState({profile: {...profile, [field]: value}})
-  }
-
-  onSave = () => {
-    const {profile} = this.state;
-    const {userActions} = this.props;
-    if (!profile.firstName) {
-      return ProfileView.flashMessage('Please enter your first name!')
-    }
-    if (!profile.lastName) {
-      return ProfileView.flashMessage('Please enter your last name!')
-    }
-    this.setState({isEdit: false})
-    userActions.saveProfileRequest(profile)
-  }
-
-  goBack = () => {
-    this.props.navigation.pop();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.user && !_.isEqual(nextProps.user.profile, this.state.profile) && !nextProps.isLoading) {
-      this.setState({profile: nextProps.user.profile})
+      this.setState({profile: nextProps.user.profile});
     }
     if (nextProps.companies && !_.isEqual(nextProps.companies, this.state.companies)) {
-      this.setState({companies: nextProps.companies})
+      this.setState({companies: nextProps.companies});
     }
   }
 
@@ -90,42 +87,49 @@ export default class ProfileView extends Component {
           <Title>Profile</Title>
           </Body>
           <Right>
-            {isEdit?<Button transparent>
-              <Button transparent onPress={this.onSave}><Text>Save</Text></Button></Button>:<Button onPress={() => this.setState({isEdit: true})} transparent><Icon style={{fontSize: 25}} type="FontAwesome" color="black" name='pencil'/></Button>}
+            {isEdit ? <Button transparent>
+                <Button transparent onPress={this.onSave}><Text>Save</Text></Button></Button> :
+              <Button onPress={() => this.setState({isEdit: true})} transparent><Icon style={{fontSize: 25}}
+                                                                                      type="FontAwesome" color="black"
+                                                                                      name='pencil'/></Button>}
 
           </Right>
         </Header>
         <Content>
-        <Card>
-          <CardItem>
-            <Left>
-              <Thumbnail
-                source={{uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271'}}/>
+          <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail
+                  source={{uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271'}}/>
+                <Body>
+                {isEdit ? <Item>
+                  <Input placeholder="First Name" onChangeText={value => this.onChange('firstName', value)} style={styles.input}
+                         value={profile.firstName}/>
+                  <Input placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)} style={styles.input}
+                         value={profile.lastName}/>
+                </Item> : <Text>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
+                }
+                {isEdit ? <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
+                                 value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem>
               <Body>
-              {isEdit ? <Item>
-                <Input onChangeText={value => this.onChange('firstName', value)} style={styles.input} value={profile.firstName}/>
-                <Input onChangeText={value => this.onChange('lastName', value)} style={styles.input} value={profile.lastName}/>
-              </Item> : <Text>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
-              }
-              {isEdit ?<Input onChangeText={value => this.onChange('title', value)} style={styles.input} value={profile.title}/>:<Text note>{profile.title || ''}</Text>}
+              {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)} value={profile.bio}/> :
+                <Text>{profile.bio}</Text>}
               </Body>
-            </Left>
-          </CardItem>
-          <CardItem>
-            <Body>
-            {isEdit?<Textarea onChangeText={value => this.onChange('bio', value)} value={profile.bio}/>:<Text>{profile.bio}</Text>}
-            </Body>
-          </CardItem>
-          <CardItem style={{flex: 1, justifyContent: 'space-between'}}>
-            {
-              companies.map((company, index) =>
-                <Button key={`company_${index}`} small rounded style={{backgroundColor: MAIN_COLOR}}>
-                <Text style={{color: 'white'}}>{company.name}</Text>
-              </Button>)
-            }
-          </CardItem>
-        </Card>
-        <Card>
+            </CardItem>
+            <CardItem style={{flex: 1, justifyContent: 'space-between'}}>
+              {
+                companies.map((company, index) =>
+                  <Button key={`company_${index}`} small rounded style={{backgroundColor: MAIN_COLOR}}>
+                    <Text style={{color: 'white'}}>{company.name}</Text>
+                  </Button>)
+              }
+            </CardItem>
+          </Card>
+          <Card>
             <CardItem cardBody>
               <Image
                 source={{uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg'}}
