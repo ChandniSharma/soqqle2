@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "immutable": "^4.0.0-rc.12",
+    "native-base": "^2.10.0",
     "react": "16.6.3",
     "react-is": "^16.7.0",
     "react-native": "0.57.8",

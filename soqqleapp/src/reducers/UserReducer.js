@@ -14,13 +14,18 @@ const FACEBOOK_LOGIN_REQUESTED = 'UserState/FACEBOOK_LOGIN_REQUESTED';
 const LINKEDIN_LOGIN_REQUESTED = 'UserState/LINKEDIN_LOGIN_REQUESTED';
 const LOGIN_COMPLETED = 'UserState/LOGIN_COMPLETED';
 const LOGIN_FAILED = 'UserState/LOGIN_FAILED';
+
+const GET_COMPANIES_REQUESTED = 'UserState/GET_COMPANIES_REQUESTED';
+const GET_COMPANIES_COMPLETED = 'UserState/GET_COMPANIES_COMPLETED';
+const GET_COMPANIES_FAILED = 'UserState/GET_COMPANIES_FAILED';
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
   headers: {'Content-type': 'application/json'}
 });
 // Initial state
-const initialState = Map({isLoading: false, user: {}, error: {}});
+const initialState = Map({isLoading: false, user: {}, error: {}, companies: []});
 
 export function loginRequest(data) {
   return {
@@ -154,6 +159,44 @@ export async function register(data) {
   }
 }
 
+
+export function getCompaniesRequest(email) {
+  return {
+    type: GET_COMPANIES_REQUESTED,
+    payload: email
+  };
+}
+
+export function getCompaniesCompleted(data) {
+  return {
+    type: GET_COMPANIES_COMPLETED,
+    payload: data
+  };
+}
+
+export function getCompaniesFailed(error) {
+  return {
+    type: GET_COMPANIES_FAILED,
+    payload: error
+  };
+}
+
+export async function getCompanies(email) {
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.get(`/company?email=${email}`)
+    console.log("response=>", response)
+    store.dispatch(AppStateActions.stopLoading());
+    return getCompaniesCompleted(response.data);
+  } catch (error) {
+    console.log("error=>", error)
+    if (error.response && error.response.data) {
+      return getCompaniesFailed(error.response.data);
+    }
+    return getCompaniesFailed({code: 500, message: 'Unexpected error!'});
+  }
+}
+
 // Reducer
 export default function UserStateReducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -166,6 +209,15 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('user', action.payload).set('registerSuccess', true);
     case REGISTER_FAILED:
       return state.set('error', action.payload).set('registerSuccess', false);
+    case GET_COMPANIES_REQUESTED:
+        return loop(
+          state.set('error', null).set('getCompaniesSuccess', false),
+          Effects.promise(getCompanies, action.payload)
+        );
+    case GET_COMPANIES_COMPLETED:
+      return state.set('companies', action.payload).set('getCompaniesSuccess', true);
+    case GET_COMPANIES_FAILED:
+      return state.set('error', action.payload).set('getCompaniesSuccess', false);
     case LOGIN_REQUESTED:
       return loop(
         state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),

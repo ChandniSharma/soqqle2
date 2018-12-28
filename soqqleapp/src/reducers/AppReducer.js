@@ -13,7 +13,7 @@ const instance = axios.create({
 });
 
 // Initial state
-const initialState = Map({loading: false, user: {}, error: {}});
+const initialState = Map({loading: false, user: Map({}), error: Map({})});
 
 export function startLoading() {
   return {
