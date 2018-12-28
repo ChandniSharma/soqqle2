@@ -161,12 +161,12 @@ export default class UserTaskGroupView extends Component {
                 <View style={styles.taskItem}>
                     <View style={styles.taskItemHeader}>
                         <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-                        <Text style={styles.taskItemSize}>5/5</Text>
+                        <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
                     </View>
                     <Text style={styles.taskItemDescription}>{data.description}</Text>
                     <View style={styles.taskItemFooter}>
                         <Text style={styles.taskItemExpiry}>
-                            {`Expire: ${data.expiry}`}
+                            {`Expire: ${data.expiry || ''}`}
                         </Text>
                         <Text style={styles.taskItemXP}>100 xp</Text>
                     </View>
