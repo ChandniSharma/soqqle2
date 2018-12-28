@@ -19,6 +19,10 @@ const GET_COMPANIES_REQUESTED = 'UserState/GET_COMPANIES_REQUESTED';
 const GET_COMPANIES_COMPLETED = 'UserState/GET_COMPANIES_COMPLETED';
 const GET_COMPANIES_FAILED = 'UserState/GET_COMPANIES_FAILED';
 
+const SAVE_PROFILE_REQUESTED = 'UserState/SAVE_PROFILE_REQUESTED';
+const SAVE_PROFILE_COMPLETED = 'UserState/SAVE_PROFILE_COMPLETED';
+const SAVE_PROFILE_FAILED = 'UserState/SAVE_PROFILE_FAILED';
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -60,6 +64,44 @@ export function loginFailed(error) {
     type: LOGIN_FAILED,
     payload: error
   };
+}
+
+export function saveProfileRequest(data) {
+  return {
+    type: SAVE_PROFILE_REQUESTED,
+    payload: data
+  };
+}
+
+export function saveProfileCompleted(data) {
+  return {
+    type: SAVE_PROFILE_COMPLETED,
+    payload: data
+  };
+}
+
+export function saveProfileFailed(error) {
+  return {
+    type: SAVE_PROFILE_FAILED,
+    payload: error
+  };
+}
+
+export async function saveProfile(data) {
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.post('/mobile/user-profile', data);
+    console.log("response=>", response)
+    store.dispatch(AppStateActions.stopLoading());
+    return saveProfileCompleted(response.data);
+  } catch (error) {
+    console.log("error=>", error.response)
+    store.dispatch(AppStateActions.stopLoading());
+    if (error.response && error.response.data) {
+      return saveProfileFailed({code: error.response.status, message:  "Save failed ! Please try again"});
+    }
+    return saveProfileFailed({code: 500, message: 'Unexpected error!'});
+  }
 }
 
 export async function login(data) {
@@ -237,6 +279,16 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('user', action.payload).set('loginSuccess', true);
     case LOGIN_FAILED:
       return state.set('error', action.payload).set('loginSuccess', false);
+    case SAVE_PROFILE_REQUESTED:
+      const _id = state.getIn(['user', '_id'])
+      return loop(
+        state.set('error', null).set('saveProfileSuccess', false),
+        Effects.promise(saveProfile, {...action.payload, _id})
+      );
+    case SAVE_PROFILE_COMPLETED:
+      return state.set('user', action.payload).set('saveProfileSuccess', true);
+    case SAVE_PROFILE_FAILED:
+      return state.set('saveProfileSuccess', false);
     default:
       return state;
   }

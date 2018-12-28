@@ -51,7 +51,16 @@ export default class ProfileView extends Component {
   }
 
   onSave = () => {
-
+    const {profile} = this.state;
+    const {userActions} = this.props;
+    if (!profile.firstName) {
+      return ProfileView.flashMessage('Please enter your first name!')
+    }
+    if (!profile.lastName) {
+      return ProfileView.flashMessage('Please enter your last name!')
+    }
+    this.setState({isEdit: false})
+    userActions.saveProfileRequest(profile)
   }
 
   goBack = () => {
@@ -59,7 +68,7 @@ export default class ProfileView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user && !_.isEqual(nextProps.user.profile, this.state.profile)) {
+    if (nextProps.user && !_.isEqual(nextProps.user.profile, this.state.profile) && !nextProps.isLoading) {
       this.setState({profile: nextProps.user.profile})
     }
     if (nextProps.companies && !_.isEqual(nextProps.companies, this.state.companies)) {
@@ -151,37 +160,9 @@ export default class ProfileView extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // backgroundColor: '#08091a',
-    flex: 1
-  },
   input: {
     height: 20,
+    fontSize: 15,
     marginLeft: 10,
-  },
-  logo: {
-    alignSelf: 'center',
-    width: 150,
-    height: 150,
-  },
-  socialLogin: {
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  margin10: {
-    marginTop: 20,
-  },
-  button: {
-    width: '90%'
-  },
-  textInput: {
-    borderRadius: 4,
-    marginTop: 10,
-    height: 40,
-    padding: 5,
-    borderColor: 'gray',
-    borderWidth: 1,
-    color: MAIN_COLOR
   }
 });
