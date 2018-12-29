@@ -24,62 +24,49 @@ import {
 
 export default class ProfileView extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEdit: false,
+      profile: props.navigation.getParam('profile', {}),
+    };
+  }
+
   static flashMessage = message => {
     showMessage({message, type: MAIN_COLOR});
   };
+
   onChange = (field, value) => {
     const {profile} = this.state;
     this.setState({profile: {...profile, [field]: value}});
   };
   onSave = () => {
     const {profile} = this.state;
-    const {userActions} = this.props;
-    if (!profile.firstName) {
-      return ProfileView.flashMessage('Please enter your first name!');
+    const {companyActions} = this.props;
+    if (!profile.name) {
+      return ProfileView.flashMessage('Please enter company name!');
     }
-    if (!profile.lastName) {
-      return ProfileView.flashMessage('Please enter your last name!');
+    if (!profile.title) {
+      return ProfileView.flashMessage('Please enter company title!');
+    }
+    if (!profile.description) {
+      return ProfileView.flashMessage('Please enter description!');
     }
     this.setState({isEdit: false});
-    userActions.saveProfileRequest(profile);
+    companyActions.saveCompanyRequest(profile);
   };
-
-  goToCompanyDetails = profile => {
-    this.props.navigation.navigate('CompanyProfile', {profile})
-  }
-
   goBack = () => {
     this.props.navigation.pop();
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isEdit: false,
-      profile: props.user.profile || {},
-      companies: props.companies || []
-    };
-  }
-
-  componentDidMount() {
-    const {userActions} = this.props;
-    const {profile} = this.state;
-    if (profile && profile.email) {
-      userActions.getCompaniesRequest(profile.email.toLowerCase());
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user && !_.isEqual(nextProps.user.profile, this.state.profile) && !nextProps.isLoading) {
-      this.setState({profile: nextProps.user.profile});
-    }
-    if (nextProps.companies && !_.isEqual(nextProps.companies, this.state.companies)) {
-      this.setState({companies: nextProps.companies});
+    if (nextProps.details && !_.isEqual(nextProps.details, this.state.profile) && !nextProps.isLoading) {
+      this.setState({profile: nextProps.details});
     }
   }
 
   render() {
-    const {profile, companies, isEdit} = this.state;
+    const {profile, isEdit} = this.state;
     return (
       <Container>
         <Header>
@@ -89,7 +76,7 @@ export default class ProfileView extends Component {
             </Button>
           </Left>
           <Body>
-          <Title>Profile</Title>
+          <Title>Company</Title>
           </Body>
           <Right>
             {isEdit ? <Button transparent>
@@ -105,14 +92,12 @@ export default class ProfileView extends Component {
             <CardItem>
               <Left>
                 <Thumbnail
-                  source={{uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}`}}/>
+                  source={{uri: profile.imageUrl || `https://ui-avatars.com/api/?name=${profile.name}`}}/>
                 <Body>
                 {isEdit ? <Item>
-                  <Input placeholder="First Name" onChangeText={value => this.onChange('firstName', value)} style={styles.input}
-                         value={profile.firstName}/>
-                  <Input placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)} style={styles.input}
-                         value={profile.lastName}/>
-                </Item> : <Text>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
+                  <Input placeholder="Name" onChangeText={value => this.onChange('name', value)} style={styles.input}
+                         value={profile.name}/>
+                </Item> : <Text>{profile.name}</Text>
                 }
                 {isEdit ? <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
                                  value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
@@ -121,20 +106,25 @@ export default class ProfileView extends Component {
             </CardItem>
             <CardItem>
               <Body>
-              {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)} value={profile.bio}/> :
-                <Text>{profile.bio}</Text>}
+              {isEdit ? <Textarea placeholder="Type company description" onChangeText={value => this.onChange('description', value)} value={profile.description}/> :
+                <Text>{profile.description}</Text>}
               </Body>
-            </CardItem>
-            <CardItem style={{flex: 1, justifyContent: 'space-between'}}>
-              {
-                companies.map((company, index) =>
-                  <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded style={{backgroundColor: MAIN_COLOR}}>
-                    <Text style={{color: 'white'}}>{company.name}</Text>
-                  </Button>)
-              }
             </CardItem>
           </Content>
           <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail
+                  small
+                  source={{uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271'}}/>
+                <Body>
+                 <Text>Jane Smith</Text>
+                </Body>
+              </Left>
+              <Right>
+                <Text>5 Mins</Text>
+              </Right>
+            </CardItem>
             <CardItem cardBody>
               <Image
                 source={{uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg'}}
@@ -148,6 +138,19 @@ export default class ProfileView extends Component {
             </CardItem>
           </Card>
           <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail
+                  small
+                  source={{uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271'}}/>
+                <Body>
+                <Text>Jane Smith</Text>
+                </Body>
+              </Left>
+              <Right>
+                <Text>5 Mins</Text>
+              </Right>
+            </CardItem>
             <CardItem cardBody>
               <Image
                 source={{uri: 'https://www.wikihow.com/images/7/7a/Make-Gratin-Dauphinoise-Without-Cream-Step-12.jpg'}}
