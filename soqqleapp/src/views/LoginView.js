@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput, View} from 'react-native';
 import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
+import {Card} from 'native-base';
 import LinkedInModal from 'react-native-linkedin';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {showMessage} from 'react-native-flash-message';
@@ -119,7 +120,7 @@ export default class LoginView extends Component {
         style={styles.container}
       >
         <Image style={styles.logo} source={require('../images/logo.png')}/>
-        <View>
+        <Card transparent>
           <TextInput
             placeholder="Name"
             placeholderTextColor="#ffffff"
@@ -161,7 +162,11 @@ export default class LoginView extends Component {
           />
           </View>
           <View style={styles.socialLogin}>
-            <Icon.Button name="facebook" style={styles.button} backgroundColor="#3b5998" onPress={this.facebookLogin}>
+            <Icon.Button name="facebook" style={styles.button} backgroundColor="#3b5998" onPress={() => {
+              RCTNetworking.clearCookies((cleared) => {
+                this.facebookLogin()
+              })
+            }}>
               Login with Facebook
             </Icon.Button>
               <LinkedInModal
@@ -184,7 +189,7 @@ export default class LoginView extends Component {
                 }}
               />
           </View>
-        </View>
+        </Card>
       </View>
     );
   }

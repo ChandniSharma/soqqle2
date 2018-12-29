@@ -82,7 +82,7 @@ export default class ProfileView extends Component {
     const {profile, companies, isEdit} = this.state;
     return (
       <Container>
-        <Header>
+        <Header transparent>
           <Left>
             <Button transparent onPress={this.goBack}>
               <Icon style={{fontSize: 25}} color="black" name='arrow-back'/>
@@ -128,8 +128,8 @@ export default class ProfileView extends Component {
             <CardItem style={{flex: 1, justifyContent: 'space-between'}}>
               {
                 companies.map((company, index) =>
-                  <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded style={{backgroundColor: MAIN_COLOR}}>
-                    <Text style={{color: 'white'}}>{company.name}</Text>
+                  <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded style={styles.companyButton}>
+                    <Text style={{color: MAIN_COLOR}}>{company.name}</Text>
                   </Button>)
               }
             </CardItem>
@@ -169,6 +169,11 @@ export default class ProfileView extends Component {
 }
 
 const styles = StyleSheet.create({
+  companyButton: {
+    backgroundColor: 'white',
+    borderColor: MAIN_COLOR,
+    borderWidth: 1,
+  },
   input: {
     height: 20,
     fontSize: 15,

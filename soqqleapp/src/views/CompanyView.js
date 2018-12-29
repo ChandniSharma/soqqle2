@@ -69,7 +69,7 @@ export default class ProfileView extends Component {
     const {profile, isEdit} = this.state;
     return (
       <Container>
-        <Header>
+        <Header transparent>
           <Left>
             <Button transparent onPress={this.goBack}>
               <Icon style={{fontSize: 25}} color="black" name='arrow-back'/>
