@@ -9,8 +9,8 @@ import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
 
 
 const AppNavigator = createStackNavigator({
-    Profile: {screen: ProfileContainer},
     Login: {screen: LoginContainer},
+    Profile: {screen: ProfileContainer},
     CompanyProfile: {screen: CompanyProfileContainer},
     Story: {screen: StoryContainer},
     Agenda: {screen: AgendaContainer},
