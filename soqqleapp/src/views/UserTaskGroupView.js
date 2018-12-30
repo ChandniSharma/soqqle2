@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     Button, Platform, StyleSheet, TouchableOpacity, ActivityIndicator,
-    Text, View, Dimensions, SafeAreaView, ScrollView, FlatList
+    Text, View, Dimensions, SafeAreaView, ScrollView, FlatList, TouchableWithoutFeedback
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 
@@ -114,80 +114,91 @@ export default class UserTaskGroupView extends Component {
             userTasks: [],
             initialLoading: true,
             loading: false,
-            activeSections: [0],
             totalCount: null,
             refreshing: false
         }
     }
 
     componentWillMount() {
-        this.getUserTasks();
+        const response = this.props.taskGroups;
+        // if (taskGroups && Object.keys(taskGroups).length) {
+        //     this.setState({ userTasks: taskGroups });
+        // }
+        // else {
+        //     this.props.userActions.getUserTaskGroupsRequest({ page: 1, load: true });
+        // }
+        pageNum = response.page
+        totalCount = response.count;
+        this.setState({ userTasks: response.taskGroups });
+
     }
 
-    getUserTasks(page = 1, reset = false) {
-        let endpoint = USER_TASK_GROUP_LIST_API.replace('{type}', 'Story');
-        fetch(endpoint.replace('{page}', page))
-            .then((response) => response.json())
-            .then((responseJson) => {
-                totalCount = responseJson.totalUserTaskGroups;
-                pageNum = page;
-
-                let newUserTasks = responseJson.latestUserTaskGroups;
-
-                if (!reset) {
-                    newUserTasks = [...this.state.userTasks, ...newUserTasks];
-                }
-
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.userTaskGroupsSuccess != this.props.userTaskGroupsSuccess) {
+            let response = nextProps.taskGroups;
+            if (Object.keys(response).length && nextProps.userTaskGroupsSuccess) {
+                totalCount = response.count;
+                pageNum = response.page
                 this.setState({
-                    userTasks: newUserTasks,
-                    initialLoading: false,
+                    userTasks: response.taskGroups,
                     loading: false,
                     refreshing: false
                 });
-            })
-            .catch((error) => {
+            }
+            if (!nextProps.userTaskGroupsSuccess && nextProps.error && Object.keys(nextProps.error).length) {
                 this.setState({
-                    initialLoading: false,
                     loading: false,
                     refreshing: false
                 });
-            });
+            }
+        }
     }
 
     _renderItem = ({ item, index }) => {
         const data = item._typeObject;
         return (
             <View style={{ paddingHorizontal: 10 }}>
-                <View style={styles.taskItem}>
-                    <View style={styles.taskItemHeader}>
-                        <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-                        <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+                <TouchableWithoutFeedback
+                    onPress={() => this.props.navigation.navigate("Chat",
+                        {
+                            task_group_id: item._id
+                        }
+                    )}
+                >
+                    <View style={styles.taskItem}>
+                        <View style={styles.taskItemHeader}>
+                            <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
+                            <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+                        </View>
+                        <Text style={styles.taskItemDescription}>{data.description}</Text>
+                        <View style={styles.taskItemFooter}>
+                            <Text style={styles.taskItemExpiry}>
+                                {`Expire: ${data.expiry || ''}`}
+                            </Text>
+                            <Text style={styles.taskItemXP}>100 xp</Text>
+                        </View>
                     </View>
-                    <Text style={styles.taskItemDescription}>{data.description}</Text>
-                    <View style={styles.taskItemFooter}>
-                        <Text style={styles.taskItemExpiry}>
-                            {`Expire: ${data.expiry || ''}`}
-                        </Text>
-                        <Text style={styles.taskItemXP}>100 xp</Text>
-                    </View>
-                </View>
+                </TouchableWithoutFeedback>
             </View>
         );
     };
 
     handleBackAction() {
-        this.props.navigation.navigate({ routeName: 'Login' })
+        this.props.navigation.navigate({ routeName: 'Story' })
     }
 
     handleRefresh() {
         this.setState({ refreshing: true });
-        this.getUserTasks(1, true);
+        this.props.userActions.getUserTaskGroupsRequest({ page: 1 });
     }
 
     handleScroll() {
         if (pageNum * pageSize < totalCount && !this.state.loading) {
             this.setState({ loading: true });
-            this.getUserTasks(pageNum + 1);
+            this.props.userActions.getUserTaskGroupsRequest({
+                page: pageNum + 1,
+                previousData: this.state.userTasks
+            });
         }
     }
 
@@ -208,22 +219,22 @@ export default class UserTaskGroupView extends Component {
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Groups</Text>
                 </View>
-                {this.state.initialLoading ? (
+                {/* {this.state.initialLoading ? (
                     <View style={styles.activityLoaderContainer}>
                         <ActivityIndicator size="large" color="#0000ff" />
                     </View>
-                ) : (
-                        <View style={{ flex: 1, marginTop: 5 }}>
-                            <FlatList
-                                data={this.state.userTasks}
-                                keyExtractor={(item, index) => item._id}
-                                renderItem={this._renderItem}
-                                refreshing={this.state.refreshing}
-                                onRefresh={() => this.handleRefresh()}
-                                onScrollEndDrag={() => this.handleScroll()}
-                            />
-                        </View>
-                    )}
+                ) : ( */}
+                <View style={{ flex: 1, marginTop: 5 }}>
+                    <FlatList
+                        data={this.state.userTasks}
+                        keyExtractor={(item, index) => item._id}
+                        renderItem={this._renderItem}
+                        refreshing={this.state.refreshing}
+                        onRefresh={() => this.handleRefresh()}
+                        onScrollEndDrag={() => this.handleScroll()}
+                    />
+                </View>
+                {/* )} */}
             </SafeAreaView>
         );
     }
