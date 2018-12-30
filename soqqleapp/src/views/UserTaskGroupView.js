@@ -121,15 +121,14 @@ export default class UserTaskGroupView extends Component {
 
     componentWillMount() {
         const response = this.props.taskGroups;
-        // if (taskGroups && Object.keys(taskGroups).length) {
-        //     this.setState({ userTasks: taskGroups });
-        // }
-        // else {
-        //     this.props.userActions.getUserTaskGroupsRequest({ page: 1, load: true });
-        // }
-        pageNum = response.page
-        totalCount = response.count;
-        this.setState({ userTasks: response.taskGroups });
+        if (response.taskGroups && Object.keys(response.taskGroups).length) {
+            pageNum = response.page
+            totalCount = response.count;
+            this.setState({ userTasks: response.taskGroups });
+        }
+        else {
+            this.props.userActions.getUserTaskGroupsRequest({ page: 1, load: true });
+        }
 
     }
 

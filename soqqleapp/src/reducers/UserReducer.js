@@ -34,7 +34,7 @@ const instance = axios.create({
   headers: { 'Content-type': 'application/json' }
 });
 // Initial state
-const initialState = Map({ isLoading: false, user: {}, error: {}, companies: [], task_groups: [] });
+const initialState = Map({ isLoading: false, user: {}, error: {}, companies: [], task_groups: {} });
 
 export function loginRequest(data) {
   return {
