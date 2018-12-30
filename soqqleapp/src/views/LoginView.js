@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, ImageBackground, Keyboard, Platform, StatusBar, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {Image, ImageBackground, Keyboard, Platform, StatusBar, TouchableOpacity, View, StyleSheet, Linking} from 'react-native';
 import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
 import {CheckBox, Form, Input, Item, Label, Text, Thumbnail} from 'native-base';
 import LinkedInModal from 'react-native-linkedin';
@@ -12,7 +12,8 @@ const baseApi = 'https://api.linkedin.com/v1/people/';
 var RCTNetworking = require('RCTNetworking');
 const faceBookProfileFields = ['id', 'email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
 const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
-
+const PRIVACY_LINK = 'https://beta.soqqle.com/privacyPolicy';
+const TERM_OF_USE_LINK = 'https://beta.soqqle.com/termsOfUse';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
@@ -39,6 +40,17 @@ export default class LoginView extends Component {
       LoginView.flashMessage('Can not fetch your LinkedIn profile');
     }
   };
+
+  openLink = url => {
+    Linking.canOpenURL(url).then(supported => {
+      if (!supported) {
+        LoginView.flashMessage("Can not open web browser")
+      } else {
+        return Linking.openURL(url);
+      }
+    }).catch(err =>  LoginView.flashMessage("Can not open web browser"));
+  }
+
   facebookLogin = () => {
     const {userActions} = this.props;
     const getFacebookInfoCallback = (error, result) => {
@@ -136,7 +148,7 @@ export default class LoginView extends Component {
           </Item>
           <View style={{height: 50, marginTop: 20, flexDirection: 'row'}}>
             <CheckBox style={styles.checkbox} checked={isAgree} onPress={() => this.setState({isAgree: !isAgree})}/>
-            <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to the </Text><Text style={styles.inputLabel}>Privacy Policy</Text><Text style={styles.text}> and </Text><Text style={styles.inputLabel}>Terms and Conditions.</Text></View>
+            <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to the </Text><TouchableOpacity onPress={() => this.openLink(PRIVACY_LINK)}><Text style={styles.inputLabel}>Privacy Policy</Text></TouchableOpacity><Text style={styles.text}> and </Text><TouchableOpacity onPress={() => this.openLink(TERM_OF_USE_LINK)}><Text style={styles.inputLabel}>Terms and Conditions.</Text></TouchableOpacity></View>
           </View>
           <View style={styles.margin10}>
             <ImageBackground style={{width: '100%', height: 57}} source={require('../images/Rectangle.png')}>
