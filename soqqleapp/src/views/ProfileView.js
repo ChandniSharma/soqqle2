@@ -1,6 +1,13 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
+import {Image, StyleSheet, View} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
+import {
+  Menu,
+  MenuTrigger,
+  MenuOptions,
+  MenuOption, MenuProvider
+} from 'react-native-popup-menu';
 import _ from 'lodash';
 import {MAIN_COLOR} from "../constants";
 import {
@@ -18,8 +25,7 @@ import {
   Right,
   Text,
   Textarea,
-  Thumbnail,
-  Title
+  Thumbnail
 } from "native-base";
 
 export default class ProfileView extends Component {
@@ -45,8 +51,8 @@ export default class ProfileView extends Component {
   };
 
   goToCompanyDetails = profile => {
-    this.props.navigation.navigate('CompanyProfile', {profile})
-  }
+    this.props.navigation.navigate('CompanyProfile', {profile});
+  };
 
   goBack = () => {
     this.props.navigation.pop();
@@ -78,92 +84,117 @@ export default class ProfileView extends Component {
     }
   }
 
+  logout = () => {
+    this.menu.close();
+    this.props.userActions.logout();
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
+
+  renderMenu = () => {
+    return <Menu ref={ref => this.menu = ref}>
+      <MenuTrigger>
+        <Icon style={styles.headerIcon} name='settings'/>
+      </MenuTrigger>
+      <MenuOptions>
+        <MenuOption>
+          <Button transparent onPress={() => this.setState({isEdit: true})}>
+            <Icon type="FontAwesome" style={styles.headerMenuIcon} name='pencil'/>
+            <Text style={styles.headerMenuIcon}>Edit Profile</Text>
+          </Button>
+        </MenuOption>
+        <MenuOption>
+          <Button transparent onPress={this.logout}>
+          <Icon type="FontAwesome" style={styles.headerMenuIcon} name='sign-out'/>
+          <Text style={styles.headerMenuIcon}>Exit</Text>
+          </Button>
+        </MenuOption>
+      </MenuOptions>
+    </Menu>
+  }
+
   render() {
     const {profile, companies, isEdit} = this.state;
     return (
+      <MenuProvider>
       <Container>
-        <Header transparent>
+        <Header transparent style={styles.blurBg}>
           <Left>
             <Button transparent onPress={this.goBack}>
-              <Icon style={{fontSize: 25}} color="black" name='arrow-back'/>
+              <Icon style={styles.headerIcon} name='arrow-back'/>
             </Button>
           </Left>
-          <Body>
-          <Title>Profile</Title>
-          </Body>
           <Right>
-            {isEdit ? <Button transparent>
-                <Button transparent onPress={this.onSave}><Text>Save</Text></Button></Button> :
-              <Button onPress={() => this.setState({isEdit: true})} transparent><Icon style={{fontSize: 25}}
-                                                                                      type="FontAwesome" color="black"
-                                                                                      name='pencil'/></Button>}
-
+            {isEdit ?
+                <Button transparent onPress={this.onSave}><Text style={styles.headerIcon}>save</Text></Button> : this.renderMenu()}
           </Right>
         </Header>
-        <Content>
-          <Content>
-            <CardItem>
-              <Left>
-                <Thumbnail
-                  source={{uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}`}}/>
-                <Body>
-                {isEdit ? <Item>
-                  <Input placeholder="First Name" onChangeText={value => this.onChange('firstName', value)} style={styles.input}
-                         value={profile.firstName}/>
-                  <Input placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)} style={styles.input}
-                         value={profile.lastName}/>
-                </Item> : <Text>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
-                }
-                {isEdit ? <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
-                                 value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem>
+        <View style={styles.topProfile}>
+          <CardItem style={styles.blurBg}>
+            <Left>
+              <Thumbnail
+                style={styles.avatar}
+                source={{uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}`}}/>
               <Body>
-              {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)} value={profile.bio}/> :
-                <Text>{profile.bio}</Text>}
-              </Body>
-            </CardItem>
-            <CardItem style={{flex: 1, justifyContent: 'space-between'}}>
-              {
-                companies.map((company, index) =>
-                  <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded style={styles.companyButton}>
-                    <Text style={{color: MAIN_COLOR}}>{company.name}</Text>
-                  </Button>)
+              {isEdit ? <Item>
+                <Input placeholder="First Name" onChangeText={value => this.onChange('firstName', value)}
+                       style={[styles.input, styles.inputName]}
+                       value={profile.firstName}/>
+                <Input placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)}
+                       style={[styles.input, styles.inputName]}
+                       value={profile.lastName}/>
+              </Item> : <Text style={styles.inputName}>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
               }
-            </CardItem>
-          </Content>
-          <Card>
-            <CardItem cardBody>
-              <Image
-                source={{uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg'}}
-                style={{height: 200, width: null, flex: 1}}/>
-            </CardItem>
-            <CardItem>
-              <Body>
-              <Text>Completed the Superwomen Achievement!</Text>
-              <Text>You need 5 more illuminates to complete this.</Text>
+              {isEdit ?
+                <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
+                       value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
               </Body>
-            </CardItem>
+            </Left>
+          </CardItem>
+          <CardItem style={styles.blurBg}>
+            <Body>
+            {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)}
+                                value={profile.bio}/> :
+              <Text>{profile.bio}</Text>}
+            </Body>
+          </CardItem>
+          <CardItem style={styles.blurBg}>
+            {
+              companies.map((company, index) =>
+                <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded
+                        style={styles.companyButton}>
+                  <Text style={{color: MAIN_COLOR}}>{company.name}</Text>
+                </Button>)
+            }
+          </CardItem>
+        </View>
+        <Content>
+          <Card style={styles.card}>
+            <Image
+              source={{uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg'}}
+              style={styles.cardImage}/>
+            <View style={styles.cardBody}>
+              <Text style={styles.cardTitle}>Completed the Superwoman Achivement!</Text>
+              <Text style={styles.cardDescription}>You need 5 more to complete this.</Text>
+            </View>
           </Card>
-          <Card>
-            <CardItem cardBody>
-              <Image
-                source={{uri: 'https://www.wikihow.com/images/7/7a/Make-Gratin-Dauphinoise-Without-Cream-Step-12.jpg'}}
-                style={{height: 200, width: null, flex: 1}}/>
-            </CardItem>
-            <CardItem>
-              <Body>
-              <Text>Started the blockchain intermeditate project !</Text>
-              <Button small rounded danger>
+          <Card style={styles.card}>
+            <Image
+              source={{uri: 'https://www.wikihow.com/images/7/7a/Make-Gratin-Dauphinoise-Without-Cream-Step-12.jpg'}}
+              style={styles.cardImage}/>
+            <View style={styles.cardBody}>
+              <Text style={styles.cardTitle}>Started the blockchain intermeditate project !</Text>
+              <Button small rounded style={styles.joinButton}>
                 <Text>Join Jan</Text>
               </Button>
-              </Body>
-            </CardItem>
+            </View>
           </Card>
         </Content>
       </Container>
+      </MenuProvider>
     );
   }
 }
@@ -173,6 +204,57 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: MAIN_COLOR,
     borderWidth: 1,
+    marginRight: 10,
+  },
+  topProfile: {
+    paddingBottom: 20,
+    backgroundColor: '#F8F8F8',
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    marginBottom: 12
+  },
+  headerIcon: {
+    fontSize: 25,
+    color: 'black'
+  },
+  headerMenuIcon: {
+    fontSize: 15,
+    color: 'black'
+  },
+  blurBg: {
+    backgroundColor: '#F8F8F8'
+  },
+  card: {
+    marginLeft: 12,
+    marginRight: 12,
+    borderRadius: 10,
+  },
+  cardImage: {
+    height: 200,
+    width: null,
+    flex: 1,
+    borderRadius: 5
+  },
+  cardBody: {
+    margin: 10,
+    justifyContent: 'flex-start'
+  },
+  cardTitle: {
+    fontSize: 15
+  },
+  cardDescription: {
+    color: 'rgba(19, 12, 56, 0.5)'
+  },
+  joinButton: {
+    marginTop: 5,
+    backgroundColor: MAIN_COLOR
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+  },
+  inputName: {
+    fontSize: 20
   },
   input: {
     height: 20,

@@ -23,6 +23,8 @@ const SAVE_PROFILE_REQUESTED = 'UserState/SAVE_PROFILE_REQUESTED';
 const SAVE_PROFILE_COMPLETED = 'UserState/SAVE_PROFILE_COMPLETED';
 const SAVE_PROFILE_FAILED = 'UserState/SAVE_PROFILE_FAILED';
 
+const LOG_OUT = 'UserState/LOG_OUT';
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -240,6 +242,10 @@ export async function getCompanies(email) {
   }
 }
 
+export function logout() {
+  return {type: LOG_OUT}
+}
+
 // Reducer
 export default function UserStateReducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -290,6 +296,8 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('user', action.payload).set('saveProfileSuccess', true);
     case SAVE_PROFILE_FAILED:
       return state.set('saveProfileSuccess', false);
+    case LOG_OUT:
+      return state.set('user', {}).set('companies', [])
     default:
       return state;
   }

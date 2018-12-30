@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Image, StyleSheet, View, StatusBar} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import _ from 'lodash';
 import {MAIN_COLOR} from "../constants";
@@ -26,6 +26,7 @@ export default class ProfileView extends Component {
 
   constructor(props) {
     super(props);
+    StatusBar.setBarStyle('light-content', true);
     this.state = {
       isEdit: false,
       profile: props.navigation.getParam('profile', {}),
@@ -69,50 +70,51 @@ export default class ProfileView extends Component {
     const {profile, isEdit} = this.state;
     return (
       <Container>
-        <Header transparent>
+        <Header transparent style={styles.blurBg}>
           <Left>
             <Button transparent onPress={this.goBack}>
-              <Icon style={{fontSize: 25}} color="black" name='arrow-back'/>
+              <Icon style={styles.headerIcon}  color="black" name='arrow-back'/>
             </Button>
           </Left>
-          <Body>
-          <Title>Company</Title>
-          </Body>
           <Right>
             {isEdit ? <Button transparent>
-                <Button transparent onPress={this.onSave}><Text>Save</Text></Button></Button> :
-              <Button onPress={() => this.setState({isEdit: true})} transparent><Icon style={{fontSize: 25}}
+                <Button transparent onPress={this.onSave}><Text style={styles.headerIcon}>save</Text></Button></Button> :
+              <Button onPress={() => this.setState({isEdit: true})} transparent><Icon style={styles.headerIcon}
                                                                                       type="FontAwesome" color="black"
                                                                                       name='pencil'/></Button>}
 
           </Right>
         </Header>
-        <Content>
-          <Content>
-            <CardItem>
-              <Left>
-                <Thumbnail
-                  source={{uri: profile.imageUrl || `https://ui-avatars.com/api/?name=${profile.name}`}}/>
-                <Body>
-                {isEdit ? <Item>
-                  <Input placeholder="Name" onChangeText={value => this.onChange('name', value)} style={styles.input}
-                         value={profile.name}/>
-                </Item> : <Text>{profile.name}</Text>
-                }
-                {isEdit ? <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
-                                 value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem>
+        <View style={styles.topProfile}>
+          <CardItem style={styles.blurBg}>
+            <Left>
+              <Thumbnail
+                style={styles.avatar}
+                source={{uri: profile.imageUrl || `https://ui-avatars.com/api/?name=${profile.name}`}}/>
               <Body>
-              {isEdit ? <Textarea placeholder="Type company description" onChangeText={value => this.onChange('description', value)} value={profile.description}/> :
-                <Text>{profile.description}</Text>}
+              {isEdit ? <Item>
+                <Input placeholder="Name" onChangeText={value => this.onChange('name', value)}
+                       style={[styles.input, styles.inputName]}
+                       value={profile.name}/>
+              </Item> : <Text style={styles.inputName}>{`${profile.name}`}</Text>
+              }
+              {isEdit ?
+                <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.inputTitle}
+                       value={profile.title}/> : <Text style={styles.inputTitle} note>{profile.title || ''}</Text>}
               </Body>
-            </CardItem>
-          </Content>
-          <Card>
-            <CardItem>
+            </Left>
+          </CardItem>
+          <CardItem style={styles.blurBg}>
+            <Body>
+            {isEdit ? <Textarea placeholder="Company description" style={styles.inputDescription} onChangeText={value => this.onChange('description', value)}
+                                value={profile.description}/> :
+              <Text style={styles.inputDescription}>{profile.description}</Text>}
+            </Body>
+          </CardItem>
+        </View>
+        <Content style={{backgroundColor: '#2C2649', paddingTop: 5}}>
+          <Card style={styles.card}>
+            <CardItem style={styles.card}>
               <Left>
                 <Thumbnail
                   small
@@ -131,14 +133,14 @@ export default class ProfileView extends Component {
                 style={{height: 200, width: null, flex: 1}}/>
             </CardItem>
             <CardItem>
-              <Body>
               <Text>Completed the Superwomen Achievement!</Text>
+            </CardItem>
+            <CardItem>
               <Text>You need 5 more illuminates to complete this.</Text>
-              </Body>
             </CardItem>
           </Card>
-          <Card>
-            <CardItem>
+          <Card style={styles.card}>
+            <CardItem style={styles.card}>
               <Left>
                 <Thumbnail
                   small
@@ -148,7 +150,7 @@ export default class ProfileView extends Component {
                 </Body>
               </Left>
               <Right>
-                <Text>5 Mins</Text>
+                <Text>10 Mins</Text>
               </Right>
             </CardItem>
             <CardItem cardBody>
@@ -157,12 +159,17 @@ export default class ProfileView extends Component {
                 style={{height: 200, width: null, flex: 1}}/>
             </CardItem>
             <CardItem>
-              <Body>
               <Text>Started the blockchain intermeditate project !</Text>
-              <Button small rounded danger>
-                <Text>Join Jan</Text>
-              </Button>
-              </Body>
+            </CardItem>
+            <CardItem style={styles.card}>
+              <Left>
+                <Button small rounded style={styles.joinButton}>
+                  <Text>Join Jan</Text>
+                </Button>
+              </Left>
+              <Right>
+                <Text style={styles.buttonExt}>4/5 Slots</Text>
+              </Right>
             </CardItem>
           </Card>
         </Content>
@@ -172,9 +179,50 @@ export default class ProfileView extends Component {
 }
 
 const styles = StyleSheet.create({
+  topProfile: {
+    paddingBottom: 20,
+    backgroundColor: '#130C38',
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  blurBg: {
+    backgroundColor: '#130C38'
+  },
+  headerIcon: {
+    fontSize: 25,
+    color: 'white'
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+  },
+  inputName: {
+    fontSize: 20,
+    color: 'white'
+  },
+  inputTitle: {
+    color: '#1FBEB8',
+    fontSize: 13
+  },
+  inputDescription: {
+    fontSize: 13,
+    color: '#AEAEAE'
+  },
   input: {
     height: 20,
     fontSize: 15,
     marginLeft: 10,
+  },
+  joinButton: {
+    marginTop: 5,
+    backgroundColor: MAIN_COLOR
+  },
+  card: {
+    marginLeft: 12,
+    marginRight: 12,
+    borderRadius: 10,
+  },
+  buttonExt: {
+    color: '#8C7DDA'
   }
 });
