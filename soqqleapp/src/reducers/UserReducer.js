@@ -1,7 +1,7 @@
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 import * as axios from 'axios';
-import {API_BASE_URL} from '../config';
-import {Effects, loop} from 'redux-loop-symbol-ponyfill';
+import { API_BASE_URL } from '../config';
+import { Effects, loop } from 'redux-loop-symbol-ponyfill';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 
@@ -24,14 +24,17 @@ const SAVE_PROFILE_COMPLETED = 'UserState/SAVE_PROFILE_COMPLETED';
 const SAVE_PROFILE_FAILED = 'UserState/SAVE_PROFILE_FAILED';
 
 const LOG_OUT = 'UserState/LOG_OUT';
+const GET_USER_TASK_GROUPS_REQUESTED = 'UserState/GET_USER_TASK_GROUPS_REQUESTED';
+const GET_USER_TASK_GROUPS_COMPLETED = 'UserState/GET_USER_TASK_GROUPS_COMPLETED';
+const GET_USER_TASK_GROUPS_FAILED = 'UserState/GET_USER_TASK_GROUPS_FAILED';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
-  headers: {'Content-type': 'application/json'}
+  headers: { 'Content-type': 'application/json' }
 });
 // Initial state
-const initialState = Map({isLoading: false, user: {}, error: {}, companies: []});
+const initialState = Map({ isLoading: false, user: {}, error: {}, companies: [], task_groups: {} });
 
 export function loginRequest(data) {
   return {
@@ -100,9 +103,9 @@ export async function saveProfile(data) {
     console.log("error=>", error.response)
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
-      return saveProfileFailed({code: error.response.status, message:  "Save failed ! Please try again"});
+      return saveProfileFailed({ code: error.response.status, message: "Save failed ! Please try again" });
     }
-    return saveProfileFailed({code: 500, message: 'Unexpected error!'});
+    return saveProfileFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -118,9 +121,9 @@ export async function login(data) {
     console.log("error=>", error.response)
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
-      return loginFailed({code: error.response.status, message:  "Login failed ! Please check your email and password"});
+      return loginFailed({ code: error.response.status, message: "Login failed ! Please check your email and password" });
     }
-    return loginFailed({code: 500, message: 'Unexpected error!'});
+    return loginFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -130,7 +133,7 @@ export async function facebookLogin(profile) {
     const response = await instance.post(`/mobile/facebook-login`, profile);
     store.dispatch(AppStateActions.stopLoading());
     if (!response.data) {
-      return loginFailed({code: 404, message: 'No Soqqle account associated with your logged Facebook account'});
+      return loginFailed({ code: 404, message: 'No Soqqle account associated with your logged Facebook account' });
     }
     store.dispatch(AppStateActions.loginSuccess(response.data));
     return loginCompleted(response.data);
@@ -139,7 +142,7 @@ export async function facebookLogin(profile) {
     if (error.response && error.response.data) {
       return loginFailed(error.response.data);
     }
-    return loginFailed({code: 500, message: 'Unexpected error!'});
+    return loginFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -149,7 +152,7 @@ export async function linkedinLogin(profile) {
     const response = await instance.post(`/mobile/linkedin-login`, profile);
     store.dispatch(AppStateActions.stopLoading());
     if (!response.data) {
-      return loginFailed({code: 404, message: 'No Soqqle account associated with your logged LinkedIn account'});
+      return loginFailed({ code: 404, message: 'No Soqqle account associated with your logged LinkedIn account' });
     }
     store.dispatch(AppStateActions.loginSuccess(response.data));
     return loginCompleted(response.data);
@@ -159,7 +162,7 @@ export async function linkedinLogin(profile) {
     if (error.response && error.response.data) {
       return loginFailed(error.response.data);
     }
-    return loginFailed({code: 500, message: 'Unexpected error!'});
+    return loginFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -199,7 +202,7 @@ export async function register(data) {
     if (error.response && error.response.data) {
       return registerFailed(error.response.data);
     }
-    return registerFailed({code: 500, message: 'Unexpected error!'});
+    return registerFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -237,7 +240,64 @@ export async function getCompanies(email) {
     if (error.response && error.response.data) {
       return getCompaniesFailed(error.response.data);
     }
-    return getCompaniesFailed({code: 500, message: 'Unexpected error!'});
+    return getCompaniesFailed({ code: 500, message: 'Unexpected error!' });
+  }
+}
+
+
+/**
+ * -----------------------
+ * USER TASK GROUPS
+ * -----------------------
+ */
+
+export const getUserTaskGroupsRequest = (data) => {
+  return {
+    type: GET_USER_TASK_GROUPS_REQUESTED,
+    payload: data
+  };
+}
+
+export const getUserTaskGroupsCompleted = (data) => {
+  return {
+    type: GET_USER_TASK_GROUPS_COMPLETED,
+    payload: data
+  };
+}
+
+export const getUserTaskGroupsFailed = (error) => {
+  return {
+    type: GET_USER_TASK_GROUPS_FAILED,
+    payload: error
+  };
+}
+
+export async function getUserTaskGroups(data) {
+  let endpoint = 'userTaskGroup?page={page}&type=Story'.replace('{}', data.page || 1);
+  let taskGroups = data.previousData || [];
+  try {
+    if (data.load) {
+      store.dispatch(AppStateActions.startLoading());
+    }
+    const response = await instance.get(endpoint);
+    store.dispatch(AppStateActions.stopLoading());
+    if (data.reset) {
+      taskGroups = [];
+    }
+    const responseData = response.data;
+    const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
+    return getUserTaskGroupsCompleted({
+      count: responseData.totalUserTaskGroups,
+      taskGroups: newUserTasks,
+      page: data.page
+    });
+  }
+  catch (error) {
+    store.dispatch(AppStateActions.stopLoading());
+    if (error.response && error.response.data) {
+      return getUserTaskGroupsFailed(error.response.data);
+    }
+    return getUserTaskGroupsFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
 
@@ -258,10 +318,10 @@ export default function UserStateReducer(state = initialState, action = {}) {
     case REGISTER_FAILED:
       return state.set('error', action.payload).set('registerSuccess', false);
     case GET_COMPANIES_REQUESTED:
-        return loop(
-          state.set('error', null).set('getCompaniesSuccess', false),
-          Effects.promise(getCompanies, action.payload)
-        );
+      return loop(
+        state.set('error', null).set('getCompaniesSuccess', false),
+        Effects.promise(getCompanies, action.payload)
+      );
     case GET_COMPANIES_COMPLETED:
       return state.set('companies', action.payload).set('getCompaniesSuccess', true);
     case GET_COMPANIES_FAILED:
@@ -289,7 +349,7 @@ export default function UserStateReducer(state = initialState, action = {}) {
       const _id = state.getIn(['user', '_id'])
       return loop(
         state.set('error', null).set('saveProfileSuccess', false),
-        Effects.promise(saveProfile, {...action.payload, _id})
+        Effects.promise(saveProfile, { ...action.payload, _id })
       );
     case SAVE_PROFILE_COMPLETED:
       return state.set('user', action.payload).set('saveProfileSuccess', true);
@@ -297,6 +357,15 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('saveProfileSuccess', false);
     case LOG_OUT:
       return state.set('user', {}).set('companies', [])
+    case GET_USER_TASK_GROUPS_REQUESTED:
+      return loop(
+        state.set('error', null).set('getUserTaskGroups', false),
+        Effects.promise(getUserTaskGroups, action.payload)
+      );
+    case GET_USER_TASK_GROUPS_COMPLETED:
+      return state.set('task_groups', action.payload).set('getUserTaskGroups', true);
+    case GET_USER_TASK_GROUPS_FAILED:
+      return state.set('error', action.payload).set('getUserTaskGroups', false);
     default:
       return state;
   }

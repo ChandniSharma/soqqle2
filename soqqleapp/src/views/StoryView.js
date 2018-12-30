@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -12,11 +12,11 @@ import {
   View
 } from 'react-native';
 import Video from 'react-native-video';
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
-import {STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL} from './../constants';
-import {SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API} from './../endpoints';
+import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
+import { SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../endpoints';
 import CustomText from './../components/CustomText';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
@@ -184,7 +184,7 @@ let selectedItemId = null;
 
 export default class StoryView extends Component {
 
-  _renderItem = ({item, index}) => {
+  _renderItem = ({ item, index }) => {
     return (
       <View>
         <View style={styles.storyContainer}>
@@ -193,7 +193,7 @@ export default class StoryView extends Component {
               ref={(ref) => {
                 this.player = ref;
               }}
-              source={{uri: STORY_VIDEO_BASE_URL.replace('{}', item._id)}}
+              source={{ uri: STORY_VIDEO_BASE_URL.replace('{}', item._id) }}
               resizeMode={"cover"}
               controls={true}
               volume={1.0}
@@ -201,36 +201,36 @@ export default class StoryView extends Component {
               style={styles.storyItemVideo}
             />
           ) : (
-            <Image
-              source={{uri: STORY_IMAGE_BASE_URL.replace('{}', item._id)}}
-              style={styles.storyItemImage}
-              resizeMode='cover'
-            />
-          )}
+              <Image
+                source={{ uri: STORY_IMAGE_BASE_URL.replace('{}', item._id) }}
+                style={styles.storyItemImage}
+                resizeMode='cover'
+              />
+            )}
           <View style={styles.storyContent}>
             <CustomText loading={this.state.loading}
-                        styles={styles.storyItemText}
-                        numberOfLines={3}
-                        font='open-sans'>
+              styles={styles.storyItemText}
+              numberOfLines={3}
+              font='open-sans'>
               {item.description}
             </CustomText>
             <View style={styles.storyTagContainer}>
               {item._objective ? (
                 <CustomText loading={this.state.loading}
-                            styles={styles.storyTag}
-                            font='open-sans'>
+                  styles={styles.storyTag}
+                  font='open-sans'>
                   {`${item._objective.value} ${item._objective.name.toUpperCase()}`}
                 </CustomText>
               ) : null}
               <CustomText loading={this.state.loading}
-                          styles={styles.storyTag}
-                          font='open-sans'>
+                styles={styles.storyTag}
+                font='open-sans'>
                 {`0/${item.quota || 0} ${item.refresh.toUpperCase()}`}
               </CustomText>
               {item.reward ? (
                 <CustomText loading={this.state.loading}
-                            styles={{...styles.storyTag, ...{'marginRight': 0}}}
-                            font='open-sans'>
+                  styles={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}
+                  font='open-sans'>
                   {`${item.reward.value} ${item.reward.type.toUpperCase()}`}
                 </CustomText>
               ) : null}
@@ -241,14 +241,14 @@ export default class StoryView extends Component {
           <TouchableOpacity onPress={() => {
             this.setModalVisible(!this.state.modalVisible, item._id);
           }}>
-            <View style={{...styles.storyActionBlock, ...{'backgroundColor': '#ffc500'}}}>
+            <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
               <Image
                 source={require('./../../assets/images/thumbs_up.png')}
                 style={styles.storyActionIcon}
               />
             </View>
           </TouchableOpacity>
-          <View style={{...styles.storyActionBlock, ...{'borderColor': '#171a54'}}}>
+          <View style={{ ...styles.storyActionBlock, ...{ 'borderColor': '#171a54' } }}>
             <Image
               source={require('./../../assets/images/thubms_down.png')}
               style={styles.storyActionIcon}
@@ -275,17 +275,21 @@ export default class StoryView extends Component {
   }
 
   goToProfileScreen = () => {
-    this.props.navigation.navigate({routeName: 'Profile'})
+    this.props.navigation.navigate({ routeName: 'Profile' })
+  }
+
+  goToUserTasksScreen = () => {
+    this.props.navigation.navigate({ routeName: 'UserTaskGroup' })
   }
 
   setModalVisible(visible, itemId) {
-    this.setState({modalVisible: visible});
+    this.setState({ modalVisible: visible });
     selectedItemId = itemId;
   }
 
   createNewUserTaskGroup() {
     if (!this.state.processing) {
-      this.setState({processing: true});
+      this.setState({ processing: true });
       let data = {
         type: 'Story',
         _typeObject: selectedItemId,
@@ -300,12 +304,12 @@ export default class StoryView extends Component {
         body: JSON.stringify(data)
       }).then((response) => JSON.stringify(response.json()))
         .then((responseData) => {
-          this.setState({processing: false, modalVisible: false});
+          this.setState({ processing: false, modalVisible: false });
           selectedItemId = null;
-          this.props.navigation.navigate({routeName: 'UserTaskGroup'});
+          this.props.navigation.navigate({ routeName: 'UserTaskGroup' });
         })
         .catch((error) => {
-          this.setState({processing: false});
+          this.setState({ processing: false });
         });
     }
   }
@@ -326,14 +330,14 @@ export default class StoryView extends Component {
       return fetch(STORY_HAS_VIDEO_API.replace('{}', story._id))
         .then((response) => response.json())
         .then((responseJson) => {
-          return {...story, ...{'has_video': true}};
+          return { ...story, ...{ 'has_video': true } };
         })
         .catch((error) => {
-          return {...story, ...{'has_video': false}};
+          return { ...story, ...{ 'has_video': false } };
         });
     });
     Promise.all(results).then((completed) => {
-      this.setState({stories: completed, loading: false});
+      this.setState({ stories: completed, loading: false });
     });
   }
 
@@ -354,21 +358,21 @@ export default class StoryView extends Component {
         </View>
         <View style={styles.storyContainerView}>
           {this.state.loading ? (
-            <ActivityIndicator size="large" color="#800094"/>
+            <ActivityIndicator size="large" color="#800094" />
           ) : (
-            <View>
-              <Carousel
-                ref={(c) => {
-                  this._carousel = c;
-                }}
-                data={this.state.stories}
-                renderItem={this._renderItem}
-                sliderWidth={width}
-                itemWidth={wp('90%')}
-                onBeforeSnapToItem={(slideIndex) => this.setState({currentSlideIndex: slideIndex})}
-              />
-            </View>
-          )}
+              <View>
+                <Carousel
+                  ref={(c) => {
+                    this._carousel = c;
+                  }}
+                  data={this.state.stories}
+                  renderItem={this._renderItem}
+                  sliderWidth={width}
+                  itemWidth={wp('90%')}
+                  onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex })}
+                />
+              </View>
+            )}
         </View>
         <View style={styles.footer}>
           <View style={styles.footerTab}>
@@ -377,8 +381,8 @@ export default class StoryView extends Component {
               style={styles.footerTabIcon}
             />
             <CustomText loading={this.state.loading}
-                        styles={{...styles.footerTabText, ...{'marginRight': 0}}}
-                        font='open-sans'>
+              styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
+              font='open-sans'>
               {'Dashboard'.toUpperCase()}
             </CustomText>
           </View>
@@ -388,21 +392,23 @@ export default class StoryView extends Component {
               style={styles.footerTabIcon}
             />
             <CustomText loading={this.state.loading}
-                        styles={{...styles.footerTabText, ...{'marginRight': 0}}}
-                        font='open-sans'>
+              styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
+              font='open-sans'>
               {'Story'.toUpperCase()}
             </CustomText>
           </View>
           <View style={styles.footerTab}>
-            <Image
-              source={require('./../../assets/images/task.png')}
-              style={styles.footerTabIcon}
-            />
-            <CustomText loading={this.state.loading}
-                        styles={{...styles.footerTabText, ...{'marginRight': 0}}}
-                        font='open-sans'>
-              {'Task'.toUpperCase()}
-            </CustomText>
+            <TouchableOpacity onPress={this.goToUserTasksScreen}>
+              <Image
+                source={require('./../../assets/images/task.png')}
+                style={styles.footerTabIcon}
+              />
+              <CustomText loading={this.state.loading}
+                styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
+                font='open-sans'>
+                {'Task'.toUpperCase()}
+              </CustomText>
+            </TouchableOpacity>
           </View>
         </View>
         <Modal
@@ -427,7 +433,7 @@ export default class StoryView extends Component {
                 style={styles.likeModalClose}
               >
                 <View>
-                  <Icon name='close' style={styles.likeModalCloseIcon}/>
+                  <Icon name='close' style={styles.likeModalCloseIcon} />
                 </View>
               </TouchableOpacity>
             </View>
