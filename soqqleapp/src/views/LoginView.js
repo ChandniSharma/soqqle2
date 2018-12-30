@@ -51,7 +51,7 @@ export default class LoginView extends Component {
     }).catch(err =>  LoginView.flashMessage("Can not open web browser"));
   }
 
-  facebookLogin = () => {
+  facebookLogin = async () => {
     const {userActions} = this.props;
     const getFacebookInfoCallback = (error, result) => {
       if (error) {
@@ -61,8 +61,8 @@ export default class LoginView extends Component {
         console.log('Success fetching data: ', JSON.stringify(result));
       }
     };
-    LoginManager.logOut();
-    LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']).then(function (result) {
+    const processResult = (result) => {
+      try {
         if (result.isCancelled) {
           LoginView.flashMessage('Facebook login has been canceled');
         } else {
@@ -71,12 +71,30 @@ export default class LoginView extends Component {
             null,
             getFacebookInfoCallback,
           );
-          new GraphRequestManager().addRequest(infoRequest).start();
+          return new GraphRequestManager().addRequest(infoRequest).start();
         }
-      }, function (error) {
-        LoginView.flashMessage('Unexpected error, please try again!');
+      } catch (error) {
+        //console.log("====error====", error)
+        LoginView.flashMessage('Unexpected error, please try again!')
       }
-    );
+    }
+
+    let result = {};
+    try {
+      this.setState({showLoadingModal: true});
+      LoginManager.setLoginBehavior('native');
+      result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
+      processResult(result)
+    } catch (nativeError) {
+      try {
+        LoginManager.setLoginBehavior('web');
+        result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
+        processResult(result)
+      } catch (webError) {
+        //console.log("web===error====", webError)
+        LoginView.flashMessage('Can not login with your Facebook, please try again!')
+      }
+    }
   };
   login = () => {
     Keyboard.dismiss();

@@ -138,6 +138,7 @@ export async function facebookLogin(profile) {
     store.dispatch(AppStateActions.loginSuccess(response.data));
     return loginCompleted(response.data);
   } catch (error) {
+    //console.log("error=====", JSON.stringify(error), JSON.stringify(profile))
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
       return loginFailed(error.response.data);

@@ -100,13 +100,13 @@ export default class ProfileView extends Component {
         <Icon style={styles.headerIcon} name='settings'/>
       </MenuTrigger>
       <MenuOptions>
-        <MenuOption>
+        <MenuOption onSelect={() => this.setState({isEdit: true})}>
           <Button transparent onPress={() => this.setState({isEdit: true})}>
             <Icon type="FontAwesome" style={styles.headerMenuIcon} name='pencil'/>
             <Text style={styles.headerMenuIcon}>Edit Profile</Text>
           </Button>
         </MenuOption>
-        <MenuOption>
+        <MenuOption onSelect={() => this.logout()}>
           <Button transparent onPress={this.logout}>
           <Icon type="FontAwesome" style={styles.headerMenuIcon} name='sign-out'/>
           <Text style={styles.headerMenuIcon}>Exit</Text>
