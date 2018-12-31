@@ -35,6 +35,8 @@
 	<string>162211384373641</string>
 	<key>FacebookDisplayName</key>
 	<string>Soqqle</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
