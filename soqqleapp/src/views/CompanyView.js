@@ -81,7 +81,7 @@ export default class ProfileView extends Component {
     return (
       <Menu ref={ref => this.menu = ref}>
         <MenuTrigger>
-          <Icon style={styles.headerIcon} type="FontAwesome" color="black" name='pencil' />
+          <Icon style={styles.headerIcon} name='settings' />
         </MenuTrigger>
         <MenuOptions>
           <MenuOption>
