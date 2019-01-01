@@ -1,6 +1,7 @@
 import { Map } from 'immutable';
 import * as axios from 'axios';
 import { API_BASE_URL } from '../config';
+import { USER_TASK_GROUP_LIST_PATH_API } from './../endpoints';
 import { Effects, loop } from 'redux-loop-symbol-ponyfill';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
@@ -274,7 +275,11 @@ export const getUserTaskGroupsFailed = (error) => {
 }
 
 export async function getUserTaskGroups(data) {
-  let endpoint = 'userTaskGroup?page={page}&type=Story'.replace('{}', data.page || 1);
+  let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', data.page || 1);
+  endpoint = endpoint.replace('{type}', 'Story');
+  if(data.user_id) {
+    endpoint = endpoint.concat('&user_id=', data.user_id);
+  }
   let taskGroups = data.previousData || [];
   try {
     if (data.load) {
@@ -303,7 +308,7 @@ export async function getUserTaskGroups(data) {
 }
 
 export function logout() {
-  return {type: LOG_OUT}
+  return { type: LOG_OUT }
 }
 
 // Reducer
