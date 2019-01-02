@@ -12,16 +12,26 @@ import {
   View
 } from 'react-native';
 import Video from 'react-native-video';
+import * as axios from 'axios';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
 import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
-import { SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API } from './../endpoints';
+import { API_BASE_URL } from './../config';
+import {
+  SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API, USER_TASK_GROUP_LIST_PATH_API
+} from './../endpoints';
 import CustomText from './../components/CustomText';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
+
+const instance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 25000,
+  headers: { 'Content-type': 'application/json' }
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -157,6 +167,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  likeModalSeparator: {
+    fontSize: 17,
+    color: 'rgba(0, 0, 0, 0.6)',
+    paddingVertical: 10,
+    textAlign: 'center',
+  },
   likeModalAction: {
     backgroundColor: '#2C2649',
     color: '#ffffff',
@@ -177,7 +193,42 @@ const styles = StyleSheet.create({
   likeModalCloseIcon: {
     color: '#333333',
     fontSize: 20,
-  }
+  },
+  taskItem: {
+    backgroundColor: '#2C2649',
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 6,
+  },
+  taskItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  taskItemName: {
+    fontSize: 15,
+    letterSpacing: 1,
+    color: '#ffffff',
+    width: '90%'
+  },
+  taskItemSize: {
+    color: '#1FBEB8',
+    fontSize: 16,
+  },
+  taskItemFooter: {
+    marginTop: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  taskItemExpiry: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 14,
+  },
+  taskItemXP: {
+    color: '#9600A1',
+    fontSize: 18,
+  },
 });
 
 let selectedItemId = null;
@@ -266,7 +317,9 @@ export default class StoryView extends Component {
       stories: [],
       currentSlideIndex: 0,
       modalVisible: false,
-      processing: false
+      processing: false,
+      tasksFetching: false,
+      userTaskGroups: []
     };
   }
 
@@ -283,8 +336,26 @@ export default class StoryView extends Component {
   }
 
   setModalVisible(visible, itemId) {
-    this.setState({ modalVisible: visible });
+    this.setState({ modalVisible: visible, tasksFetching: !!itemId });
     selectedItemId = itemId;
+    if (itemId) {
+      this.fetchUserTaskGroupsBasedOnStory(itemId);
+    }
+  }
+
+  fetchUserTaskGroupsBasedOnStory(storyId) {
+    let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', 1);
+    endpoint = endpoint.replace('{type}', 'Story');
+    endpoint = endpoint.concat('&page_size=', 3);
+    endpoint = endpoint.concat('&type_id=', storyId);
+    instance.get(endpoint).then(response => {
+      this.setState({
+        userTaskGroups: response.data.latestUserTaskGroups,
+        tasksFetching: false
+      })
+    }).catch((error) => {
+      this.setState({ tasksFetching: false });
+    });
   }
 
   createNewUserTaskGroup() {
@@ -306,7 +377,7 @@ export default class StoryView extends Component {
         .then((responseData) => {
           this.setState({ processing: false, modalVisible: false });
           selectedItemId = null;
-          this.props.navigation.navigate({ routeName: 'UserTaskGroup' });
+          this.props.navigation.navigate("UserTaskGroup", { reset: true })
         })
         .catch((error) => {
           this.setState({ processing: false });
@@ -340,6 +411,26 @@ export default class StoryView extends Component {
       this.setState({ stories: completed, loading: false });
     });
   }
+
+  _renderStoryTaskItem = (item) => {
+    const data = item._typeObject;
+    return (
+      <View style={{ paddingHorizontal: 8 }} key={item._id}>
+        <View style={styles.taskItem}>
+          <View style={styles.taskItemHeader}>
+            <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
+            <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+          </View>
+          <View style={styles.taskItemFooter}>
+            <Text style={styles.taskItemExpiry}>
+              {`Expire: ${data.expiry || ''}`}
+            </Text>
+            <Text style={styles.taskItemXP}>100 xp</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   render() {
     return (
@@ -415,17 +506,38 @@ export default class StoryView extends Component {
           animationType="fade"
           transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
+          onRequestClose={() => this.setModalVisible(!this.state.modalVisible)}
+        >
           <View style={styles.likeModalView}>
             <View style={styles.likeModalInnerView}>
               <Text style={styles.likeModalTitle}>You like this!</Text>
-              <Text style={styles.likeModalText}>But there are no available teams.</Text>
-              <TouchableOpacity
-                onPress={() => this.createNewUserTaskGroup()}>
-                <Text style={styles.likeModalAction}>Start one</Text>
-              </TouchableOpacity>
+              {this.state.tasksFetching ? (
+                <ActivityIndicator size="small" color="#800094" />
+              ) : (
+                  this.state.userTaskGroups.length ? (
+                    <View>
+                      <Text style={styles.likeModalText}>Join a team to surge forward!</Text>
+                      {this.state.userTaskGroups.map(userTaskGroup => {
+                        return this._renderStoryTaskItem(userTaskGroup)
+                      })}
+                      <Text style={styles.likeModalSeparator}>or</Text>
+                      <TouchableOpacity
+                        onPress={() => this.createNewUserTaskGroup()}>
+                        <Text style={{ ...styles.likeModalAction, ...{ 'backgroundColor': 'transparent', 'color': '#000000' } }}>
+                          Start one
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                      <View>
+                        <Text style={styles.likeModalText}>But there are no available teams.</Text>
+                        <TouchableOpacity
+                          onPress={() => this.createNewUserTaskGroup()}>
+                          <Text style={styles.likeModalAction}>Start one</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )
+                )}
               <TouchableOpacity
                 onPress={() => {
                   this.setModalVisible(!this.state.modalVisible);

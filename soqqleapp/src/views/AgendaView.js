@@ -10,7 +10,7 @@ import { AGENDA_LIST_API } from './../endpoints';
 import { PAGE_SIZE } from './../constants';
 
 
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
+const statusBarHeight = Platform.OS === 'ios' ? 0 : 20;
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
 
@@ -233,7 +233,7 @@ export default class AgendaView extends Component {
     };
 
     handleBackAction() {
-        this.props.navigation.navigate({ routeName: 'Login' })
+        this.props.navigation.pop();
     }
 
     fetchMoreAgendaOnScroll() {

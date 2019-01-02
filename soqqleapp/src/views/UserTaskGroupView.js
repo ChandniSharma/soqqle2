@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
+let userId = null;
 
 export default class UserTaskGroupView extends Component {
 
@@ -117,17 +118,22 @@ export default class UserTaskGroupView extends Component {
             totalCount: null,
             refreshing: false
         }
+        userId = this.props.user._id;
     }
 
     componentWillMount() {
         const response = this.props.taskGroups;
-        if (response.taskGroups && Object.keys(response.taskGroups).length) {
+        const params = this.props.navigation.state.params;
+        const isReset = params && params.reset || false;
+        if (response.taskGroups && Object.keys(response.taskGroups).length && !isReset) {
             pageNum = response.page
             totalCount = response.count;
             this.setState({ userTasks: response.taskGroups });
         }
         else {
-            this.props.userActions.getUserTaskGroupsRequest({ page: 1, load: true });
+            this.props.userActions.getUserTaskGroupsRequest({
+                page: 1, load: true, user_id: userId
+            });
         }
 
     }
@@ -188,7 +194,7 @@ export default class UserTaskGroupView extends Component {
 
     handleRefresh() {
         this.setState({ refreshing: true });
-        this.props.userActions.getUserTaskGroupsRequest({ page: 1 });
+        this.props.userActions.getUserTaskGroupsRequest({ page: 1, user_id: userId });
     }
 
     handleScroll() {
@@ -196,7 +202,8 @@ export default class UserTaskGroupView extends Component {
             this.setState({ loading: true });
             this.props.userActions.getUserTaskGroupsRequest({
                 page: pageNum + 1,
-                previousData: this.state.userTasks
+                previousData: this.state.userTasks,
+                user_id: userId
             });
         }
     }
@@ -218,11 +225,6 @@ export default class UserTaskGroupView extends Component {
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Groups</Text>
                 </View>
-                {/* {this.state.initialLoading ? (
-                    <View style={styles.activityLoaderContainer}>
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    </View>
-                ) : ( */}
                 <View style={{ flex: 1, marginTop: 5 }}>
                     <FlatList
                         data={this.state.userTasks}
@@ -233,7 +235,6 @@ export default class UserTaskGroupView extends Component {
                         onScrollEndDrag={() => this.handleScroll()}
                     />
                 </View>
-                {/* )} */}
             </SafeAreaView>
         );
     }
