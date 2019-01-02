@@ -337,7 +337,7 @@ export default class StoryView extends Component {
   }
 
   setModalVisible(visible, itemId) {
-    this.setState({ modalVisible: visible, tasksFetching: !!itemId });
+    this.setState({ modalVisible: visible, tasksFetching: !!itemId, userTaskGroups: [] });
     selectedItemId = itemId;
     if (itemId) {
       this.fetchUserTaskGroupsBasedOnStory(itemId);
