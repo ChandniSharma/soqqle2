@@ -454,6 +454,7 @@ export default class StoryView extends Component {
 
   _renderStoryTaskItem = (item) => {
     const data = item._typeObject;
+    const teamLength = item._team.emails.length;
     return (
       <View style={{ paddingHorizontal: 8 }} key={item._id}>
         <TouchableOpacity
@@ -462,7 +463,7 @@ export default class StoryView extends Component {
           <View style={styles.taskItem}>
             <View style={styles.taskItemHeader}>
               <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-              <Text style={styles.taskItemSize}>{data.quota ? `1/${data.quota}` : ''}</Text>
+              <Text style={styles.taskItemSize}>{data.quota ? `${teamLength}/${data.quota}` : ''}</Text>
             </View>
             <View style={styles.taskItemFooter}>
               <Text style={styles.taskItemExpiry}>
