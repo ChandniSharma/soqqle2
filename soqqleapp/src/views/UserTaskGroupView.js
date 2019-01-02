@@ -161,6 +161,7 @@ export default class UserTaskGroupView extends Component {
 
     _renderItem = ({ item, index }) => {
         const data = item._typeObject;
+        const teamLength = item._team.emails.length;
         return (
             <View style={{ paddingHorizontal: 10 }}>
                 <TouchableWithoutFeedback
@@ -173,7 +174,7 @@ export default class UserTaskGroupView extends Component {
                     <View style={styles.taskItem}>
                         <View style={styles.taskItemHeader}>
                             <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-                            <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+                            <Text style={styles.taskItemSize}>{`${teamLength}/${data.quota}`}</Text>
                         </View>
                         <Text style={styles.taskItemDescription}>{data.description}</Text>
                         <View style={styles.taskItemFooter}>

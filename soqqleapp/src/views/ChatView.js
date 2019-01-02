@@ -147,7 +147,8 @@ export default class UserTaskGroupView extends Component {
     }
 
     render() {
-        const story = this.state.taskGroup._typeObject;
+        const { taskGroup } = this.state;
+        const story = taskGroup._typeObject;
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
@@ -166,7 +167,7 @@ export default class UserTaskGroupView extends Component {
                             />
                         </View>
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>5/5</Text>
+                    <Text style={styles.headerText}>{story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}</Text>
                 </View>
                 <View style={styles.storyDetailView}>
                     <View style={styles.storyDetailHeader}>
