@@ -348,7 +348,7 @@ export default function UserStateReducer(state = initialState, action = {}) {
         Effects.promise(linkedinLogin, action.payload)
       );
     case LOGIN_COMPLETED:
-      return state.set('user', action.payload).set('loginSuccess', true);
+      return state.set('user', action.payload).set('loginSuccess', true).set('task_groups', {}).set('getUserTaskGroups', false);
     case LOGIN_FAILED:
       return state.set('error', action.payload).set('loginSuccess', false);
     case SAVE_PROFILE_REQUESTED:
@@ -362,7 +362,7 @@ export default function UserStateReducer(state = initialState, action = {}) {
     case SAVE_PROFILE_FAILED:
       return state.set('saveProfileSuccess', false);
     case LOG_OUT:
-      return state.set('user', {}).set('companies', [])
+      return state.set('user', {}).set('companies', []).set('task_groups', {}).set('getUserTaskGroups', false)
     case GET_USER_TASK_GROUPS_REQUESTED:
       return loop(
         state.set('error', null).set('getUserTaskGroups', false),
