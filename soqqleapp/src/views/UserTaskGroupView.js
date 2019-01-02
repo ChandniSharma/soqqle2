@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
-let userId = null;
+let userEmail = null;
 
 export default class UserTaskGroupView extends Component {
 
@@ -118,7 +118,7 @@ export default class UserTaskGroupView extends Component {
             totalCount: null,
             refreshing: false
         }
-        userId = this.props.user._id;
+        userEmail = this.props.user.profile.email;
     }
 
     componentWillMount() {
@@ -132,7 +132,7 @@ export default class UserTaskGroupView extends Component {
         }
         else {
             this.props.userActions.getUserTaskGroupsRequest({
-                page: 1, load: true, user_id: userId
+                page: 1, load: true, user_email: userEmail
             });
         }
 
@@ -194,7 +194,7 @@ export default class UserTaskGroupView extends Component {
 
     handleRefresh() {
         this.setState({ refreshing: true });
-        this.props.userActions.getUserTaskGroupsRequest({ page: 1, user_id: userId });
+        this.props.userActions.getUserTaskGroupsRequest({ page: 1, user_email: userEmail });
     }
 
     handleScroll() {
@@ -203,7 +203,7 @@ export default class UserTaskGroupView extends Component {
             this.props.userActions.getUserTaskGroupsRequest({
                 page: pageNum + 1,
                 previousData: this.state.userTasks,
-                user_id: userId
+                user_email: userEmail
             });
         }
     }

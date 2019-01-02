@@ -73,10 +73,6 @@ export default class ProfileView extends Component {
     }
   }
 
-  goAgendaView = () => {
-    this.props.navigation.navigate("Agenda");
-  }
-
   renderMenu = () => {
     return (
       <Menu ref={ref => this.menu = ref}>
@@ -88,12 +84,6 @@ export default class ProfileView extends Component {
             <Button transparent onPress={() => this.setState({ isEdit: true })}>
               <Icon type="FontAwesome" style={styles.headerMenuIcon} name='pencil' />
               <Text style={styles.headerMenuIcon}>Edit Profile</Text>
-            </Button>
-          </MenuOption>
-          <MenuOption>
-            <Button transparent onPress={() => this.goAgendaView()}>
-              <Icon type="FontAwesome" style={styles.headerMenuIcon} name='calendar' />
-              <Text style={styles.headerMenuIcon}>Agenda</Text>
             </Button>
           </MenuOption>
         </MenuOptions>

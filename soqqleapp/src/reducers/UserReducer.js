@@ -277,8 +277,8 @@ export const getUserTaskGroupsFailed = (error) => {
 export async function getUserTaskGroups(data) {
   let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', data.page || 1);
   endpoint = endpoint.replace('{type}', 'Story');
-  if(data.user_id) {
-    endpoint = endpoint.concat('&user_id=', data.user_id);
+  if(data.user_email) {
+    endpoint = endpoint.concat('&user_email=', data.user_email);
   }
   let taskGroups = data.previousData || [];
   try {

@@ -19,7 +19,8 @@ import Carousel from 'react-native-snap-carousel';
 import { STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
 import { API_BASE_URL } from './../config';
 import {
-  SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API, USER_TASK_GROUP_LIST_PATH_API
+  SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API, USER_TASK_GROUP_LIST_PATH_API,
+  TEAM_UPDATE_API
 } from './../endpoints';
 import CustomText from './../components/CustomText';
 
@@ -358,16 +359,12 @@ export default class StoryView extends Component {
     });
   }
 
-  createNewUserTaskGroup() {
+  addUserToTeam(teamId) {
     if (!this.state.processing) {
       this.setState({ processing: true });
-      let data = {
-        type: 'Story',
-        _typeObject: selectedItemId,
-        _user: this.props.user._id
-      };
-      fetch(SAVE_USER_TASK_GROUP_API, {
-        method: 'POST',
+      let data = { email: this.props.user.profile.email };
+      fetch(TEAM_UPDATE_API.replace('{}', teamId), {
+        method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -376,13 +373,56 @@ export default class StoryView extends Component {
       }).then((response) => JSON.stringify(response.json()))
         .then((responseData) => {
           this.setState({ processing: false, modalVisible: false });
-          selectedItemId = null;
           this.props.navigation.navigate("UserTaskGroup", { reset: true })
         })
         .catch((error) => {
           this.setState({ processing: false });
         });
     }
+  }
+
+  createNewTeam() {
+    if (!this.state.processing) {
+      this.setState({ processing: true });
+      const { profile } = this.props.user;
+      let data = {
+        name: `${profile.firstName} - team`,
+        emails: {
+          "accepted": true,
+          "email": profile.email
+        }
+      };
+      instance.post(TEAM_UPDATE_API.replace('{}/', ''), data).then(response => {
+        this.createNewUserTaskGroup(response.data._id);
+      }).catch((error) => {
+        this.setState({ processing: false });
+      });
+    }
+  }
+
+  createNewUserTaskGroup(teamId) {
+    let data = {
+      type: 'Story',
+      _typeObject: selectedItemId,
+      _user: this.props.user._id,
+      _team: teamId
+    };
+    fetch(SAVE_USER_TASK_GROUP_API, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then((response) => JSON.stringify(response.json()))
+      .then((responseData) => {
+        this.setState({ processing: false, modalVisible: false });
+        selectedItemId = null;
+        this.props.navigation.navigate("UserTaskGroup", { reset: true })
+      })
+      .catch((error) => {
+        this.setState({ processing: false });
+      });
   }
 
   getStories() {
@@ -416,18 +456,22 @@ export default class StoryView extends Component {
     const data = item._typeObject;
     return (
       <View style={{ paddingHorizontal: 8 }} key={item._id}>
-        <View style={styles.taskItem}>
-          <View style={styles.taskItemHeader}>
-            <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-            <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+        <TouchableOpacity
+          onPress={() => this.addUserToTeam(item._team._id)}
+        >
+          <View style={styles.taskItem}>
+            <View style={styles.taskItemHeader}>
+              <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
+              <Text style={styles.taskItemSize}>{data.quota ? `1/${data.quota}` : ''}</Text>
+            </View>
+            <View style={styles.taskItemFooter}>
+              <Text style={styles.taskItemExpiry}>
+                {`Expire: ${data.expiry || ''}`}
+              </Text>
+              <Text style={styles.taskItemXP}>100 xp</Text>
+            </View>
           </View>
-          <View style={styles.taskItemFooter}>
-            <Text style={styles.taskItemExpiry}>
-              {`Expire: ${data.expiry || ''}`}
-            </Text>
-            <Text style={styles.taskItemXP}>100 xp</Text>
-          </View>
-        </View>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -522,7 +566,7 @@ export default class StoryView extends Component {
                       })}
                       <Text style={styles.likeModalSeparator}>or</Text>
                       <TouchableOpacity
-                        onPress={() => this.createNewUserTaskGroup()}>
+                        onPress={() => this.createNewTeam()}>
                         <Text style={{ ...styles.likeModalAction, ...{ 'backgroundColor': 'transparent', 'color': '#000000' } }}>
                           Start one
                         </Text>
@@ -532,7 +576,7 @@ export default class StoryView extends Component {
                       <View>
                         <Text style={styles.likeModalText}>But there are no available teams.</Text>
                         <TouchableOpacity
-                          onPress={() => this.createNewUserTaskGroup()}>
+                          onPress={() => this.createNewTeam()}>
                           <Text style={styles.likeModalAction}>Start one</Text>
                         </TouchableOpacity>
                       </View>
