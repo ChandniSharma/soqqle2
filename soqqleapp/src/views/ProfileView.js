@@ -181,28 +181,6 @@ export default class ProfileView extends Component {
             }
           </CardItem>
         </View>
-        <Content>
-          <Card style={styles.card}>
-            <Image
-              source={{uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg'}}
-              style={styles.cardImage}/>
-            <View style={styles.cardBody}>
-              <Text style={styles.cardTitle}>Completed the Superwoman Achivement!</Text>
-              <Text style={styles.cardDescription}>You need 5 more to complete this.</Text>
-            </View>
-          </Card>
-          <Card style={styles.card}>
-            <Image
-              source={{uri: 'https://www.wikihow.com/images/7/7a/Make-Gratin-Dauphinoise-Without-Cream-Step-12.jpg'}}
-              style={styles.cardImage}/>
-            <View style={styles.cardBody}>
-              <Text style={styles.cardTitle}>Started the blockchain intermeditate project !</Text>
-              <Button small rounded style={styles.joinButton}>
-                <Text>Join Jan</Text>
-              </Button>
-            </View>
-          </Card>
-        </Content>
       </Container>
       </MenuProvider>
     );

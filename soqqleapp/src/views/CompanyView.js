@@ -137,67 +137,6 @@ export default class ProfileView extends Component {
               </Body>
             </CardItem>
           </View>
-          <Content style={{ backgroundColor: '#2C2649', paddingTop: 5 }}>
-            <Card style={styles.card}>
-              <CardItem style={styles.card}>
-                <Left>
-                  <Thumbnail
-                    small
-                    source={{ uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271' }} />
-                  <Body>
-                    <Text>Jane Smith</Text>
-                  </Body>
-                </Left>
-                <Right>
-                  <Text>5 Mins</Text>
-                </Right>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={{ uri: 'https://www.wikihow.com/images/5/51/Keep-Halloween-Pumpkins-from-Molding-Step-13-Version-2.jpg' }}
-                  style={{ height: 200, width: null, flex: 1 }} />
-              </CardItem>
-              <CardItem>
-                <Text>Completed the Superwomen Achievement!</Text>
-              </CardItem>
-              <CardItem>
-                <Text>You need 5 more illuminates to complete this.</Text>
-              </CardItem>
-            </Card>
-            <Card style={styles.card}>
-              <CardItem style={styles.card}>
-                <Left>
-                  <Thumbnail
-                    small
-                    source={{ uri: 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/userProfile/avatar_1541645735271' }} />
-                  <Body>
-                    <Text>Jane Smith</Text>
-                  </Body>
-                </Left>
-                <Right>
-                  <Text>10 Mins</Text>
-                </Right>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={{ uri: 'https://www.wikihow.com/images/7/7a/Make-Gratin-Dauphinoise-Without-Cream-Step-12.jpg' }}
-                  style={{ height: 200, width: null, flex: 1 }} />
-              </CardItem>
-              <CardItem>
-                <Text>Started the blockchain intermeditate project !</Text>
-              </CardItem>
-              <CardItem style={styles.card}>
-                <Left>
-                  <Button small rounded style={styles.joinButton}>
-                    <Text>Join Jan</Text>
-                  </Button>
-                </Left>
-                <Right>
-                  <Text style={styles.buttonExt}>4/5 Slots</Text>
-                </Right>
-              </CardItem>
-            </Card>
-          </Content>
         </Container>
       </MenuProvider>
     );
