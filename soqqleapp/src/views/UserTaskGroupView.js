@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
-let userId = null;
+let userEmail = null;
 
 export default class UserTaskGroupView extends Component {
 
@@ -118,7 +118,7 @@ export default class UserTaskGroupView extends Component {
             totalCount: null,
             refreshing: false
         }
-        userId = this.props.user._id;
+        userEmail = this.props.user.profile.email;
     }
 
     componentWillMount() {
@@ -132,7 +132,7 @@ export default class UserTaskGroupView extends Component {
         }
         else {
             this.props.userActions.getUserTaskGroupsRequest({
-                page: 1, load: true, user_id: userId
+                page: 1, load: true, user_email: userEmail
             });
         }
 
@@ -161,6 +161,7 @@ export default class UserTaskGroupView extends Component {
 
     _renderItem = ({ item, index }) => {
         const data = item._typeObject;
+        const teamLength = item._team.emails.length;
         return (
             <View style={{ paddingHorizontal: 10 }}>
                 <TouchableWithoutFeedback
@@ -173,7 +174,7 @@ export default class UserTaskGroupView extends Component {
                     <View style={styles.taskItem}>
                         <View style={styles.taskItemHeader}>
                             <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-                            <Text style={styles.taskItemSize}>{`1/${data.quota}`}</Text>
+                            <Text style={styles.taskItemSize}>{`${teamLength}/${data.quota}`}</Text>
                         </View>
                         <Text style={styles.taskItemDescription}>{data.description}</Text>
                         <View style={styles.taskItemFooter}>
@@ -194,7 +195,7 @@ export default class UserTaskGroupView extends Component {
 
     handleRefresh() {
         this.setState({ refreshing: true });
-        this.props.userActions.getUserTaskGroupsRequest({ page: 1, user_id: userId });
+        this.props.userActions.getUserTaskGroupsRequest({ page: 1, user_email: userEmail });
     }
 
     handleScroll() {
@@ -203,7 +204,7 @@ export default class UserTaskGroupView extends Component {
             this.props.userActions.getUserTaskGroupsRequest({
                 page: pageNum + 1,
                 previousData: this.state.userTasks,
-                user_id: userId
+                user_email: userEmail
             });
         }
     }

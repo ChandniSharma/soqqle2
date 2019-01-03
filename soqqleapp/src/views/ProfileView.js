@@ -84,6 +84,10 @@ export default class ProfileView extends Component {
     }
   }
 
+  goAgendaView = () => {
+    this.props.navigation.navigate("Agenda");
+  }
+
   logout = () => {
     this.menu.close();
     this.props.userActions.logout();
@@ -106,6 +110,12 @@ export default class ProfileView extends Component {
             <Text style={styles.headerMenuIcon}>Edit Profile</Text>
           </Button>
         </MenuOption>
+        <MenuOption>
+            <Button transparent onPress={() => this.goAgendaView()}>
+              <Icon type="FontAwesome" style={styles.headerMenuIcon} name='calendar' />
+              <Text style={styles.headerMenuIcon}>Agenda</Text>
+            </Button>
+          </MenuOption>
         <MenuOption onSelect={() => this.logout()}>
           <Button transparent onPress={this.logout}>
           <Icon type="FontAwesome" style={styles.headerMenuIcon} name='sign-out'/>
