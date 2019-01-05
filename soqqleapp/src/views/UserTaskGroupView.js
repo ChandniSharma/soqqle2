@@ -174,7 +174,7 @@ export default class UserTaskGroupView extends Component {
                     <View style={styles.taskItem}>
                         <View style={styles.taskItemHeader}>
                             <Text style={styles.taskItemName} numberOfLines={2}>{data.name}</Text>
-                            <Text style={styles.taskItemSize}>{`${teamLength}/${data.quota}`}</Text>
+                            <Text style={styles.taskItemSize}>{data.quota ? `${teamLength}/${data.quota}` : ''}</Text>
                         </View>
                         <Text style={styles.taskItemDescription}>{data.description}</Text>
                         <View style={styles.taskItemFooter}>

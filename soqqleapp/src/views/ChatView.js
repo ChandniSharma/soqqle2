@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 30,
+        overflow: 'hidden',
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#9600A1',
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 30,
+        overflow: 'hidden',
         backgroundColor: '#1FBEB8'
     },
     chatView: {
@@ -187,37 +189,7 @@ export default class UserTaskGroupView extends Component {
                                     </Text>
                                 ) : null}
                             </View>
-                            <View>
-                                <Text style={styles.storyDetailActionTag}>Start Task</Text>
-                            </View>
                         </View>
-                    </View>
-                </View>
-                <View style={styles.chatView}>
-                    <View style={styles.chatItemsView}>
-                        <ScrollView>
-                            <View style={styles.chatItem}>
-                                <SenderChatItem />
-                            </View>
-                            <View style={styles.chatItem}>
-                                <ReceiverChatItem />
-                            </View>
-                            <View style={styles.chatItem}>
-                                <SenderChatItem />
-                            </View>
-                            <View style={styles.chatItem}>
-                                <ReceiverChatItem />
-                            </View>
-                            <View style={styles.chatItem}>
-                                <ReceiverChatItem />
-                            </View>
-                        </ScrollView>
-                    </View>
-                    <View style={styles.chatActionView}>
-                        <Icon name='paperclip' style={styles.chatAttachmentIcon} />
-                        <TextInput
-                            style={styles.chatInputItem}
-                            value='Enter message' />
                     </View>
                 </View>
             </SafeAreaView>
