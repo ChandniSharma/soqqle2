@@ -1,19 +1,15 @@
 import React, { Component } from 'react';
 import {
-    Button, Platform, StyleSheet, TouchableOpacity, ActivityIndicator,
-    Text, View, Dimensions, SafeAreaView, ScrollView, TextInput, Image
+    Platform, StyleSheet, TouchableOpacity,
+    Text, View, SafeAreaView, ScrollView, TextInput
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Header from './../components/Header';
 
-import { USER_TASK_GROUP_LIST_API } from './../endpoints';
-import { PAGE_SIZE, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL } from './../constants';
 import ReceiverChatItem from './../components/ReceiverChatItem';
 import SenderChatItem from './../components/SenderChatItem';
 
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
-var width = Dimensions.get('window').width; //full width
-var height = Dimensions.get('window').height; //full height
 
 const styles = StyleSheet.create({
     container: {
@@ -22,21 +18,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         flex: 1,
         flexDirection: 'column'
-    },
-    header: {
-        backgroundColor: '#F8F8F8',
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    headerText: {
-        color: '#1FBEB8',
-        fontSize: 16,
-    },
-    headerBackIcon: {
-        color: '#130C38',
-        fontSize: 20,
     },
     storyDetailView: {
         paddingVertical: 15,
@@ -153,24 +134,20 @@ export default class UserTaskGroupView extends Component {
         const story = taskGroup._typeObject;
         return (
             <SafeAreaView style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate("UserTaskGroup",
-                            {
-                                task_group_id: null
-                            }
-                        )}
-                        style={styles.headerBackView}>
-
-                        <View>
-                            <Icon
-                                name='chevron-left'
-                                style={styles.headerBackIcon}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <Text style={styles.headerText}>{story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}</Text>
-                </View>
+                <Header title='Chat'
+                    navigation={this.props.navigation}
+                    rightText={story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}
+                    headerStyle={{
+                        backgroundColor: '#F8F8F8',
+                        elevation: 0,
+                    }}
+                    headerIconStyle={{
+                        color: '#130C38',
+                    }}
+                    headerRightTextStyle={{
+                        color: '#1FBEB8'
+                    }}
+                />
                 <View style={styles.storyDetailView}>
                     <View style={styles.storyDetailHeader}>
                         <Text style={styles.storyDetailTitle}>{story.name}</Text>
