@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         color: '#9600A1',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        borderRadius: 30,
+        borderRadius: 14,
         overflow: 'hidden',
         borderWidth: 1,
         borderStyle: 'solid',
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        borderRadius: 30,
+        borderRadius: 14,
         overflow: 'hidden',
         backgroundColor: '#1FBEB8'
     },

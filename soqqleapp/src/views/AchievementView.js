@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   groupTag: {
     margin: 5,
     padding: 10,
-    borderRadius: 30,
+    borderRadius: 20,
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#1FBEB8',
@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
   },
   achievementTags: {
     marginTop: 6,
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
+    flex: 1,
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   achievementTag: {
     backgroundColor: '#9600A1',
     overflow: 'hidden',
-    borderRadius: 30,
+    borderRadius: 14,
     color: '#ffffff',
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 5,
     marginRight: 6,
-    fontWeight: '700'
+    fontWeight: '500'
   }
 });
 
