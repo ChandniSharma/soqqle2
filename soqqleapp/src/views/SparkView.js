@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList, Picker } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { Picker, Form } from "native-base";
 import { USER_SPARK_LIST_PATH_API } from './../endpoints';
 const styles = StyleSheet.create({
   contentView: {
@@ -10,6 +11,7 @@ const styles = StyleSheet.create({
   sortPicker: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     color: '#FFFFFF',
+    width: '100%'
   },
   sparkTile: {
     backgroundColor: '#ffffff',
@@ -114,16 +116,20 @@ export default class SparkView extends Component {
   render() {
     return (
       <View style={styles.contentView}>
-        <Picker
-          selectedValue={this.state.sorter}
-          style={styles.sortPicker}
-          onValueChange={(itemValue, itemIndex) => this.handleSortChange(itemValue)}
-        >
-          <Picker.Item label="Sort by" value="" />
-          <Picker.Item label="Date" value="timestamp" />
-          <Picker.Item label="House" value="_id" />
-          <Picker.Item label="Tokens" value="numTokens" />
-        </Picker>
+        <Form>
+          <Picker
+            note
+            mode="dropdown"
+            selectedValue={this.state.sorter}
+            style={styles.sortPicker}
+            onValueChange={(itemValue, itemIndex) => this.handleSortChange(itemValue)}
+          >
+            <Picker.Item label="Sort by" value="" />
+            <Picker.Item label="Date" value="timestamp" />
+            <Picker.Item label="House" value="_id" />
+            <Picker.Item label="Tokens" value="numTokens" />
+          </Picker>
+        </Form>
         <View style={{ flex: 1, paddingVertical: 10 }}>
           <FlatList
             data={this.state.sparks}
