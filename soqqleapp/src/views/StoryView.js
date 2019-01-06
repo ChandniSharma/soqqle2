@@ -55,6 +55,10 @@ const styles = StyleSheet.create({
     width: wp('8%'),
     height: hp('4%'),
   },
+  headerFontIcon: {
+    fontSize: wp('9%'),
+    color: '#ffffff'
+  },
   storyContainerView: {
     flex: 1,
     flexDirection: 'row',
@@ -121,21 +125,23 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: '#800094',
-    height: hp('10%'),
     width: width,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   footerTab: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: hp('1%'),
+    paddingHorizontal: wp('4%'),
   },
   footerTabIcon: {
-    width: wp('6%'),
-    height: hp('3%'),
+    marginTop: 2,
+    textAlign: 'center',
+    color: '#ffffff',
+    fontSize: wp('5.5%')
   },
   footerTabText: {
+    textAlign: 'center',
     color: '#fff',
     paddingTop: hp('1%'),
     fontSize: wp('3.5%'),
@@ -328,6 +334,10 @@ export default class StoryView extends Component {
     this.getStories();
   }
 
+  goToAchievementScreen = () => {
+    this.props.navigation.navigate({ routeName: 'Achievement' })
+  }
+
   goToProfileScreen = () => {
     this.props.navigation.navigate({ routeName: 'Profile' })
   }
@@ -486,10 +496,7 @@ export default class StoryView extends Component {
             style={styles.headerIcon}
           />
           <TouchableOpacity onPress={this.goToProfileScreen}>
-            <Image
-              source={require('./../../assets/images/menu.png')}
-              style={styles.headerIcon}
-            />
+            <Icon name='bars' style={styles.headerFontIcon} />
           </TouchableOpacity>
         </View>
         <View style={styles.storyContainerView}>
@@ -511,41 +518,34 @@ export default class StoryView extends Component {
             )}
         </View>
         <View style={styles.footer}>
+          <TouchableOpacity onPress={this.goToAchievementScreen}>
+            <View style={styles.footerTab}>
+              <Icon name='th' style={styles.footerTabIcon} />
+              <CustomText loading={this.state.loading}
+                styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
+                font='open-sans'>
+                {'Dashboard'.toUpperCase()}
+              </CustomText>
+            </View>
+          </TouchableOpacity>
           <View style={styles.footerTab}>
-            <Image
-              source={require('./../../assets/images/dashboard.png')}
-              style={styles.footerTabIcon}
-            />
-            <CustomText loading={this.state.loading}
-              styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
-              font='open-sans'>
-              {'Dashboard'.toUpperCase()}
-            </CustomText>
-          </View>
-          <View style={styles.footerTab}>
-            <Image
-              source={require('./../../assets/images/story.png')}
-              style={styles.footerTabIcon}
-            />
+            <Icon name='star' style={styles.footerTabIcon} />
             <CustomText loading={this.state.loading}
               styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
               font='open-sans'>
               {'Story'.toUpperCase()}
             </CustomText>
           </View>
-          <View style={styles.footerTab}>
-            <TouchableOpacity onPress={this.goToUserTasksScreen}>
-              <Image
-                source={require('./../../assets/images/task.png')}
-                style={styles.footerTabIcon}
-              />
+          <TouchableOpacity onPress={this.goToUserTasksScreen}>
+            <View style={styles.footerTab}>
+              <Icon name='tasks' style={styles.footerTabIcon} />
               <CustomText loading={this.state.loading}
                 styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
                 font='open-sans'>
-                {'Task'.toUpperCase()}
+                {'Groups'.toUpperCase()}
               </CustomText>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </View>
         <Modal
           animationType="fade"

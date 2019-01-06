@@ -3,15 +3,17 @@ import {loop, combineReducers} from 'redux-loop-symbol-ponyfill';
 import NavigatorStateReducer from '../navigator/NavigatorState';
 import UserReducer from '../reducers/UserReducer';
 import CompanyReducer from '../reducers/CompanyReducer';
+import AchievementReducer from '../reducers/AchievementReducer';
 import AppReducer from '../reducers/AppReducer';
 import SessionStateReducer, {RESET_STATE} from '../session/SessionState';
 
 const reducers = {
   user: UserReducer,
   company: CompanyReducer,
+  achievement: AchievementReducer,
   app: AppReducer,
   navigatorState: NavigatorStateReducer,
-  session: SessionStateReducer
+  session: SessionStateReducer,
 };
 const immutableStateContainer = Map();
 const getImmutable = (child, key) => child ? child.get(key) : void 0;
