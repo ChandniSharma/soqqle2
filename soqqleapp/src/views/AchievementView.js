@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Platform, StyleSheet, Text, View, SafeAreaView, ScrollView,
+  StyleSheet, Text, View, ScrollView,
   TouchableWithoutFeedback, FlatList, Image
 } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { USER_ACHIEVEMENT_LIST_PATH_API } from './../endpoints';
 import { ACHIEVEMENT_IMAGE_BASE_URL } from './../constants';
-import Header from './../components/Header';
-
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -18,13 +15,6 @@ const instance = axios.create({
 });
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 0,
-    paddingTop: statusBarHeight,
-    backgroundColor: '#ffffff',
-    flex: 1,
-    flexDirection: 'column'
-  },
   contentView: {
     flex: 1,
     backgroundColor: '#2C2649'
@@ -136,7 +126,7 @@ export default class AchievementView extends Component {
       });
     }
     else {
-      this.props.actions.getAchievementsRequest({ initialLoad: true });
+      this.props.achievementActions.getAchievementsRequest({ initialLoad: true });
     }
   }
 
@@ -205,46 +195,43 @@ export default class AchievementView extends Component {
   }
 
   handleRefresh() {
-    this.props.actions.getAchievementsRequest();
+    this.props.achievementActions.getAchievementsRequest();
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <Header title='Achievements' navigation={this.props.navigation} />
-        <View style={styles.contentView}>
-          <View style={styles.groupTagsView}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {this.state.achievementGroups.map(group => {
-                let isSelected = group.id === this.state.selectedGroup;
-                return (
-                  <TouchableWithoutFeedback
-                    key={group.id}
-                    onPress={() => this.setGroupId(group.id)}>
-                    <Text
-                      style={isSelected ? {
-                        ...styles.groupTag, ...{
-                          'color': '#FFFFFF',
-                          'backgroundColor': '#1FBEB8'
-                        }
-                      } : styles.groupTag}
-                    >{group.name}</Text>
-                  </TouchableWithoutFeedback>
-                )
-              })}
-            </ScrollView>
-          </View>
-          <View style={{ flex: 1, padding: 10, }}>
-            <FlatList
-              data={this.getGroupAchievements()}
-              keyExtractor={(item) => item._id}
-              renderItem={this._renderItem}
-              refreshing={this.state.refreshing}
-              onRefresh={() => this.handleRefresh()}
-            />
-          </View>
+      <View style={styles.contentView}>
+        <View style={styles.groupTagsView}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {this.state.achievementGroups.map(group => {
+              let isSelected = group.id === this.state.selectedGroup;
+              return (
+                <TouchableWithoutFeedback
+                  key={group.id}
+                  onPress={() => this.setGroupId(group.id)}>
+                  <Text
+                    style={isSelected ? {
+                      ...styles.groupTag, ...{
+                        'color': '#FFFFFF',
+                        'backgroundColor': '#1FBEB8'
+                      }
+                    } : styles.groupTag}
+                  >{group.name}</Text>
+                </TouchableWithoutFeedback>
+              )
+            })}
+          </ScrollView>
         </View>
-      </SafeAreaView>
+        <View style={{ flex: 1, padding: 10, }}>
+          <FlatList
+            data={this.getGroupAchievements()}
+            keyExtractor={(item) => item._id}
+            renderItem={this._renderItem}
+            refreshing={this.state.refreshing}
+            onRefresh={() => this.handleRefresh()}
+          />
+        </View>
+      </View>
     );
   }
 }

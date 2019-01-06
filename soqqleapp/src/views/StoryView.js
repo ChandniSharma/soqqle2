@@ -334,8 +334,8 @@ export default class StoryView extends Component {
     this.getStories();
   }
 
-  goToAchievementScreen = () => {
-    this.props.navigation.navigate({ routeName: 'Achievement' })
+  goToDashboardScreen = () => {
+    this.props.navigation.navigate({ routeName: 'Dashboard' })
   }
 
   goToProfileScreen = () => {
@@ -518,7 +518,7 @@ export default class StoryView extends Component {
             )}
         </View>
         <View style={styles.footer}>
-          <TouchableOpacity onPress={this.goToAchievementScreen}>
+          <TouchableOpacity onPress={this.goToDashboardScreen}>
             <View style={styles.footerTab}>
               <Icon name='th' style={styles.footerTabIcon} />
               <CustomText loading={this.state.loading}

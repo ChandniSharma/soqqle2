@@ -7,3 +7,4 @@ export const USER_TASK_GROUP_LIST_PATH_API = 'userTaskGroup?page={page}&type={ty
 export const TEAM_UPDATE_API = 'https://stgapi.soqqle.com/team/{}/';
 export const ACHIEVEMENT_LIST_PATH_API = '/achievement/group/';
 export const USER_ACHIEVEMENT_LIST_PATH_API = '/userAchievement/{}/'
+export const USER_SPARK_LIST_PATH_API = '/userAccounting?id={}'
