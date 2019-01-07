@@ -7,7 +7,7 @@ import StoryContainer from '../containers/StoryContainer';
 import AgendaContainer from '../containers/AgendaContainer';
 import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
 import ChatContainer from '../containers/ChatContainer';
-import AchievementContainer from '../containers/AchievementContainer';
+import DashboardContainer from '../containers/DashboardContainer';
 
 
 const AppNavigator = createStackNavigator({
@@ -18,7 +18,7 @@ const AppNavigator = createStackNavigator({
   UserTaskGroup: { screen: UserTaskGroupContainer },
   Chat: { screen: ChatContainer },
   Agenda: { screen: AgendaContainer },
-  Achievement: { screen: AchievementContainer },
+  Dashboard: { screen: DashboardContainer },
 },
   {
     headerMode: 'none'
