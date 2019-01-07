@@ -19,9 +19,15 @@ const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {email: '', password: '', isAgree: false};
+  }
+
   static flashMessage = message => {
     showMessage({message, type: MAIN_COLOR});
   };
+
   linkedinLogin = async token => {
     try {
       const {userActions} = this.props;
@@ -111,11 +117,6 @@ export default class LoginView extends Component {
     }
     userActions.loginRequest(this.state);
   };
-
-  constructor(props) {
-    super(props);
-    this.state = {email: '', password: '', isAgree: false};
-  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.error && nextProps.error.message) {
