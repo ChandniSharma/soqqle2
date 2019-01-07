@@ -6,6 +6,7 @@ import { Effects, loop } from 'redux-loop-symbol-ponyfill';
 import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
+import * as snapshot from "../utils/snapshot";
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -308,8 +309,9 @@ export async function getUserTaskGroups(data) {
   }
 }
 
-export function logout() {
-  store.dispatch(SessionStateActions.initializeSessionState());
+export async function logout() {
+  await snapshot.clearSnapshot();
+  store.dispatch(SessionStateActions.resetSessionStateFromSnapshot());
   return { type: LOG_OUT }
 }
 
