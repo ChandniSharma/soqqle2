@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config';
 import { USER_TASK_GROUP_LIST_PATH_API } from './../endpoints';
 import { Effects, loop } from 'redux-loop-symbol-ponyfill';
 import * as SessionStateActions from '../session/SessionState';
+import * as SparkActions from '../reducers/SparkReducer';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";

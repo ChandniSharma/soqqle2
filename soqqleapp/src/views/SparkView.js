@@ -66,13 +66,17 @@ export default class SparkView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sparks: this.props.sparks,
+      sparks: sortByKey(this.props.sparks, '_id'),
       refreshing: false,
-      sorter: '',
+      sorter: '_id',
     }
     userId = this.props.user._id || null;
     profile = this.props.user.profile || null;
     endpoint = endpoint.replace('{}', userId);
+  }
+
+  componentWillUnmount() {
+    endpoint = USER_SPARK_LIST_PATH_API;
   }
 
   componentWillMount() {
@@ -83,7 +87,7 @@ export default class SparkView extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.sparks.length != this.props.sparks.length) {
-      this.setState({ sparks: nextProps.sparks });
+      this.setState({ sparks: sortByKey(nextProps.sparks, this.state.sorter) });
     }
   }
 
@@ -98,7 +102,7 @@ export default class SparkView extends Component {
         </View>
         <View style={styles.sparkTileRow}>
           <Text style={styles.sparkTileDate}>{getDateFromTimestamp(item.timestamp)}</Text>
-          <Text style={styles.sparkTileUser}>{profile ? `${profile.firstName} ${profile.lastName}` : ''}</Text>
+          <Text style={styles.sparkTileUser}>{profile ? `${profile.firstName} ${profile.lastName || ''}` : ''}</Text>
         </View>
       </View>
     )

@@ -142,9 +142,9 @@ export default class AchievementView extends Component {
 
   fetchUserAchievements() {
     if (userId) {
-      let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', userId)
+      let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', userId);
       instance.get(endpoint).then(response => {
-        this.setState({ userAchievements: response.data.achievements })
+        this.setState({ userAchievements: response.data.achievements || [] })
       }).catch(err => { })
     }
   }

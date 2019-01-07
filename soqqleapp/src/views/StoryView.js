@@ -496,7 +496,7 @@ export default class StoryView extends Component {
             style={styles.headerIcon}
           />
           <TouchableOpacity onPress={this.goToProfileScreen}>
-            <Icon name='bars' style={styles.headerFontIcon} />
+            <Icon name='th' style={styles.headerFontIcon} />
           </TouchableOpacity>
         </View>
         <View style={styles.storyContainerView}>
@@ -520,7 +520,7 @@ export default class StoryView extends Component {
         <View style={styles.footer}>
           <TouchableOpacity onPress={this.goToDashboardScreen}>
             <View style={styles.footerTab}>
-              <Icon name='th' style={styles.footerTabIcon} />
+              <Icon name='bars' style={styles.footerTabIcon} />
               <CustomText loading={this.state.loading}
                 styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
                 font='open-sans'>

@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
-import {
-  Platform, StyleSheet, Text, View,
-  SafeAreaView, Dimensions, ScrollView, TouchableWithoutFeedback
-} from 'react-native';
+import React from 'react';
+import { Platform, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { Tab, Tabs, ScrollableTab } from 'native-base';
 import Header from './../components/Header';
 
 import AchievementView from './AchievementView';
@@ -10,7 +8,6 @@ import LevelView from './LevelView';
 import SparkView from './SparkView';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
-var width = Dimensions.get('window').width; //full width
 
 const styles = StyleSheet.create({
   container: {
@@ -24,86 +21,64 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2C2649',
     padding: 0,
-  },
-  tabContainer: {
-    backgroundColor: '#130C38',
-    width: width,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  tabLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 17,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
   }
 });
 
-const tabs = [
-  {
-    key: 'rewards',
-    label: 'Rewards',
-  },
-  {
-    key: 'achievements',
-    label: 'Achievements',
-  },
-  {
-    key: 'levels',
-    label: 'Levels',
-  },
-  {
-    key: 'sparks',
-    label: 'Sparks',
-  }
-]
+const DashboardView = (props) => {
 
-export default class DashboardView extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      selectedTab: 'achievements',
+  const tabs = [
+    {
+      key: 'rewards',
+      label: 'Rewards',
+      component: <Text style={{ color: '#000000' }}>Rewards coming soon..</Text>
+    },
+    {
+      key: 'achievements',
+      label: 'Achievements',
+      component: (<AchievementView {...props} />)
+    },
+    {
+      key: 'levels',
+      label: 'Levels',
+      component: (<LevelView {...props} />)
+    },
+    {
+      key: 'sparks',
+      label: 'Sparks',
+      component: (<SparkView {...props} />)
     }
-  }
-
-  render() {
-    const { selectedTab } = this.state;
-    const { props } = this;
-    const components = {
-      rewards: <Text style={{ color: '#fff' }}>Rewards coming soon..</Text>,
-      achievements: (<AchievementView {...props} />),
-      levels: (<LevelView {...props} />),
-      sparks: (<SparkView {...props} />)
-    }
-    return (
-      <SafeAreaView style={styles.container}>
-        <Header navigation={this.props.navigation}
-          headerStyle={{
-            elevation: 0
-          }} />
-        <View style={styles.contentView}>
-          <View style={styles.tabContainer}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {tabs.map(tab => {
-                return (
-                  <TouchableWithoutFeedback
-                    key={tab.key}
-                    onPress={() => { this.setState({ selectedTab: tab.key }) }}>
-                    <Text
-                      style={tab.key === selectedTab ?
-                        { ...styles.tabLabel, ...{ 'color': '#ffffff' } } :
-                        styles.tabLabel}
-                    >{tab.label}</Text>
-                  </TouchableWithoutFeedback>
-                )
-              })}
-            </ScrollView>
-          </View>
-          {components[this.state.selectedTab]}
-        </View>
-      </SafeAreaView>
-    );
-  }
+  ]
+  return (
+    <SafeAreaView style={styles.container}>
+      <Header navigation={props.navigation}
+        headerStyle={{
+          elevation: 0
+        }} />
+      <View style={styles.contentView}>
+        <Tabs
+          locked={true}
+          renderTabBar={() => <ScrollableTab style={{ borderWidth: 0 }} />}
+          tabBarUnderlineStyle={{ backgroundColor: '#1FBEB8' }}>
+          {tabs.map(tab => {
+            return (
+              <Tab heading={tab.label}
+                tabStyle={{
+                  backgroundColor: '#130C38'
+                }}
+                activeTabStyle={{
+                  backgroundColor: '#130C38',
+                  color: '#ffffff'
+                }}
+                key={tab.key}
+              >
+                {tab.component}
+              </Tab>
+            )
+          })}
+        </Tabs>
+      </View>
+    </SafeAreaView>
+  );
 }
+
+export default DashboardView;
