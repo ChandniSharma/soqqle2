@@ -3,6 +3,7 @@ import * as axios from 'axios';
 import { API_BASE_URL } from '../config';
 import { USER_TASK_GROUP_LIST_PATH_API } from './../endpoints';
 import { Effects, loop } from 'redux-loop-symbol-ponyfill';
+import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 
@@ -308,6 +309,7 @@ export async function getUserTaskGroups(data) {
 }
 
 export function logout() {
+  store.dispatch(SessionStateActions.initializeSessionState());
   return { type: LOG_OUT }
 }
 
