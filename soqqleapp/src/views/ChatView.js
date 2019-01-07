@@ -126,9 +126,9 @@ export default class UserTaskGroupView extends Component {
   }
 
   goToTask = (story) => {
-    const {skill} = story;
+    const {skill, reward} = story;
     if (skill) {
-      this.props.navigation.navigate('Task', {skill})
+      this.props.navigation.navigate('Task', {skill, reward})
     }
   }
 

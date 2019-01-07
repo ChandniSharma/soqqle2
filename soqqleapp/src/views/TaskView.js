@@ -27,7 +27,13 @@ export default class TaskView extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {questions: [], currentSlideIndex: 0, modalVisible: false, helps: []};
+    this.state = {
+      questions: [],
+      currentSlideIndex: 0,
+      modalVisible: false,
+      helps: [],
+      resultModalVisible: false,
+    };
   }
 
   static flashMessage = message => {
@@ -67,6 +73,13 @@ export default class TaskView extends Component {
         break;
       }
     }
+    if (isCompleted) {
+      this.setState({resultModalVisible: true})
+    }
+  }
+
+  onShowResult = () => {
+    this.setState({resultModalVisible: false}, this.props.navigation.goBack)
   }
 
   renderIlluminate = ({item, index}) => {
@@ -103,9 +116,24 @@ export default class TaskView extends Component {
   }
 
   render() {
-    const {questions, currentSlideIndex, modalVisible, helps} = this.state;
+    const {questions, currentSlideIndex, modalVisible, helps, resultModalVisible} = this.state;
+    const reward = this.props.navigation.getParam('reward', null);
     return (
       <SafeAreaView style={styles.container}>
+        <Modal
+          animationType="fade"
+          transparent
+          visible={resultModalVisible}
+        >
+          <View style={styles.helpModal}>
+            <View style={styles.resultModalContent}>
+              <Text style={[styles.buttonText, {fontSize: 25}]}>You gain {reward.value || 0} {reward.type || ''}</Text>
+              <Button style={styles.stepButton} onPress={this.onShowResult} medium rounded>
+                <Text style={[styles.buttonText, {fontSize: 25}]}>OK</Text>
+              </Button>
+            </View>
+          </View>
+        </Modal>
         <Modal
           animationType="fade"
           transparent
@@ -238,6 +266,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+  resultModalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   helpModalContent: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
