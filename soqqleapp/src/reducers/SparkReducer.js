@@ -8,6 +8,7 @@ import store from '../redux/store';
 const GET_SPARKS_REQUESTED = 'sparksState/GET_SPARKS_REQUESTED';
 const GET_SPARKS_COMPLETED = 'sparksState/GET_SPARKS_COMPLETED';
 const GET_SPARKS_FAILED = 'sparksState/GET_SPARKS_FAILED';
+const RESET_SPARKS = 'sparksState/RESET_SPARKS';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -40,6 +41,12 @@ export function getSparksFailed(error) {
   };
 }
 
+export function resetSparks() {
+  return {
+    type: RESET_SPARKS,
+  };
+}
+
 export async function getSparks(data) {
   try {
     if (data.initialLoad) {
@@ -69,6 +76,8 @@ export default function sparkStateReducer(state = initialState, action = {}) {
       return state.set('details', action.payload).set('getSparksSuccess', true);
     case GET_SPARKS_FAILED:
       return state.set('error', action.payload).set('getSparksSuccess', false);
+    case RESET_SPARKS:
+      return state.set('details', []).set('getSparksSuccess', false);
     default:
       return state;
   }
