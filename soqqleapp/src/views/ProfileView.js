@@ -1,25 +1,17 @@
 import React, {Component} from 'react';
-import { StackActions, NavigationActions } from 'react-navigation';
-import {Image, StyleSheet, View} from 'react-native';
+import {NavigationActions, StackActions} from 'react-navigation';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
-import {
-  Menu,
-  MenuTrigger,
-  MenuOptions,
-  MenuOption, MenuProvider
-} from 'react-native-popup-menu';
+import {Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger} from 'react-native-popup-menu';
 import _ from 'lodash';
 import {MAIN_COLOR} from "../constants";
 import {
   Body,
   Button,
-  Card,
   CardItem,
   Container,
-  Content,
   Header,
   Icon,
-  Input,
   Item,
   Left,
   Right,
@@ -57,6 +49,45 @@ export default class ProfileView extends Component {
   goBack = () => {
     this.props.navigation.pop();
   };
+  goAgendaView = () => {
+    this.props.navigation.navigate("Agenda");
+  };
+  logout = () => {
+    this.menu.close();
+    this.props.userActions.logout();
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({routeName: 'Login'})],
+    });
+    this.props.navigation.dispatch(resetAction);
+  };
+  renderMenu = () => {
+    return <Menu ref={ref => this.menu = ref}>
+      <MenuTrigger>
+        <Icon style={styles.headerIcon} name='settings'/>
+      </MenuTrigger>
+      <MenuOptions>
+        <MenuOption onSelect={() => this.setState({isEdit: true})}>
+          <Button transparent onPress={() => this.setState({isEdit: true})}>
+            <Icon type="FontAwesome" style={styles.headerMenuIcon} name='pencil'/>
+            <Text style={styles.headerMenuIcon}>Edit Profile</Text>
+          </Button>
+        </MenuOption>
+        <MenuOption>
+          <Button transparent onPress={() => this.goAgendaView()}>
+            <Icon type="FontAwesome" style={styles.headerMenuIcon} name='calendar'/>
+            <Text style={styles.headerMenuIcon}>Agenda</Text>
+          </Button>
+        </MenuOption>
+        <MenuOption onSelect={() => this.logout()}>
+          <Button transparent onPress={this.logout}>
+            <Icon type="FontAwesome" style={styles.headerMenuIcon} name='sign-out'/>
+            <Text style={styles.headerMenuIcon}>Exit</Text>
+          </Button>
+        </MenuOption>
+      </MenuOptions>
+    </Menu>;
+  };
 
   constructor(props) {
     super(props);
@@ -84,104 +115,64 @@ export default class ProfileView extends Component {
     }
   }
 
-  goAgendaView = () => {
-    this.props.navigation.navigate("Agenda");
-  }
-
-  logout = () => {
-    this.menu.close();
-    this.props.userActions.logout();
-    const resetAction = StackActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({routeName: 'Login' })],
-    });
-    this.props.navigation.dispatch(resetAction);
-  }
-
-  renderMenu = () => {
-    return <Menu ref={ref => this.menu = ref}>
-      <MenuTrigger>
-        <Icon style={styles.headerIcon} name='settings'/>
-      </MenuTrigger>
-      <MenuOptions>
-        <MenuOption onSelect={() => this.setState({isEdit: true})}>
-          <Button transparent onPress={() => this.setState({isEdit: true})}>
-            <Icon type="FontAwesome" style={styles.headerMenuIcon} name='pencil'/>
-            <Text style={styles.headerMenuIcon}>Edit Profile</Text>
-          </Button>
-        </MenuOption>
-        <MenuOption>
-            <Button transparent onPress={() => this.goAgendaView()}>
-              <Icon type="FontAwesome" style={styles.headerMenuIcon} name='calendar' />
-              <Text style={styles.headerMenuIcon}>Agenda</Text>
-            </Button>
-          </MenuOption>
-        <MenuOption onSelect={() => this.logout()}>
-          <Button transparent onPress={this.logout}>
-          <Icon type="FontAwesome" style={styles.headerMenuIcon} name='sign-out'/>
-          <Text style={styles.headerMenuIcon}>Exit</Text>
-          </Button>
-        </MenuOption>
-      </MenuOptions>
-    </Menu>
-  }
-
   render() {
     const {profile, companies, isEdit} = this.state;
     return (
       <MenuProvider>
-      <Container>
-        <Header transparent style={styles.blurBg}>
-          <Left>
-            <Button transparent onPress={this.goBack}>
-              <Icon style={styles.headerIcon} name='arrow-back'/>
-            </Button>
-          </Left>
-          <Right>
-            {isEdit ?
-                <Button transparent onPress={this.onSave}><Text style={styles.headerIcon}>save</Text></Button> : this.renderMenu()}
-          </Right>
-        </Header>
-        <View style={styles.topProfile}>
-          <CardItem style={styles.blurBg}>
-            <Left>
-              <Thumbnail
-                style={styles.avatar}
-                source={{uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}`}}/>
-              <Body>
-              {isEdit ? <Item>
-                <Input placeholder="First Name" onChangeText={value => this.onChange('firstName', value)}
-                       style={[styles.input, styles.inputName]}
-                       value={profile.firstName}/>
-                <Input placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)}
-                       style={[styles.input, styles.inputName]}
-                       value={profile.lastName}/>
-              </Item> : <Text style={styles.inputName}>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
-              }
-              {isEdit ?
-                <Input placeholder="Title" onChangeText={value => this.onChange('title', value)} style={styles.input}
-                       value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
-              </Body>
-            </Left>
-          </CardItem>
-          <CardItem style={styles.blurBg}>
-            <Body>
-            {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)}
-                                value={profile.bio}/> :
-              <Text>{profile.bio}</Text>}
-            </Body>
-          </CardItem>
-          <CardItem style={styles.blurBg}>
-            {
-              companies.map((company, index) =>
-                <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded
-                        style={styles.companyButton}>
-                  <Text style={{color: MAIN_COLOR}}>{company.name}</Text>
-                </Button>)
-            }
-          </CardItem>
-        </View>
-      </Container>
+          <Container>
+            <Header transparent style={styles.blurBg}>
+              <Left>
+                <Button transparent onPress={this.goBack}>
+                  <Icon style={styles.headerIcon} name='arrow-back'/>
+                </Button>
+              </Left>
+              <Right>
+                {isEdit ?
+                  <Button transparent onPress={this.onSave}><Text
+                    style={styles.headerIcon}>save</Text></Button> : this.renderMenu()}
+              </Right>
+            </Header>
+            <View style={styles.topProfile}>
+              <CardItem style={styles.blurBg}>
+                <Left>
+                  <Thumbnail
+                    style={styles.avatar}
+                    source={{uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}`}}/>
+                  <Body>
+                  {isEdit ? <Item>
+                    <TextInput placeholder="First Name" onChangeText={value => this.onChange('firstName', value)}
+                               style={[styles.input, styles.inputName]}
+                               value={profile.firstName}/>
+                    <TextInput placeholder="Last Name" onChangeText={value => this.onChange('lastName', value)}
+                               style={[styles.input, styles.inputName]}
+                               value={profile.lastName}/>
+                  </Item> : <Text style={styles.inputName}>{`${profile.firstName} ${profile.lastName || ''}`}</Text>
+                  }
+                  {isEdit ?
+                    <TextInput placeholder="Title" onChangeText={value => this.onChange('title', value)}
+                               style={styles.input}
+                               value={profile.title}/> : <Text note>{profile.title || ''}</Text>}
+                  </Body>
+                </Left>
+              </CardItem>
+              <CardItem style={styles.blurBg}>
+                <Body>
+                {isEdit ? <Textarea placeholder="Type your bio" onChangeText={value => this.onChange('bio', value)}
+                                    value={profile.bio}/> :
+                  <Text>{profile.bio}</Text>}
+                </Body>
+              </CardItem>
+              <CardItem style={styles.blurBg}>
+                {
+                  companies.map((company, index) =>
+                    <Button key={`company_${index}`} onPress={() => this.goToCompanyDetails(company)} small rounded
+                            style={styles.companyButton}>
+                      <Text style={{color: MAIN_COLOR}}>{company.name}</Text>
+                    </Button>)
+                }
+              </CardItem>
+            </View>
+          </Container>
       </MenuProvider>
     );
   }
@@ -245,8 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   input: {
-    height: 20,
     fontSize: 15,
-    marginLeft: 10,
   }
 });

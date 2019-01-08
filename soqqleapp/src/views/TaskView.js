@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
   Dimensions,
   Image,
-  ImageBackground, Modal,
+  ImageBackground, KeyboardAvoidingView, Modal,
   Platform, ScrollView,
   StatusBar,
   StyleSheet,
@@ -14,7 +14,7 @@ import {showMessage} from 'react-native-flash-message';
 import {MAIN_COLOR} from "../constants";
 import {SafeAreaView} from "react-navigation";
 import Header from "../components/Header";
-import {widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
 import Carousel from "react-native-snap-carousel";
 import _ from 'lodash';
 const QUESTION_IMAGE_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/questionImages/'
@@ -119,7 +119,43 @@ export default class TaskView extends Component {
     const {questions, currentSlideIndex, modalVisible, helps, resultModalVisible} = this.state;
     const reward = this.props.navigation.getParam('reward', null);
     return (
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled={Platform.OS === 'ios'}>
       <SafeAreaView style={styles.container}>
+        <Header title='Task'
+                navigation={this.props.navigation}
+                headerStyle={{
+                  elevation: 0,
+                }}
+                headerIconStyle={{
+                  color: '#F8F8F8',
+                }}
+
+        />
+        <View style={styles.body}>
+          <Button style={styles.stepButton} onPress={() => {
+          }} small rounded>
+            <Text style={styles.buttonText}>{currentSlideIndex + 1}/{questions.length}</Text>
+          </Button>
+          <Carousel
+            ref={(c) => {
+              this._carousel = c;
+            }}
+            data={questions}
+            renderItem={this.renderIlluminate}
+            sliderWidth={width}
+            itemHeight={hp('70%')}
+            itemWidth={wp('90%')}
+            onBeforeSnapToItem={(slideIndex) => this.setState({currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || []})}
+          />
+          <ImageBackground style={{width: '100%', height: 57}} source={require('../images/RectangleBlue.png')}>
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={this.onSave}
+            >
+              <Text style={styles.submitText}>SAVE</Text>
+            </TouchableOpacity>
+          </ImageBackground>
+        </View>
         <Modal
           animationType="fade"
           transparent
@@ -143,12 +179,12 @@ export default class TaskView extends Component {
           <View style={styles.helpModal}>
             <View style={styles.helpModalContent}>
               <ScrollView>
-              {
-                helps.map((item, index) => this.renderHelpItem(item, index, currentSlideIndex))
-              }
+                {
+                  helps.map((item, index) => this.renderHelpItem(item, index, currentSlideIndex))
+                }
               </ScrollView>
-            <View>
-            </View>
+              <View>
+              </View>
               <TouchableOpacity
                 onPress={() => {
                   this.setState({modalVisible: !modalVisible})
@@ -162,50 +198,23 @@ export default class TaskView extends Component {
             </View>
           </View>
         </Modal>
-        <Header title='Task'
-                navigation={this.props.navigation}
-                headerStyle={{
-                  elevation: 0,
-                }}
-                headerIconStyle={{
-                  color: '#F8F8F8',
-                }}
-
-        />
-        <View style={styles.body}>
-          <Button style={styles.stepButton} onPress={() => {
-          }} small rounded>
-            <Text style={styles.buttonText}>{currentSlideIndex + 1}/{questions.length}</Text>
-          </Button>
-          <Carousel
-            ref={(c) => {
-              this._carousel = c;
-            }}
-            data={questions}
-            renderItem={this.renderIlluminate}
-            sliderWidth={width}
-            itemWidth={wp('90%')}
-            onBeforeSnapToItem={(slideIndex) => this.setState({currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || []})}
-          />
-          <ImageBackground style={{width: '100%', height: 57}} source={require('../images/RectangleBlue.png')}>
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={this.onSave}
-            >
-              <Text style={styles.submitText}>SAVE</Text>
-            </TouchableOpacity>
-          </ImageBackground>
-        </View>
       </SafeAreaView>
+    </KeyboardAvoidingView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    paddingTop: statusBarHeight,
+    flex: 1,
+    padding: 0,
+    flexDirection: 'column',
+    backgroundColor: '#130C38',
+  },
   container: {
     flex: 1,
     padding: 0,
-    paddingTop: statusBarHeight,
     flexDirection: 'column',
     backgroundColor: '#130C38',
   },
@@ -285,7 +294,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: '#FFC600',
     borderWidth: 1,
-    marginTop: 10,
+    marginTop: 5,
   },
   buttonText: {
     color: '#FFC600',
@@ -301,7 +310,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textArea: {
-    height: 200,
     borderWidth: 1,
     borderColor: MAIN_COLOR,
     color: 'white',
