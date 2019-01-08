@@ -7,6 +7,8 @@ import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";
+import * as constants from '../constants';
+import { constant } from 'redux-loop-symbol-ponyfill/lib/effects';
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -17,6 +19,11 @@ const FACEBOOK_LOGIN_REQUESTED = 'UserState/FACEBOOK_LOGIN_REQUESTED';
 const LINKEDIN_LOGIN_REQUESTED = 'UserState/LINKEDIN_LOGIN_REQUESTED';
 const LOGIN_COMPLETED = 'UserState/LOGIN_COMPLETED';
 const LOGIN_FAILED = 'UserState/LOGIN_FAILED';
+
+const FORGOT_PASSWORD_REQUESTED = 'UserState/FORGOT_PASSWORD_REQUESTED';
+const FORGOT_PASSWORD_COMPLETED = 'UserState/FORGOT_PASSWORD_COMPLETED';
+const FORGOT_PASSWORD_FAILED = 'UserState/FORGOT_PASSWORD_FAILED';
+
 
 const GET_COMPANIES_REQUESTED = 'UserState/GET_COMPANIES_REQUESTED';
 const GET_COMPANIES_COMPLETED = 'UserState/GET_COMPANIES_COMPLETED';
@@ -74,6 +81,26 @@ export function loginFailed(error) {
   };
 }
 
+export function forgotpasswordRequested(data){
+  console.log('forgotpasswordRequested ', data);
+  return {
+    type: FORGOT_PASSWORD_REQUESTED,
+    payload: data
+  }
+}
+export function forgotpasswordCompleted(data){
+  return {
+    type: FORGOT_PASSWORD_COMPLETED,
+    payload: data
+  }
+}
+export function forgotpasswordFailed(error){
+  return {
+    type: FORGOT_PASSWORD_FAILED,
+    payload: error
+  }
+}
+
 export function saveProfileRequest(data) {
   return {
     type: SAVE_PROFILE_REQUESTED,
@@ -112,10 +139,40 @@ export async function saveProfile(data) {
   }
 }
 
+
+export async function forgotPassword(data){
+  console.log( 'in api calling methd ', data);
+ // let arrayParam =  {'email':'demo2@demo.com','password':'1234'};
+
+  let arrayParam =  {'email':data.email,'password':data.newPassword};
+
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.post('/auth/forget-password', arrayParam);
+    console.log("response=>", response.data)
+    store.dispatch(AppStateActions.stopLoading());
+    //console.log('For error ping ',response.data.error)
+  
+    return forgotpasswordCompleted(response.data);
+  } catch (error) {
+    console.log("error=>", error.response)
+    store.dispatch(AppStateActions.stopLoading());
+    console.log('error response data ',error.response.data );
+   
+    if (error.response && error.response.data) {
+      return forgotpasswordFailed({ code: error.response.status, message: "Forgot password failed! Please check your email." });
+    }
+    return forgotpasswordFailed({ code: 500, message: 'Unexpected error!' });
+  }
+   
+}
+
 export async function login(data) {
+ 
   try {
     store.dispatch(AppStateActions.startLoading());
     const response = await instance.post('/auth/sign-in', data);
+
     console.log("response=>", response)
     store.dispatch(AppStateActions.stopLoading());
     store.dispatch(AppStateActions.loginSuccess(response.data));
@@ -170,7 +227,6 @@ export async function linkedinLogin(profile) {
   }
 }
 
-
 export function registerRequest(data) {
   return {
     type: REGISTER_REQUESTED,
@@ -209,6 +265,7 @@ export async function register(data) {
     return registerFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
+
 
 
 export function getCompaniesRequest(email) {
@@ -317,6 +374,7 @@ export async function logout() {
 
 // Reducer
 export default function UserStateReducer(state = initialState, action = {}) {
+
   switch (action.type) {
     case REGISTER_REQUESTED:
       return loop(
@@ -327,6 +385,20 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('user', action.payload).set('registerSuccess', true);
     case REGISTER_FAILED:
       return state.set('error', action.payload).set('registerSuccess', false);
+    
+      case FORGOT_PASSWORD_REQUESTED:
+       return loop(
+        state.set('error', null).set('forgotpasswordSuccess', false),
+        Effects.promise(forgotPassword, action.payload)
+       );
+       case FORGOT_PASSWORD_COMPLETED:
+          //console.log("****** forgot pwd payload ",action.payload,"******");
+        return state.set('user', action.payload).set('forgotpasswordSuccess', true);
+
+      case FORGOT_PASSWORD_FAILED:
+      console.log("****** forgot pwd payload ",action.payload,"******");
+          return state.set('error', action.payload).set('forgotpasswordSuccess', false);
+
     case GET_COMPANIES_REQUESTED:
       return loop(
         state.set('error', null).set('getCompaniesSuccess', false),
