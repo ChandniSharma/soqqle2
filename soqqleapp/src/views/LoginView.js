@@ -140,7 +140,6 @@ export default class LoginView extends Component {
     }else if(!newPassword){
       return LoginView.flashMessage(constants.KPASSWORD_VALIDATION_ALERT);
     }else{
-      console.log(' requested param ', this.state);
       userActions.forgotpasswordRequested(this.state);
     }
   }
@@ -174,7 +173,6 @@ export default class LoginView extends Component {
       this.props.navigation.navigate({routeName: 'Story'});
     }
     if (nextProps.forgotpasswordSuccess && nextProps.forgotpasswordSuccess !== this.props.forgotpasswordSuccess) {
-     console.log( 'in forgot pwd success ');
       LoginView.flashMessage(constants.KFORGOT_PWD_SUCCESS_ALERT);
       this.setState({
         modalVisible:false,
@@ -187,7 +185,7 @@ export default class LoginView extends Component {
   }
 
   render() {
-    const {email, password, name, isAgree, newPassword, modalVisible} = this.state;
+    const {email, password, name, isAgree, modalVisible} = this.state;
     return (
       <View
         style={styles.container}

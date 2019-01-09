@@ -82,7 +82,7 @@ export function loginFailed(error) {
 }
 
 export function forgotpasswordRequested(data){
-  console.log('forgotpasswordRequested ', data);
+ 
   return {
     type: FORGOT_PASSWORD_REQUESTED,
     payload: data
@@ -141,9 +141,7 @@ export async function saveProfile(data) {
 
 
 export async function forgotPassword(data){
-  console.log( 'in api calling methd ', data);
- // let arrayParam =  {'email':'demo2@demo.com','password':'1234'};
-
+  
   let arrayParam =  {'email':data.email,'password':data.newPassword};
 
   try {
@@ -151,13 +149,11 @@ export async function forgotPassword(data){
     const response = await instance.post('/auth/forget-password', arrayParam);
     console.log("response=>", response.data)
     store.dispatch(AppStateActions.stopLoading());
-    //console.log('For error ping ',response.data.error)
   
     return forgotpasswordCompleted(response.data);
   } catch (error) {
     console.log("error=>", error.response)
     store.dispatch(AppStateActions.stopLoading());
-    console.log('error response data ',error.response.data );
    
     if (error.response && error.response.data) {
       return forgotpasswordFailed({ code: error.response.status, message: "Forgot password failed! Please check your email." });
