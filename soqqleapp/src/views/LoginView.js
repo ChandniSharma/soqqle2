@@ -24,7 +24,14 @@ export default class LoginView extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {email: '', password: '', isAgree: false};
+    this.state = {
+      email: '', 
+      password: '', 
+      newPassword: '',
+      isAgree: false,
+      modalVisible: false,
+      processing: false,
+    };
   }
 
   static flashMessage = message => {
@@ -146,18 +153,6 @@ export default class LoginView extends Component {
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
     
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '', 
-      password: '', 
-      newPassword: '',
-      isAgree: false,
-      modalVisible: false,
-      processing: false,
-    };
   }
 
   componentWillReceiveProps(nextProps) {
