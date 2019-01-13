@@ -8,3 +8,7 @@ export const TEAM_UPDATE_API = 'https://stgapi.soqqle.com/team/{}/';
 export const ACHIEVEMENT_LIST_PATH_API = '/achievement/group/';
 export const USER_ACHIEVEMENT_LIST_PATH_API = '/userAchievement/{}/'
 export const USER_SPARK_LIST_PATH_API = '/userAccounting?id={}'
+export const SAVE_ANSWERS_PATH_API = '/hangoutAnswersSave';
+export const SAVE_TASK_PATH_API = '/taskSavePost';
+export const UPDATE_USER_TASK_GROUP_API_PATH = '/taskGroup/{}';
+export const GET_OBJECTIVE_API_PATH = '/taskRefs/{}';

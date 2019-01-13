@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import * as axios from 'axios';
 import {
   Dimensions,
   Image,
@@ -9,19 +10,25 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import {Button, Icon, Text, Textarea} from 'native-base';
-import {showMessage} from 'react-native-flash-message';
-import {MAIN_COLOR} from "../constants";
-import {SafeAreaView} from "react-navigation";
+import { Button, Icon, Text, Textarea } from 'native-base';
+import { showMessage } from 'react-native-flash-message';
+import { MAIN_COLOR, QUESTION_IMAGE_BASE_URL } from "../constants";
+import { API_BASE_URL } from './../config';
+import { SAVE_ANSWERS_PATH_API } from './../endpoints';
+import { SafeAreaView } from "react-navigation";
 import Header from "../components/Header";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Carousel from "react-native-snap-carousel";
 import _ from 'lodash';
-const QUESTION_IMAGE_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/questionImages/'
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
-const  {width} = Dimensions.get('window'); //full width
+const { width } = Dimensions.get('window'); //full width
 
+const instance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 25000,
+  headers: { 'Content-type': 'application/json' }
+});
 
 export default class TaskView extends Component {
 
@@ -37,7 +44,7 @@ export default class TaskView extends Component {
   }
 
   static flashMessage = message => {
-    showMessage({message, type: MAIN_COLOR});
+    showMessage({ message, type: MAIN_COLOR });
   };
 
   componentDidMount() {
@@ -48,55 +55,90 @@ export default class TaskView extends Component {
   }
 
   componentWillUnmount() {
-    this.setState({questions: []})
+    this.setState({ questions: [] })
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.questions && !_.isEqual(nextProps.questions, this.state.questions)) {
-      this.setState({questions: nextProps.questions, helps: nextProps.questions[0].preLoad || []})
+      this.setState({ questions: nextProps.questions, helps: nextProps.questions[0].preLoad || [] })
     }
   }
 
   onChange = (index, field, value) => {
-    const {questions} = this.state;
-    this.setState({modalVisible: false, questions: questions.map((question, i) => index === i ? {...question, [field]: value}:question)})
+    const { questions } = this.state;
+    this.setState({ modalVisible: false, questions: questions.map((question, i) => index === i ? { ...question, [field]: value } : question) })
   }
 
   onSave = () => {
-    const {questions} = this.state;
+    const { questions } = this.state;
     let isCompleted = true;
     for (let i = 0; i < questions.length; i++) {
       if (_.isEmpty(questions[i].answer)) {
         TaskView.flashMessage('Please complete all questions!');
-        this.setState({currentSlideIndex: i})
+        this.setState({ currentSlideIndex: i })
         isCompleted = false;
         break;
       }
     }
     if (isCompleted) {
-      this.setState({resultModalVisible: true})
+      this.saveUserQuestions(questions);
     }
   }
 
-  onShowResult = () => {
-    this.setState({resultModalVisible: false}, this.props.navigation.goBack)
+  saveUserQuestions(questions) {
+    let task = this.props.navigation.getParam('task', null);
+    if (task) {
+      let data = {
+        taskId: task._id,
+        userId: this.props.user._id,
+        answers: questions.reduce((obj, item) => {
+          obj[item._id] = { text: item.answer, timeChanged: Date.now() }; return obj
+        }, {})
+      }
+      instance.post(SAVE_ANSWERS_PATH_API, data).then(response => {
+        this.updateTaskStatus(response.data.foundTask);
+        this.setState({ resultModalVisible: true });
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
-  renderIlluminate = ({item, index}) => {
-    const {helps} = this.state;
+  updateTaskStatus(task) {
+    const taskGroups = this.props.taskGroups.taskGroups;
+    const id = this.props.navigation.state.params.task_group_id;
+    let index = id && taskGroups.findIndex(t => {
+      return t._id === id;
+    });
+    if (index > -1) {
+      let taskIndex = taskGroups[index]['_tasks'].findIndex(t => t._id === task._id);
+      if (taskIndex > -1) {
+        taskGroups[index]['_tasks'][taskIndex] = task;
+      }
+    };
+    this.props.userActions.getUserTaskGroupsCompleted({ ...this.props.taskGroups, taskGroups });
+  }
+
+  onShowResult = () => {
+    this.setState({ resultModalVisible: false });
+    this.props.navigation.navigate('Chat', { taskUpdated: true })
+  }
+
+  renderIlluminate = ({ item, index }) => {
+    const { helps } = this.state;
     return <View style={styles.questionCard}>
       <View style={styles.question}>
-      <Text style={styles.questionText}>{item.question}</Text>
-      {!item.noImage && <Image resizeMode="cover" style={styles.image}
-             source={{uri: `${QUESTION_IMAGE_BASE_URL}${item._id}_cover`}}
-             onError={() => this.onChange(index, 'noImage', true)}
+        <Text style={styles.questionText}>{item.question}</Text>
+        {!item.noImage && <Image resizeMode="cover" style={styles.image}
+          source={{ uri: `${QUESTION_IMAGE_BASE_URL}${item._id}_cover` }}
+          onError={() => this.onChange(index, 'noImage', true)}
 
-      />}
+        />}
       </View>
       <View style={styles.answers}>
-        <Textarea placeholderTextColor={MAIN_COLOR} onChangeText={value => this.onChange(index, 'answer', value)} placeholder="Type your answer here!" style={styles.textArea} value={item.answer || ''}/>
+        <Textarea placeholderTextColor={MAIN_COLOR} onChangeText={value => this.onChange(index, 'answer', value)} placeholder="Type your answer here!" style={styles.textArea} value={item.answer || ''} />
 
-        {helps.length > 0 && <Button style={styles.stepButton} onPress={() => this.setState({modalVisible: true})} small rounded>
+        {helps.length > 0 && <Button style={styles.stepButton} onPress={() => this.setState({ modalVisible: true })} small rounded>
           <Text style={styles.buttonText}>Get Help</Text>
         </Button>}
       </View>
@@ -116,90 +158,90 @@ export default class TaskView extends Component {
   }
 
   render() {
-    const {questions, currentSlideIndex, modalVisible, helps, resultModalVisible} = this.state;
+    const { questions, currentSlideIndex, modalVisible, helps, resultModalVisible } = this.state;
     const reward = this.props.navigation.getParam('reward', null);
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled={Platform.OS === 'ios'}>
-      <SafeAreaView style={styles.container}>
-        <Header title='Task'
-                navigation={this.props.navigation}
-                headerStyle={{
-                  elevation: 0,
-                }}
-                headerIconStyle={{
-                  color: '#F8F8F8',
-                }}
-
-        />
-        <View style={styles.body}>
-          <Button style={styles.stepButton} onPress={() => {
-          }} small rounded>
-            <Text style={styles.buttonText}>{currentSlideIndex + 1}/{questions.length}</Text>
-          </Button>
-          <Carousel
-            ref={(c) => {
-              this._carousel = c;
+        <SafeAreaView style={styles.container}>
+          <Header title='Task'
+            navigation={this.props.navigation}
+            headerStyle={{
+              elevation: 0,
             }}
-            data={questions}
-            renderItem={this.renderIlluminate}
-            sliderWidth={width}
-            itemHeight={hp('70%')}
-            itemWidth={wp('90%')}
-            onBeforeSnapToItem={(slideIndex) => this.setState({currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || []})}
+            headerIconStyle={{
+              color: '#F8F8F8',
+            }}
+
           />
-          <ImageBackground style={{width: '100%', height: 57}} source={require('../images/RectangleBlue.png')}>
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={this.onSave}
-            >
-              <Text style={styles.submitText}>SAVE</Text>
-            </TouchableOpacity>
-          </ImageBackground>
-        </View>
-        <Modal
-          animationType="fade"
-          transparent
-          visible={resultModalVisible}
-        >
-          <View style={styles.helpModal}>
-            <View style={styles.resultModalContent}>
-              <Text style={[styles.buttonText, {fontSize: 25}]}>You gain {reward.value || 0} {reward.type || ''}</Text>
-              <Button style={styles.stepButton} onPress={this.onShowResult} medium rounded>
-                <Text style={[styles.buttonText, {fontSize: 25}]}>OK</Text>
-              </Button>
-            </View>
-          </View>
-        </Modal>
-        <Modal
-          animationType="fade"
-          transparent
-          visible={modalVisible}
-          onRequestClose={() => this.setState({modalVisible: !modalVisible})}
-        >
-          <View style={styles.helpModal}>
-            <View style={styles.helpModalContent}>
-              <ScrollView>
-                {
-                  helps.map((item, index) => this.renderHelpItem(item, index, currentSlideIndex))
-                }
-              </ScrollView>
-              <View>
-              </View>
+          <View style={styles.body}>
+            <Button style={styles.stepButton} onPress={() => {
+            }} small rounded>
+              <Text style={styles.buttonText}>{currentSlideIndex + 1}/{questions.length}</Text>
+            </Button>
+            <Carousel
+              ref={(c) => {
+                this._carousel = c;
+              }}
+              data={questions}
+              renderItem={this.renderIlluminate}
+              sliderWidth={width}
+              itemHeight={hp('70%')}
+              itemWidth={wp('90%')}
+              onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || [] })}
+            />
+            <ImageBackground style={{ width: '100%', height: 57 }} source={require('../images/RectangleBlue.png')}>
               <TouchableOpacity
-                onPress={() => {
-                  this.setState({modalVisible: !modalVisible})
-                }}
-                style={styles.likeModalClose}
+                style={styles.submitButton}
+                onPress={this.onSave}
               >
-                <View>
-                  <Icon name='close' style={styles.likeModalCloseIcon} />
-                </View>
+                <Text style={styles.submitText}>SAVE</Text>
               </TouchableOpacity>
-            </View>
+            </ImageBackground>
           </View>
-        </Modal>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+          <Modal
+            animationType="fade"
+            transparent
+            visible={resultModalVisible}
+          >
+            <View style={styles.helpModal}>
+              <View style={styles.resultModalContent}>
+                <Text style={[styles.buttonText, { fontSize: 25 }]}>You gain {reward.value || 0} {reward.type || ''}</Text>
+                <Button style={styles.stepButton} onPress={this.onShowResult} medium rounded>
+                  <Text style={[styles.buttonText, { fontSize: 25 }]}>OK</Text>
+                </Button>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent
+            visible={modalVisible}
+            onRequestClose={() => this.setState({ modalVisible: !modalVisible })}
+          >
+            <View style={styles.helpModal}>
+              <View style={styles.helpModalContent}>
+                <ScrollView>
+                  {
+                    helps.map((item, index) => this.renderHelpItem(item, index, currentSlideIndex))
+                  }
+                </ScrollView>
+                <View>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({ modalVisible: !modalVisible })
+                  }}
+                  style={styles.likeModalClose}
+                >
+                  <View>
+                    <Icon name='close' style={styles.likeModalCloseIcon} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -228,7 +270,7 @@ const styles = StyleSheet.create({
   question: {
     justifyContent: 'center',
     flexDirection: 'column',
-    flex:1,
+    flex: 1,
   },
   questionText: {
     alignSelf: 'center',

@@ -136,7 +136,8 @@ export default class UserTaskGroupView extends Component {
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.navigate("Chat",
                         {
-                            task_group_id: item._id
+                            task_group_id: item._id,
+                            taskUpdated: false
                         }
                     )}
                 >
