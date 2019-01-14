@@ -277,7 +277,7 @@ export default class StoryView extends Component {
                 <CustomText loading={this.state.loading}
                   styles={styles.storyTag}
                   font='open-sans'>
-                  {`${item._objective.value} ${item._objective.name.toUpperCase()}`}
+                  {`${item._objective.value || 0} ${item._objective.name.toUpperCase()}`}
                 </CustomText>
               ) : null}
               <CustomText loading={this.state.loading}
@@ -289,7 +289,7 @@ export default class StoryView extends Component {
                 <CustomText loading={this.state.loading}
                   styles={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}
                   font='open-sans'>
-                  {`${item.reward.value} ${item.reward.type.toUpperCase()}`}
+                  {`${item.reward.value || 0} ${item.reward.type.toUpperCase()}`}
                 </CustomText>
               ) : null}
             </View>
@@ -359,6 +359,8 @@ export default class StoryView extends Component {
     endpoint = endpoint.replace('{type}', 'Story');
     endpoint = endpoint.concat('&page_size=', 3);
     endpoint = endpoint.concat('&type_id=', storyId);
+    endpoint = endpoint.concat('&user_email=', this.props.user.profile.email);
+    endpoint = endpoint.concat('&filter_user=', true);
     instance.get(endpoint).then(response => {
       this.setState({
         userTaskGroups: response.data.latestUserTaskGroups,

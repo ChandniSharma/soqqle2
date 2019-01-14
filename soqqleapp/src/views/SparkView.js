@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
 
 let userId = null;
 let profile = null;
-let endpoint = USER_SPARK_LIST_PATH_API;
 
 function getDateFromTimestamp(timestamp) {
   if (!timestamp) return null;
@@ -66,28 +65,26 @@ export default class SparkView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sparks: sortByKey(this.props.sparks, '_id'),
+      sparks: sortByKey(this.props.sparks.transactions || [], '_id'),
       refreshing: false,
       sorter: '_id',
     }
     userId = this.props.user._id || null;
     profile = this.props.user.profile || null;
-    endpoint = endpoint.replace('{}', userId);
-  }
-
-  componentWillUnmount() {
-    endpoint = USER_SPARK_LIST_PATH_API;
   }
 
   componentWillMount() {
-    if (!this.props.sparks.length) {
+    if (!Object.keys(this.props.sparks).length) {
+      let endpoint = USER_SPARK_LIST_PATH_API.replace('{}', this.props.user._id);
       this.props.sparkActions.getSparksRequest({ initialLoad: true, endpoint });
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.sparks.length != this.props.sparks.length) {
-      this.setState({ sparks: sortByKey(nextProps.sparks, this.state.sorter) });
+    if (Object.keys(nextProps.sparks).length
+      && (!this.props.sparks.transactions ||
+        nextProps.sparks.transactions.length != this.props.sparks.transactions.length)) {
+      this.setState({ sparks: sortByKey(nextProps.sparks.transactions, this.state.sorter) });
     }
   }
 
@@ -109,6 +106,7 @@ export default class SparkView extends Component {
   }
 
   handleRefresh() {
+    let endpoint = USER_SPARK_LIST_PATH_API.replace('{}', this.props.user._id);
     this.props.sparkActions.getSparksRequest({ endpoint });
   }
 

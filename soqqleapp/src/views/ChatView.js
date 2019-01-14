@@ -150,7 +150,7 @@ export default class UserTaskGroupView extends Component {
           task.metaData.subject.skill._id == taskGroup._typeObject._id
       })[0];
     }
-    this.setState({ taskGroup, userTask });
+    this.setState({ taskGroup, userTask: userTask || {} });
   }
 
   goToTask = (story) => {
@@ -259,6 +259,7 @@ export default class UserTaskGroupView extends Component {
   render() {
     const { taskGroup } = this.state;
     const story = taskGroup._typeObject;
+    const isCompleted = this.state.userTask.status === 'complete';
     return (
       <SafeAreaView style={styles.container}>
         <Header title='Chat'
@@ -287,20 +288,20 @@ export default class UserTaskGroupView extends Component {
               <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.storyDetailTag}>50 xp</Text>
                 <Text style={styles.storyDetailTag}>5 team xp</Text>
-                {story.reward ? (
+                {story.reward && (
                   <Text style={styles.storyDetailTag}>
                     {`${story.reward.type} ${story.reward.value || ''}`}
                   </Text>
-                ) : null}
+                )}
               </View>
-              <TouchableOpacity onPress={() => this.goToTask(story)}>
+              <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
                 <View style={styles.storyDetailActionTag}>
                   {this.state.processing ? (
                     <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
                   ) : (
                       <Text style={{ color: '#ffffff' }}>
                         {Object.keys(this.state.userTask).length ? (
-                          this.state.userTask.status === 'complete' ? 'Task Completed' : 'Task Started'
+                          isCompleted ? 'Task Completed' : 'Task Started'
                         ) : 'Start Task'}
                       </Text>
                     )}

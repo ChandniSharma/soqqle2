@@ -17,7 +17,7 @@ const instance = axios.create({
 });
 
 // Initial state
-const initialState = Map({ isLoading: false, details: [], error: {} });
+const initialState = Map({ isLoading: false, details: {}, error: {} });
 
 
 export function getSparksRequest(data) {
@@ -54,7 +54,7 @@ export async function getSparks(data) {
     }
     const response = await instance.get(data.endpoint);
     store.dispatch(AppStateActions.stopLoading());
-    return getSparksCompleted(response.data.userTransactions);
+    return getSparksCompleted({ transactions: response.data.userTransactions, tokensCount: response.data.userAccounting.numTokens });
   } catch (error) {
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
@@ -77,7 +77,7 @@ export default function sparkStateReducer(state = initialState, action = {}) {
     case GET_SPARKS_FAILED:
       return state.set('error', action.payload).set('getSparksSuccess', false);
     case RESET_SPARKS:
-      return state.set('details', []).set('getSparksSuccess', false);
+      return state.set('details', {}).set('getSparksSuccess', false);
     default:
       return state;
   }

@@ -14,7 +14,7 @@ import { Button, Icon, Text, Textarea } from 'native-base';
 import { showMessage } from 'react-native-flash-message';
 import { MAIN_COLOR, QUESTION_IMAGE_BASE_URL } from "../constants";
 import { API_BASE_URL } from './../config';
-import { SAVE_ANSWERS_PATH_API } from './../endpoints';
+import { SAVE_ANSWERS_PATH_API, USER_SPARK_LIST_PATH_API } from './../endpoints';
 import { SafeAreaView } from "react-navigation";
 import Header from "../components/Header";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -97,6 +97,7 @@ export default class TaskView extends Component {
       }
       instance.post(SAVE_ANSWERS_PATH_API, data).then(response => {
         this.updateTaskStatus(response.data.foundTask);
+        this.refreshSparks();
         this.setState({ resultModalVisible: true });
       }).catch((error) => {
         console.log(error);
@@ -117,6 +118,11 @@ export default class TaskView extends Component {
       }
     };
     this.props.userActions.getUserTaskGroupsCompleted({ ...this.props.taskGroups, taskGroups });
+  }
+
+  refreshSparks() {
+    let endpoint = USER_SPARK_LIST_PATH_API.replace('{}', this.props.user._id);
+    this.props.sparkActions.getSparksRequest({ endpoint });
   }
 
   onShowResult = () => {

@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { NavigationActions } from 'react-navigation';
 import * as UserActions from '../reducers/UserReducer';
 import * as TaskActions from '../reducers/TaskReducer';
+import * as sparkActions from '../reducers/SparkReducer';
 
 export default connect(
   state => ({
@@ -18,7 +19,8 @@ export default connect(
     return {
       navigate: bindActionCreators(NavigationActions.navigate, dispatch),
       taskActions: bindActionCreators(TaskActions, dispatch),
-      userActions: bindActionCreators(UserActions, dispatch)
+      userActions: bindActionCreators(UserActions, dispatch),
+      sparkActions: bindActionCreators(sparkActions, dispatch)
     };
   }
 )(TaskView);
