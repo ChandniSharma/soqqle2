@@ -1,120 +1,15 @@
 import React, { Component } from 'react';
-import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
+import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
   headers: { 'Content-type': 'application/json' }
-});
-
-
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 0,
-    paddingTop: statusBarHeight,
-    backgroundColor: '#ffffff',
-    flex: 1,
-    flexDirection: 'column'
-  },
-  storyDetailView: {
-    paddingVertical: 15,
-    paddingTop: 5,
-    paddingHorizontal: 15,
-    backgroundColor: '#F8F8F8',
-  },
-  storyDetailHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  storyDetailTitle: {
-    fontSize: 18,
-    color: '#000000',
-    width: '70%',
-    fontWeight: '400'
-  },
-  storyDetailXP: {
-    fontSize: 16,
-    color: '#9600A1',
-    fontWeight: '500'
-  },
-  storyDetailText: {
-    paddingVertical: 10,
-    fontSize: 14,
-    color: '#000000'
-  },
-  storyDetailTagTitle: {
-    fontSize: 14,
-    color: '#000000',
-    fontWeight: '400'
-  },
-  storyDetailTags: {
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  storyDetailTag: {
-    color: '#9600A1',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 14,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#9600A1',
-    marginRight: 8,
-  },
-  storyDetailActionTag: {
-    color: '#FFFFFF',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#1FBEB8'
-  },
-  chatView: {
-    flex: 1,
-    flexDirection: 'column',
-    shadowColor: 'rgba(0, 0, 0, 0.9)',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    elevation: 5,
-  },
-  chatItemsView: {
-    flex: 1,
-    padding: 15,
-  },
-  chatItem: {
-    width: '100%',
-    marginBottom: 10,
-  },
-  chatActionView: {
-    height: 50,
-    backgroundColor: '#F8F8F8',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-  chatAttachmentIcon: {
-    color: '#cccccc',
-    fontSize: 20,
-    marginRight: 15,
-  },
-  chatInputItem: {
-    height: 30,
-    backgroundColor: '#ffffff',
-    borderColor: '#cccccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    width: '80%',
-    paddingVertical: 0,
-    paddingHorizontal: 10,
-  }
 });
 
 export default class UserTaskGroupView extends Component {
@@ -154,7 +49,9 @@ export default class UserTaskGroupView extends Component {
   }
 
   goToTask = (story) => {
-    if (this.state.processing || this.state.userTask.status === 'complete') return;
+    if (this.state.processing || this.isTaskCompleted()) {
+      return;
+    }
     let taskGroupId = this.props.navigation.state.params.task_group_id;
     const { skill, reward } = story;
     if (skill) {
@@ -165,7 +62,9 @@ export default class UserTaskGroupView extends Component {
         })
       }
       else {
-        this.setState({ processing: true });
+        this.setState({
+          processing: true
+        });
         instance.get(GET_OBJECTIVE_API_PATH.replace('{}', story._objective)).then(response => {
           let objectiveType = response.data && response.data.name.toLocaleLowerCase()
           if (objectiveType) {
@@ -180,17 +79,17 @@ export default class UserTaskGroupView extends Component {
 
   createTask(data, objectiveType, taskGroupId) {
     const userId = this.props.user._id;
-    const profile = this.props.user.profile || null;
-
+    const profile = this.props.user.profile || {};
+    const { firstName, lastName } = profile;
     const taskData = {
       type: objectiveType,
-      userName: `${profile.firstName}${profile.lastName ? ` ${profile.lastName}` : ''}`,
+      userName: `${firstName}${lastName ? ` ${lastName}` : ''}`,
       userID: userId,
       isHidden: 0,
       creator: {
         _id: userId,
-        firstName: profile.firstName,
-        ...(profile.lastName ? { lastName: profile.lastName } : {})
+        firstName: firstName,
+        ...(lastName ? { lastName: lastName } : {})
       },
       metaData: {
         subject: {
@@ -201,8 +100,8 @@ export default class UserTaskGroupView extends Component {
           {
             user: {
               _id: userId,
-              firstName: profile.firstName,
-              ...(profile.lastName ? { lastName: profile.lastName } : {})
+              firstName: firstName,
+              ...(lastName ? { lastName: lastName } : {})
             },
             status: 'accepted',
             isCreator: true,
@@ -212,6 +111,7 @@ export default class UserTaskGroupView extends Component {
         time: Date.now(),
         awardXP: null
       },
+      name: data.name
     };
 
     instance.post(SAVE_TASK_PATH_API, taskData).then(response => {
@@ -232,7 +132,9 @@ export default class UserTaskGroupView extends Component {
     tasks.push(task);
     let path = UPDATE_USER_TASK_GROUP_API_PATH.replace('{}', taskGroup._id);
     instance.put(path, { '_tasks': tasks }).then(response => {
-      this.setState({ processing: false });
+      this.setState({
+        processing: false
+      });
       this.props.navigation.navigate('Task', {
         skill, reward,
         task: this.state.userTask, task_group_id: taskGroupId
@@ -256,25 +158,22 @@ export default class UserTaskGroupView extends Component {
     this.props.userActions.getUserTaskGroupsCompleted({ ...this.props.taskGroups, taskGroups });
   }
 
+  isTaskCompleted() {
+    return this.state.userTask.status === 'complete';
+  }
+
   render() {
     const { taskGroup } = this.state;
     const story = taskGroup._typeObject;
-    const isCompleted = this.state.userTask.status === 'complete';
+    const isCompleted = this.isTaskCompleted();
     return (
       <SafeAreaView style={styles.container}>
         <Header title='Chat'
           navigation={this.props.navigation}
           rightText={story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}
-          headerStyle={{
-            backgroundColor: '#F8F8F8',
-            elevation: 0,
-          }}
-          headerIconStyle={{
-            color: '#130C38',
-          }}
-          headerRightTextStyle={{
-            color: '#1FBEB8'
-          }}
+          headerStyle={styles.headerStyle}
+          headerIconStyle={styles.headerIconStyle}
+          headerRightTextStyle={styles.headerRightTextStyle}
         />
         <View style={styles.storyDetailView}>
           <View style={styles.storyDetailHeader}>

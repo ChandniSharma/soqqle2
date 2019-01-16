@@ -8,7 +8,8 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native';
 import { Button, Icon, Text, Textarea } from 'native-base';
 import { showMessage } from 'react-native-flash-message';
@@ -40,6 +41,7 @@ export default class TaskView extends Component {
       modalVisible: false,
       helps: [],
       resultModalVisible: false,
+      processing: false,
     };
   }
 
@@ -80,17 +82,22 @@ export default class TaskView extends Component {
         break;
       }
     }
-    if (isCompleted) {
+    if (isCompleted && !this.state.processing) {
       this.saveUserQuestions(questions);
     }
   }
 
   saveUserQuestions(questions) {
     let task = this.props.navigation.getParam('task', null);
+    const reward = this.props.navigation.getParam('reward', {});
     if (task) {
+      this.setState({
+        processing: true,
+      })
       let data = {
         taskId: task._id,
         userId: this.props.user._id,
+        tokenCount: reward.value || 0,
         answers: questions.reduce((obj, item) => {
           obj[item._id] = { text: item.answer, timeChanged: Date.now() }; return obj
         }, {})
@@ -98,7 +105,7 @@ export default class TaskView extends Component {
       instance.post(SAVE_ANSWERS_PATH_API, data).then(response => {
         this.updateTaskStatus(response.data.foundTask);
         this.refreshSparks();
-        this.setState({ resultModalVisible: true });
+        this.setState({ resultModalVisible: true, processing: false });
       }).catch((error) => {
         console.log(error);
       });
@@ -200,7 +207,11 @@ export default class TaskView extends Component {
                 style={styles.submitButton}
                 onPress={this.onSave}
               >
-                <Text style={styles.submitText}>SAVE</Text>
+                {this.state.processing ? (
+                  <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
+                ) : (
+                    <Text style={styles.submitText}>SAVE</Text>
+                  )}
               </TouchableOpacity>
             </ImageBackground>
           </View>

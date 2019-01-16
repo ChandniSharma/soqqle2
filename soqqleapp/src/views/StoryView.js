@@ -242,6 +242,35 @@ let selectedItemId = null;
 
 export default class StoryView extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      stories: [],
+      currentSlideIndex: 0,
+      modalVisible: false,
+      processing: false,
+      tasksFetching: false,
+      userTaskGroups: []
+    };
+  }
+
+  componentWillMount() {
+    this.getStories();
+  }
+
+  goToDashboardScreen = () => {
+    this.props.navigation.navigate({ routeName: 'Dashboard' })
+  }
+
+  goToProfileScreen = () => {
+    this.props.navigation.navigate({ routeName: 'Profile' })
+  }
+
+  goToUserTasksScreen = () => {
+    this.props.navigation.navigate({ routeName: 'UserTaskGroup' })
+  }
+
   _renderItem = ({ item, index }) => {
     return (
       <View>
@@ -316,35 +345,6 @@ export default class StoryView extends Component {
       </View>
     );
   };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      stories: [],
-      currentSlideIndex: 0,
-      modalVisible: false,
-      processing: false,
-      tasksFetching: false,
-      userTaskGroups: []
-    };
-  }
-
-  componentWillMount() {
-    this.getStories();
-  }
-
-  goToDashboardScreen = () => {
-    this.props.navigation.navigate({ routeName: 'Dashboard' })
-  }
-
-  goToProfileScreen = () => {
-    this.props.navigation.navigate({ routeName: 'Profile' })
-  }
-
-  goToUserTasksScreen = () => {
-    this.props.navigation.navigate({ routeName: 'UserTaskGroup' })
-  }
 
   setModalVisible(visible, itemId) {
     this.setState({ modalVisible: visible, tasksFetching: !!itemId, userTaskGroups: [] });
@@ -497,8 +497,8 @@ export default class StoryView extends Component {
             source={require('./../../assets/images/chat.png')}
             style={styles.headerIcon}
           />
-          <TouchableOpacity onPress={this.goToProfileScreen}>
-            <Icon name='th' style={styles.headerFontIcon} />
+          <TouchableOpacity onPress={this.goToDashboardScreen}>
+            <Icon name='bars' style={styles.headerFontIcon} />
           </TouchableOpacity>
         </View>
         <View style={styles.storyContainerView}>
@@ -520,9 +520,9 @@ export default class StoryView extends Component {
             )}
         </View>
         <View style={styles.footer}>
-          <TouchableOpacity onPress={this.goToDashboardScreen}>
+          <TouchableOpacity onPress={this.goToProfileScreen}>
             <View style={styles.footerTab}>
-              <Icon name='bars' style={styles.footerTabIcon} />
+              <Icon name='th' style={styles.footerTabIcon} />
               <CustomText loading={this.state.loading}
                 styles={{ ...styles.footerTabText, ...{ 'marginRight': 0 } }}
                 font='open-sans'>
