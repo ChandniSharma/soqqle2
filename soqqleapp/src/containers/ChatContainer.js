@@ -6,8 +6,7 @@ import ChatView from '../views/ChatView';
 
 export default connect(
     state => ({
-        isReady: state.getIn(['session', 'isReady']),
-        user: state.getIn(['user', 'user']),
+        user: isImmutable(state.getIn(['user', 'user'])) ? state.getIn(['user', 'user']).toJS() : state.getIn(['user', 'user']),
         taskGroups: isImmutable(state.getIn(['user', 'task_groups'])) ? state.getIn(['user', 'task_groups']).toJS() : state.getIn(['user', 'task_groups']),
     }),
     dispatch => {

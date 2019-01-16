@@ -7,8 +7,7 @@ import SparkView from '../views/SparkView';
 
 export default connect(
   state => ({
-    isReady: state.getIn(['session', 'isReady']),
-    user: state.getIn(['user', 'user']),
+    user: isImmutable(state.getIn(['user', 'user'])) ? state.getIn(['user', 'user']).toJS() : state.getIn(['user', 'user']),
     sparks: isImmutable(state.getIn(['spark', 'details'])) ? state.getIn(['spark', 'details']).toJS() : state.getIn(['spark', 'details']),
   }),
   dispatch => {

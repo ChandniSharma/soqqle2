@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
+import { isImmutable } from 'immutable';
 import LevelView from '../views/LevelView';
 
 export default connect(
   state => ({
-    isReady: state.getIn(['session', 'isReady']),
-    user: state.getIn(['user', 'user'])
+    user: isImmutable(state.getIn(['user', 'user'])) ? state.getIn(['user', 'user']).toJS() : state.getIn(['user', 'user']),
   })
 )(LevelView);

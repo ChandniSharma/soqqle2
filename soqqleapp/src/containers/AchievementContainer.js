@@ -7,8 +7,7 @@ import AchievementView from '../views/AchievementView';
 
 export default connect(
   state => ({
-    isReady: state.getIn(['session', 'isReady']),
-    user: state.getIn(['user', 'user']),
+    user: isImmutable(state.getIn(['user', 'user'])) ? state.getIn(['user', 'user']).toJS() : state.getIn(['user', 'user']),
     achievements: isImmutable(state.getIn(['achievement', 'details'])) ? state.getIn(['achievement', 'details']).toJS() : state.getIn(['achievement', 'details']),
   }),
   dispatch => {
