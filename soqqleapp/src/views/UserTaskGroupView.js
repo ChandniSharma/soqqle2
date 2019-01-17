@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import {
     Platform, StyleSheet, TouchableWithoutFeedback,
-    Text, View, SafeAreaView, FlatList,
+    Text, View, SafeAreaView, FlatList,TouchableOpacity
 } from 'react-native';
 import Header from './../components/Header';
 import { PAGE_SIZE } from './../constants';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 
@@ -137,13 +138,8 @@ export default class UserTaskGroupView extends Component {
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.navigate("Chat",
                         {
-<<<<<<< Updated upstream
                             task_group_id: item._id,
                             taskUpdated: false
-=======
-                            
-                            task_group_id: item._id
->>>>>>> Stashed changes
                         }
                     )}
                 >

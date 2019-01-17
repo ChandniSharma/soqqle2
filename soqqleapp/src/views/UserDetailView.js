@@ -224,24 +224,6 @@ export default class UserDetailView extends Component{
                     </Text>
                 </TouchableOpacity>
                 </View>
-              {/*  <View style={styles.viewContainImage}>
-                <ImageBackground source={require('../../assets/images/Soldier.png')} style={styles.imgStyle}>
-                                        <Text style={styles.txtMin}>
-                            5 min
-                        </Text>
-                    </ImageBackground>
-                    <Text>
-                        Completed the superwoman Achievement!
-                    </Text>
-                         <View style={{flexDirection:'row', alignSelf:'center'}}>
-                                <Text style={styles.textGrayLine }> You need 5 more </Text>
-                                <Text style={styles.txtIluminates}> illuminates </Text>
-                                <Text style={styles.textGrayLine}> to complete this.</Text>
-                         </View>
-                        
-
-                     </View> */}
-                 
                 </SafeAreaView>
         )
     }

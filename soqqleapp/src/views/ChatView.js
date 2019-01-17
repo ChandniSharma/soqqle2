@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator,Platform} from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
@@ -15,10 +15,6 @@ const instance = axios.create({
   timeout: 25000,
   headers: { 'Content-type': 'application/json' }
 });
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
-var width = Dimensions.get('window').width; //full width
-var height = Dimensions.get('window').height; //full height
-
 
 export default class UserTaskGroupView extends Component {
 
@@ -172,11 +168,12 @@ export default class UserTaskGroupView extends Component {
 
   render() {
     const { taskGroup } = this.state;
-    const story = taskGroup._typeObject;
+    
     const isCompleted = this.isTaskCompleted();
 
         const story = taskGroup._typeObject;
         let countExtraMbr = 0;
+
         countExtraMbr = this.state.taskGroup._team.emails.length-2;
 
         // Now showing photos
@@ -213,36 +210,23 @@ export default class UserTaskGroupView extends Component {
           headerRightTextStyle={styles.headerRightTextStyle}
         />
         <View style={styles.storyDetailView}>
-          <View style={styles.storyDetailHeader}>
-            <Text style={styles.storyDetailTitle}>{story.name}</Text>
-            <Text style={styles.storyDetailXP}>Team 100 XP</Text>
-          </View>
+            <View style={styles.storyDetailHeader}>
+              <Text style={styles.storyDetailTitle}>{story.name}</Text>
+              <Text style={styles.storyDetailXP}>Team 100 XP</Text>
+            </View>
           <Text style={styles.storyDetailText} numberOfLines={2}>{story.description}</Text>
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
             <View style={styles.storyDetailTags}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.storyDetailTag}>50 xp</Text>
-                <Text style={styles.storyDetailTag}>5 team xp</Text>
-                {story.reward && (
-                  <Text style={styles.storyDetailTag}>
-                    {`${story.reward.type} ${story.reward.value || ''}`}
-                  </Text>
-                )}
-              </View>
-              <View style={styles.viewShowMember}>
-                {image1}
-                {image2}
-                <View style={styles.plusMemberView}>
-                    <TouchableOpacity style={styles.plusMemberBtn} onPress={()=>this.props.navigation.navigate('UsersList',{taskGroupData:this.state.taskGroup})}>
-                        <Text style={styles.plusTxt}>
-                            +{countExtraMbr}
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text style={styles.storyDetailTag}>50 xp</Text>
+                      <Text style={styles.storyDetailTag}>5 team xp</Text>
+                      {story.reward && (
+                        <Text style={styles.storyDetailTag}>
+                          {`${story.reward.type} ${story.reward.value || ''}`}
                         </Text>
-                        </TouchableOpacity>
-                </View>
-                    
-               </View>
-              <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
+                      )}
+                      <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
                 <View style={styles.storyDetailActionTag}>
                   {this.state.processing ? (
                     <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
@@ -255,9 +239,29 @@ export default class UserTaskGroupView extends Component {
                     )}
                 </View>
               </TouchableOpacity>
-            </View>
+                    </View>
+                </View>
+              
+              
           </View>
         </View>
+        
+        <TouchableOpacity onPress={()=>this.props.navigation.navigate('UsersList',{taskGroupData:this.state.taskGroup})}>
+          <View style={styles.viewShowMember}>
+            {image1}
+            {image2}
+            { countExtraMbr > 0 && 
+            <View style={styles.plusMemberView}>
+                    <Text style={styles.plusTxt}>
+                        +{countExtraMbr}
+                    </Text>
+                    
+            </View>
+            }
+           </View>
+        </TouchableOpacity>
+                
+                
       </SafeAreaView>
     );
   }
