@@ -306,7 +306,7 @@ export default class StoryView extends Component {
                 <CustomText loading={this.state.loading}
                   styles={styles.storyTag}
                   font='open-sans'>
-                  {`${item._objective.value || 0} ${item._objective.name.toUpperCase()}`}
+                  {`${item.objectiveValue || 0} ${item._objective.name.toUpperCase()}`}
                 </CustomText>
               ) : null}
               <CustomText loading={this.state.loading}
