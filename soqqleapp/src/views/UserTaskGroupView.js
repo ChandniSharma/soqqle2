@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
     },
     listLoader: {
         paddingVertical: 10,
-    }
+    },
+   
 });
 
 let pageNum = 0;
@@ -136,8 +137,13 @@ export default class UserTaskGroupView extends Component {
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.navigate("Chat",
                         {
+<<<<<<< Updated upstream
                             task_group_id: item._id,
                             taskUpdated: false
+=======
+                            
+                            task_group_id: item._id
+>>>>>>> Stashed changes
                         }
                     )}
                 >
@@ -155,10 +161,10 @@ export default class UserTaskGroupView extends Component {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
+               
             </View>
         );
-    };
-
+    }
     handleBackAction() {
         this.props.navigation.navigate({ routeName: 'Story' })
     }
@@ -185,6 +191,19 @@ export default class UserTaskGroupView extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <Header title='Groups' navigation={this.props.navigation} />
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={() => this.handleBackAction()}
+                        style={styles.headerBackView}>
+                        <View>
+                            <Icon
+                                name='chevron-left'
+                                style={styles.headerBackIcon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <Text style={styles.headerText}>Groups</Text>
+                </View>
                 <View style={{ flex: 1, marginTop: 5 }}>
                     <FlatList
                         data={this.state.userTasks}

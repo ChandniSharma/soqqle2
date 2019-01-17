@@ -5,12 +5,20 @@ import { API_BASE_URL } from './../config';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
+import UsersList from './UsersList';
+import {
+    Thumbnail
+  } from "native-base";
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
   headers: { 'Content-type': 'application/json' }
 });
+const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
+var width = Dimensions.get('window').width; //full width
+var height = Dimensions.get('window').height; //full height
+
 
 export default class UserTaskGroupView extends Component {
 
@@ -166,6 +174,35 @@ export default class UserTaskGroupView extends Component {
     const { taskGroup } = this.state;
     const story = taskGroup._typeObject;
     const isCompleted = this.isTaskCompleted();
+
+        const story = taskGroup._typeObject;
+        let countExtraMbr = 0;
+        countExtraMbr = this.state.taskGroup._team.emails.length-2;
+
+        // Now showing photos
+        let image1, image2;
+
+        if(this.state.taskGroup._team.emails.length>0){
+          let  temp = this.state.taskGroup._team.emails[0];
+            
+                let dict = temp.userDetails
+                console.log('chat ')
+                image1 =  <Thumbnail
+                style={styles.member1}
+                source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
+               
+        
+    }
+        if(this.state.taskGroup._team.emails.length>1){
+            let  temp1 = this.state.taskGroup._team.emails[1];
+            
+                let dict = temp1.userDetails
+                image2 =  <Thumbnail
+                style={styles.member2}
+                source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
+               
+           
+        }
     return (
       <SafeAreaView style={styles.container}>
         <Header title='Chat'
@@ -193,6 +230,18 @@ export default class UserTaskGroupView extends Component {
                   </Text>
                 )}
               </View>
+              <View style={styles.viewShowMember}>
+                {image1}
+                {image2}
+                <View style={styles.plusMemberView}>
+                    <TouchableOpacity style={styles.plusMemberBtn} onPress={()=>this.props.navigation.navigate('UsersList',{taskGroupData:this.state.taskGroup})}>
+                        <Text style={styles.plusTxt}>
+                            +{countExtraMbr}
+                        </Text>
+                        </TouchableOpacity>
+                </View>
+                    
+               </View>
               <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
                 <View style={styles.storyDetailActionTag}>
                   {this.state.processing ? (
@@ -211,5 +260,8 @@ export default class UserTaskGroupView extends Component {
         </View>
       </SafeAreaView>
     );
+  }
+  moveToUsersList(){
+    this.props.navigation.navigate('UsersList');
   }
 }

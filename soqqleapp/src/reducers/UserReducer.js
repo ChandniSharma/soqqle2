@@ -126,7 +126,7 @@ export async function saveProfile(data) {
   try {
     store.dispatch(AppStateActions.startLoading());
     const response = await instance.post('/mobile/user-profile', data);
-    console.log("response=>", response)
+    console.log("response Save profile=>", response)
     store.dispatch(AppStateActions.stopLoading());
     return saveProfileCompleted(response.data);
   } catch (error) {
@@ -289,7 +289,7 @@ export async function getCompanies(email) {
   try {
     store.dispatch(AppStateActions.startLoading());
     const response = await instance.get(`/company?email=${email}`)
-    console.log("response=>", response)
+    console.log("response companies=>", response)
     store.dispatch(AppStateActions.stopLoading());
     return getCompaniesCompleted(response.data);
   } catch (error) {
@@ -309,6 +309,7 @@ export async function getCompanies(email) {
  */
 
 export const getUserTaskGroupsRequest = (data) => {
+  
   return {
     type: GET_USER_TASK_GROUPS_REQUESTED,
     payload: data
@@ -345,6 +346,14 @@ export async function getUserTaskGroups(data) {
     if (data.reset) {
       taskGroups = [];
     }
+    response.data.latestUserTaskGroups.map(function(group, groupIndex) {
+      return group._team.emails.map(function(email, emailIndex) {
+        response.data.latestUserTaskGroups[groupIndex]._team.emails[emailIndex]['userDetails'] = response.data.userDetails.find(function(element) {
+          return element.profile.email === email.email;
+        });
+      });
+    });
+    
     const responseData = response.data;
     const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
     return getUserTaskGroupsCompleted({

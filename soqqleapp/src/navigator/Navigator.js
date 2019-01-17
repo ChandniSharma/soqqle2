@@ -10,6 +10,8 @@ import ChatContainer from '../containers/ChatContainer';
 import DashboardContainer from '../containers/DashboardContainer';
 import TaskContainer from "../containers/TaskContainer";
 
+import UsersList from '../views/UsersList';
+import UserDetailView from '../views/UserDetailView';
 
 const AppNavigator = createStackNavigator({
     Login: {screen: LoginContainer},
@@ -21,6 +23,8 @@ const AppNavigator = createStackNavigator({
     Chat: {screen: ChatContainer},
     Agenda: {screen: AgendaContainer},
     Dashboard: {screen: DashboardContainer},
+    UsersList:{screen: UsersList},
+    UserDetailView:{screen:UserDetailView},
   },
   {
     headerMode: 'none'

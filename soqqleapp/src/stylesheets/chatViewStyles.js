@@ -111,6 +111,41 @@ const styles = StyleSheet.create({
         width: '80%',
         paddingVertical: 0,
         paddingHorizontal: 10,
+    },
+    viewShowMember:{
+        flexDirection:'row',
+        alignSelf: 'center',
+        marginTop: 10,
+    },
+    member1:{
+       width:40,
+       height:40,
+       borderRadius:20,
+       marginRight:-5
+    },
+    member2:{
+        width:40,
+        height:40,
+        borderRadius:20,
+        marginRight:-5
+    },
+    
+    plusMemberBtn:{
+
+    },
+    plusMemberView:{
+        width:40,
+        height:40,
+        borderRadius:20,
+        borderColor: '#9600A1',
+        borderWidth:1,
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor:'white',
+    },
+    plusTxt:{
+        color: '#9600A1',
+        fontSize: 14,
     }
 });
 

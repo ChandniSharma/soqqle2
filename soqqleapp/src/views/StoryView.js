@@ -362,6 +362,14 @@ export default class StoryView extends Component {
     endpoint = endpoint.concat('&user_email=', this.props.user.profile.email);
     endpoint = endpoint.concat('&filter_user=', true);
     instance.get(endpoint).then(response => {
+      response.data.latestUserTaskGroups.map(function(group, groupIndex) {
+        return group._team.emails.map(function(email, emailIndex) {
+          response.data.latestUserTaskGroups[groupIndex]._team.emails[emailIndex]['userDetails'] = response.data.userDetails.find(function(element) {
+            return element.profile.email === email.email;
+          });
+        });
+      });
+      
       this.setState({
         userTaskGroups: response.data.latestUserTaskGroups,
         tasksFetching: false

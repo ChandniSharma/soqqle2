@@ -169,6 +169,7 @@ export default class LoginView extends Component {
     }
     if (nextProps.forgotpasswordSuccess && nextProps.forgotpasswordSuccess !== this.props.forgotpasswordSuccess) {
       LoginView.flashMessage(constants.KFORGOT_PWD_SUCCESS_ALERT);
+     
       this.setState({
         modalVisible:false,
       });
@@ -177,6 +178,7 @@ export default class LoginView extends Component {
         modalVisible:false,
       });
     }
+
   }
 
   render() {
