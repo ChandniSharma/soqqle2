@@ -163,7 +163,7 @@ export default class UserDetailView extends Component{
         this.props.navigation.navigate({ routeName: 'UsersList' })
     }
     render(){
-        var name = '', designation = '',imgUser;
+        var name = '', designation = '',imgUser, bio = '';
         let dict = this.state.dataUser.userDetails;
         if(dict){
             if(dict.profile.firstName){
@@ -173,9 +173,15 @@ export default class UserDetailView extends Component{
                 name = name+' '+dict.profile.lastName;
              }
              imgUser =  <Thumbnail
-     style={styles.imageUser}
-     source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
+             style={styles.imageUser}
+             source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
     
+            if(dict.profile.title){
+              designation = dict.profile.title;
+            }
+            if(dict.profile.bio){
+              bio = dict.profile.bio
+            }
         }
         return(
             <SafeAreaView style={styles.container}>
@@ -197,14 +203,12 @@ export default class UserDetailView extends Component{
                             {imgUser}
                             <View>
                                 <Text style={styles.txtName}> {name} </Text>
-                                <Text style={styles.txtDesignation}>  Product Manager </Text>
+                                <Text style={styles.txtDesignation}>  {designation} </Text>
                             </View>
                         </View>
                  </CardSection>
                  <CardSection>
-                     <Text style={styles.txtDescription}>
-                     With FlatIcons.net you can easily customize this royalty free flat orientation portrait icon for your (web) projects within seconds! Set dimensions, padding, choose a background shape and colorize your orientation portrait flat icon now! 
-                     </Text>
+                     <Text style={styles.txtDescription}>{bio}</Text>
                  </CardSection>
                 
                  <View style={styles.viewBottomBtn}>

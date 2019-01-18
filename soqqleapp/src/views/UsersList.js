@@ -117,6 +117,9 @@ renderItem = (item,index) =>{
      if(dict.profile.lastName){
         name = name+' '+dict.profile.lastName;
      }
+     if(dict.profile.title){
+        designation = dict.profile.title;
+      }
     
    imgUser =  <Thumbnail
      style={styles.imageUser}
@@ -131,7 +134,7 @@ renderItem = (item,index) =>{
             {imgUser}
                    <View>
                     <Text style={styles.txtName}> {name} </Text>
-                    <Text style={styles.txtDesignation}>  {designation} </Text>
+                    <Text style={styles.txtDesignation}> {designation} </Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -141,6 +144,10 @@ renderItem = (item,index) =>{
     render(){
         let countMbr = 0;
         countMbr = this.state.dataUser.length;
+        let mbrTitle = 'Members';
+        if(countMbr == 1){
+            mbrTitle = 'Member'
+        }
 
         return(
             <SafeAreaView style={styles.container}>
@@ -158,7 +165,7 @@ renderItem = (item,index) =>{
                         </TouchableOpacity>
                     </View>
                     <View style={styles.viewSearchMemCount}>
-                       <Text style={styles.txtMemberCount}>{countMbr} Members</Text>
+                       <Text style={styles.txtMemberCount}>{countMbr} {mbrTitle}</Text>
                        <Image style={styles.imgSearchIcon} source={require('../../assets/images/Search.png')}/>
                     </View>
                    
