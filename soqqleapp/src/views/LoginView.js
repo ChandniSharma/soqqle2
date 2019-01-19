@@ -1,43 +1,40 @@
 import React, {Component} from 'react';
-import {Image, ImageBackground, Keyboard, Platform, StatusBar, TouchableOpacity, View, StyleSheet, Linking,Modal} from 'react-native';
+import {
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
-import {CheckBox, Form, Input, Item, Label, Text, Thumbnail} from 'native-base';
-import LinkedInModal from 'react-native-linkedin';
+import {Button, Input, Item, Label, Text, Thumbnail} from 'native-base';
 import {showMessage} from 'react-native-flash-message';
+import * as constants from "../constants";
 import {MAIN_COLOR} from "../constants";
-import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from "../config";
+import {heightPercentageToDP as hp} from "react-native-responsive-screen";
 import {isValidEmail} from "../utils/common";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import * as constants from '../constants';
-
+import Step1 from "./login/Step1";
+import Step3 from "./login/Step3";
+import Step2 from "./login/Step2";
+import LinkedInModal from "react-native-linkedin";
+import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from "../config";
 const baseApi = 'https://api.linkedin.com/v1/people/';
 var RCTNetworking = require('RCTNetworking');
 const faceBookProfileFields = ['id', 'email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
 const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
-const PRIVACY_LINK = 'https://beta.soqqle.com/privacyPolicy';
-const TERM_OF_USE_LINK = 'https://beta.soqqle.com/termsOfUse';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class LoginView extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '', 
-      password: '', 
-      newPassword: '',
-      isAgree: false,
-      modalVisible: false,
-      processing: false,
-    };
-  }
-
   static flashMessage = message => {
     showMessage({message, type: MAIN_COLOR});
   };
-
   linkedinLogin = async token => {
     try {
       const {userActions} = this.props;
@@ -56,21 +53,11 @@ export default class LoginView extends Component {
       LoginView.flashMessage('Can not fetch your LinkedIn profile');
     }
   };
-
-  openLink = url => {
-    Linking.canOpenURL(url).then(supported => {
-      if (!supported) {
-        LoginView.flashMessage("Can not open web browser")
-      } else {
-        return Linking.openURL(url);
-      }
-    }).catch(err =>  LoginView.flashMessage("Can not open web browser"));
-  }
-
   facebookLogin = async () => {
     const {userActions} = this.props;
     const getFacebookInfoCallback = (error, result) => {
       if (error) {
+        console.log("=======", error);
         LoginView.flashMessage('Can not fetch your Facebook profile');
       } else {
         userActions.facebookLoginRequest(result);
@@ -87,72 +74,106 @@ export default class LoginView extends Component {
             null,
             getFacebookInfoCallback,
           );
+          console.log("=======");
           return new GraphRequestManager().addRequest(infoRequest).start();
         }
       } catch (error) {
-        //console.log("====error====", error)
-        LoginView.flashMessage('Unexpected error, please try again!')
+        console.log("====error====", error);
+        LoginView.flashMessage('Unexpected error, please try again!');
       }
-    }
-
+    };
     let result = {};
     try {
       this.setState({showLoadingModal: true});
       LoginManager.setLoginBehavior('native');
-      
       result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
-      processResult(result)
+      processResult(result);
     } catch (nativeError) {
       try {
         LoginManager.setLoginBehavior('web');
         result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
-        processResult(result)
+        processResult(result);
       } catch (webError) {
-        console.log("web===error====", webError)
-        LoginView.flashMessage('Can not login with your Facebook, please try again!')
+        console.log("web===error====", webError);
+        LoginView.flashMessage('Can not login with your Facebook, please try again!');
       }
     }
   };
   login = () => {
     Keyboard.dismiss();
     const {userActions} = this.props;
-    const {email, name, password, isAgree} = this.state;
-    if (!email || !name || !password) {
-      return LoginView.flashMessage('Please enter your name, email and password');
+    const {email, password} = this.state;
+    if (!password) {
+      return LoginView.flashMessage('Please enter your password');
     }
-    if (!isValidEmail(email)) {
-      return LoginView.flashMessage('Please enter an valid email');
+    userActions.loginRequest({email, password, name: 'hardcoded'});//API required name in login case??
+  };
+  signup = () => {
+    Keyboard.dismiss();
+    const {userActions} = this.props;
+    const {email, name, password, isAgree, repassword} = this.state;
+    if (!name || !password || !repassword) {
+      return LoginView.flashMessage('Please enter your name, password and re-password');
+    }
+    if (password !== repassword) {
+      return LoginView.flashMessage('Password and re-password are not matched');
     }
     if (!isAgree) {
       return LoginView.flashMessage('Please agree to the Privacy Policy and Terms and Conditions.');
     }
-    userActions.loginRequest(this.state);
+    userActions.loginRequest({email, password, name});
+  };
+  showforgotPasswordView = () => {
+    this.setState({
+      modalVisible: true,
+      newPassword: ''
+    });
+  };
+  onOtherEmail = () => {
+    this.setState({step: 1, email: ''});
+  };
+  onChange = (field, value) => {
+    this.setState({[field]: value});
+  };
+  onEmailSubmit = () => {
+    const {email} = this.state;
+    const {userActions} = this.props;
+    if (!isValidEmail(email)) {
+      return LoginView.flashMessage('Please enter an valid email');
+    }
+    userActions.checkEmailRequest(email.toLowerCase());
   };
 
-  showforgotPasswordView = () =>{
-    
-   this.setState({modalVisible:true,
-    newPassword:''
-  });
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 1,
+      email: '',
+      password: '',
+      newPassword: '',
+      isAgree: false,
+      modalVisible: false,
+      processing: false,
+    };
   }
-  
-  forgotPassword(){
+
+  forgotPassword() {
     Keyboard.dismiss();
     const {userActions} = this.props;
     const {email, newPassword} = this.state;
     if (!email) {
       return LoginView.flashMessage(constants.KEMAIL_VALIDATION_ALERT);
-    }else if (!isValidEmail(email)) {
+    } else if (!isValidEmail(email)) {
       return LoginView.flashMessage(constants.KEMAIL_VALIDATION_ALERT);
-    }else if(!newPassword){
+    } else if (!newPassword) {
       return LoginView.flashMessage(constants.KPASSWORD_VALIDATION_ALERT);
-    }else{
+    } else {
       userActions.forgotpasswordRequested(this.state);
     }
   }
+
   setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-    
+    this.setState({modalVisible: visible});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -167,72 +188,45 @@ export default class LoginView extends Component {
       LoginView.flashMessage('Login successful');
       this.props.navigation.navigate({routeName: 'Story'});
     }
+    if (nextProps.checkEmailResult && nextProps.checkEmailResult !== this.props.checkEmailResult) {
+      if (nextProps.checkEmailResult.isExisten) {
+        this.setState({email: nextProps.checkEmailResult.email, step: 2});
+      } else {
+        this.setState({email: nextProps.checkEmailResult.email, step: 3});
+      }
+    }
+
+    // if (nextProps.checkEmailSuccess !== this.props.checkEmailSuccess && nextProps.checkEmailSuccess === false) {
+    //   LoginView.flashMessage('Unexpected error, please try again');
+    // }
+
     if (nextProps.forgotpasswordSuccess && nextProps.forgotpasswordSuccess !== this.props.forgotpasswordSuccess) {
       LoginView.flashMessage(constants.KFORGOT_PWD_SUCCESS_ALERT);
-     
       this.setState({
-        modalVisible:false,
+        modalVisible: false,
       });
-    }else{
+    } else {
       this.setState({
-        modalVisible:false,
+        modalVisible: false,
       });
     }
 
   }
 
   render() {
-    const {email, password, name, isAgree, modalVisible} = this.state;
+    const {email, password, name, isAgree, modalVisible, step, repassword} = this.state;
     return (
-      <View
-        style={styles.container}
+      <KeyboardAvoidingView behavior="padding"
+                            style={styles.container}
       >
         <Image style={styles.logo} source={require('../images/image2.1.png')} resizeMode="contain"/>
-        <Form>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Your name</Label>
-            <Input
-              style={styles.textInput}
-              value={name}
-              onChangeText={name => this.setState({name})}
-            />
-          </Item>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Email</Label>
-            <Input
-              style={styles.textInput}
-              value={email}
-              onChangeText={email => this.setState({email})}
-            />
-          </Item>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Password</Label>
-            <Input
-              style={styles.textInput}
-              secureTextEntry
-              value={password}
-              onChangeText={password => this.setState({password})}
-            />
-          </Item>
-          <TouchableOpacity style={styles.btnForgotPwd} onPress={this.showforgotPasswordView}>
-            <Text style={styles.textForgotpassword}>Forgot password?</Text>
-          </TouchableOpacity>
-              
-           
-          <View style={{height: 50, marginTop: 20, flexDirection: 'row'}}>
-            <CheckBox style={styles.checkbox} checked={isAgree} onPress={() => this.setState({isAgree: !isAgree})}/>
-            <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to the </Text><TouchableOpacity onPress={() => this.openLink(PRIVACY_LINK)}><Text style={styles.inputLabel}>Privacy Policy</Text></TouchableOpacity><Text style={styles.text}> and </Text><TouchableOpacity onPress={() => this.openLink(TERM_OF_USE_LINK)}><Text style={styles.inputLabel}>Terms and Conditions.</Text></TouchableOpacity></View>
-          </View>
-          <View style={styles.margin10}>
-            <ImageBackground style={{width: '100%', height: 57}} source={require('../images/Rectangle.png')}>
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={this.login}
-              >
-                <Text style={styles.loginText}>Login</Text>
-              </TouchableOpacity>
-            </ImageBackground>
-          </View>
+        <View style={styles.content}>
+          {step === 1 && <Step1 onChange={this.onChange} email={email} onEmailSubmit={this.onEmailSubmit}/>}
+          {step === 2 && <Step2 onChange={this.onChange} password={password} onLogin={this.login}
+                                showforgotPasswordView={this.showforgotPasswordView} onOtherEmail={this.onOtherEmail}/>}
+          {step === 3 &&
+          <Step3 onChange={this.onChange} password={password} repassword={repassword} name={name} isAgree={isAgree}
+                 onSignup={this.signup}/>}
           <View style={styles.socialLogin}>
             <Text style={[styles.text]}>Or</Text>
           </View>
@@ -269,43 +263,43 @@ export default class LoginView extends Component {
               }}
             />
           </View>
-          
-            
-        </Form>
-        {modalVisible? <View style={styles.viewModal}>
-                <View style={styles.likeModalView}>
-                  <View style={styles.likeModalInnerView}>                    
-                            <View>
-                            <Item floatingLabel style={styles.itemPwd}>
-                                <Label style={styles.inputLabel}>New Password</Label>
-                                <Input
-                                  style={styles.textInputPwd}
-                                  secureTextEntry
-                                  value={this.state.newPassword}
-                                  onChangeText={newPassword => this.setState({newPassword})}
-                                />
-                              </Item>
-                            <TouchableOpacity 
-                                style={{marginTop:10}}
-                                onPress={() => this.forgotPassword()}>
-                                <Text style={styles.likeModalAction}> Forgot Password</Text>
-                              </TouchableOpacity>
-
-                            </View>                    
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.setModalVisible(!this.state.modalVisible);
-                      }}
-                      style={styles.likeModalClose}
-                    >
-                      <View>
-                        <Icon name='close' style={styles.likeModalCloseIcon} />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+        </View>
+        <Modal
+          animationType="fade"
+          transparent
+          visible={modalVisible}
+          onRequestClose={() => this.setState({modalVisible: !modalVisible})}
+        >
+          <View style={styles.helpModal}>
+            <View style={styles.helpModalContent}>
+              <Item floatingLabel>
+                <Label style={styles.inputLabel}>New Password</Label>
+                <Input
+                  style={styles.textInputPwd}
+                  secureTextEntry
+                  value={this.state.newPassword}
+                  onChangeText={newPassword => this.setState({newPassword})}
+                />
+              </Item>
+              <Button
+                style={styles.stepButton}
+                onPress={() => this.forgotPassword()}>
+                <Text style={styles.likeModalAction}>Forgot Password</Text>
+              </Button>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({modalVisible: !modalVisible});
+                }}
+                style={styles.likeModalClose}
+              >
+                <View>
+                  <Icon name='close' style={styles.likeModalCloseIcon}/>
                 </View>
-              </View>:<View />}
-      </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -313,16 +307,13 @@ export default class LoginView extends Component {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    paddingTop: statusBarHeight + 5,
-    justifyContent: 'center',
+    paddingTop: hp('10%'),
     backgroundColor: '#130C38',
     flex: 1
   },
-  checkbox: {
-    borderWidth: 0,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)'
+  content: {
+    justifyContent: 'center',
+    flex: 1
   },
   inputLabel: {
     color: MAIN_COLOR
@@ -339,16 +330,13 @@ const styles = StyleSheet.create({
   text: {
     color: 'rgba(255, 255, 255, 0.3)'
   },
-  btnForgotPwd:{
-  right:0,
-  //backgroundColor:'red',
-
-  alignSelf: 'flex-end',
-  marginTop:5,
+  btnForgotPwd: {
+    right: 0,
+    alignSelf: 'flex-end',
+    marginTop: 5,
   },
-  textForgotpassword:{
+  textForgotpassword: {
     color: 'rgba(255, 255, 255, 0.3)',
-    
   },
   margin10: {
     marginTop: 20,
@@ -373,45 +361,28 @@ const styles = StyleSheet.create({
   },
   textInputPwd: {
     color: "black",
-
   },
-
-  likeModalView: {
+  helpModal: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
-  likeModalInnerView: {
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    paddingVertical: 25,
+  resultModalContent: {
+    flex: 1,
+    paddingVertical: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  helpModalContent: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    paddingVertical: 30,
     paddingHorizontal: 10,
     width: '90%',
+    height: '20%',
     borderRadius: 5,
-  },
-  itemPwd:{
-   marginTop:-15,
-   marginBottom:10,
-  },
-  likeModalTitle: {
-    fontSize: 20,
-    color: '#000000',
-    marginBottom: 10,
-    textAlign: 'center',
-    fontWeight: 'bold'
-  },
-  likeModalText: {
-    fontSize: 18,
-    color: '#000000',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  likeModalSeparator: {
-    fontSize: 17,
-    color: 'rgba(0, 0, 0, 0.6)',
-    paddingVertical: 10,
-    textAlign: 'center',
   },
   likeModalClose: {
     position: 'absolute',
@@ -423,26 +394,9 @@ const styles = StyleSheet.create({
     color: '#333333',
     fontSize: 20,
   },
-  likeModalAction: {
-    backgroundColor: '#2C2649',
-    color: '#ffffff',
-    fontSize: 17,
-    paddingTop: 5,
-    paddingBottom: 8,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    alignSelf: 'center'
-
-  },
-  viewModal:{
-   backgroundColor:'rgba(52, 52, 52, 0.001)',
-   top:0,
-   bottom:0,
-  left:10,
-  right: 10,
-  width:'100%',
-  height:'100%',
-  position:'absolute',
-  alignSelf:'center'
+  stepButton: {
+    alignSelf: 'center',
+    backgroundColor: MAIN_COLOR,
+    marginTop: 5,
   },
 });
