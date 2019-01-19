@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.5)',
         fontSize: wp('4%'),
         minHeight: 70,
+        paddingTop: 2,
     },
     storyTagContainer: {
         flexDirection: 'row',
@@ -82,11 +83,12 @@ const styles = StyleSheet.create({
     storyTag: {
         color: '#ffffff',
         paddingVertical: wp('2%'),
-        paddingHorizontal: wp('3.2%'),
-        fontSize: wp('3.2%'),
+        paddingHorizontal: 10,
+        fontSize: 11,
         marginBottom: hp('1%'),
         fontWeight: '700',
         borderRadius: 15,
+        overflow: 'hidden'
     },
     objectiveTag: {
         borderWidth: 1,
