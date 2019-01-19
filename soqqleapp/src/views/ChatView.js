@@ -170,10 +170,9 @@ export default class UserTaskGroupView extends Component {
     const taskGroupType = taskGroup.type;
 
     // Need refactoring -------------------------
-    const story = taskGroup._typeObject;
     let countExtraMember = this.state.taskGroup._team.emails.length - 2;
-
-
+    // Now showing photos
+    let image1, image2;
     if (this.state.taskGroup._team.emails.length > 0) {
       let arrayEmail = this.state.taskGroup._team.emails[0];
       let dictUserDetail = arrayEmail.userDetails;
