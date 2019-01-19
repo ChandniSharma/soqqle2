@@ -38,10 +38,10 @@ export function getQuestionFailed(error) {
   };
 }
 
-export async function getQuestions(skill) {
+export async function getQuestions(skill, number) {
   try {
     store.dispatch(AppStateActions.startLoading());
-    const response = await instance.get(`/questionsGet?roadmapSkill=${skill}&type=illuminate`);
+    const response = await instance.get(`/questionsGet?roadmapSkill=${skill}&type=illuminate&value=${number}`);
     console.log("response=>", response)
     store.dispatch(AppStateActions.stopLoading());
     return getQuestionCompleted(response.data);

@@ -62,6 +62,7 @@ export default class UserTaskGroupView extends Component {
       if (Object.keys(this.state.userTask).length) {
         this.props.navigation.navigate('Task', {
           skill, reward,
+          questionsNum: story.objectiveValue,
           task: this.state.userTask, task_group_id: taskGroupId
         })
       }
