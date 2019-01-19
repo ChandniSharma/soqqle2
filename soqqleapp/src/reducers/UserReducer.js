@@ -7,6 +7,7 @@ import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";
+import {getGroupUserDetails} from "../utils/common";
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -308,7 +309,6 @@ export async function register(data) {
   }
 }
 
-
 export function getCompaniesRequest(email) {
   return {
     type: GET_COMPANIES_REQUESTED,
@@ -377,8 +377,8 @@ export const getUserTaskGroupsFailed = (error) => {
 
 export async function getUserTaskGroups(data) {
   let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', data.page || 1);
-  endpoint = endpoint.replace('{type}', 'Story');
-  if (data.user_email) {
+  endpoint = endpoint.replace('{type}', '');
+  if(data.user_email) {
     endpoint = endpoint.concat('&user_email=', data.user_email);
   }
   let taskGroups = data.previousData || [];
@@ -391,21 +391,15 @@ export async function getUserTaskGroups(data) {
     if (data.reset) {
       taskGroups = [];
     }
-    response.data.latestUserTaskGroups.map(function (group, groupIndex) {
-      return group._team.emails.map(function (email, emailIndex) {
-        response.data.latestUserTaskGroups[groupIndex]._team.emails[emailIndex]['userDetails'] = response.data.userDetails.find(function (element) {
-          return element.profile.email === email.email;
-        });
+    if(response){
+      const responseData = getGroupUserDetails(response.data);
+      const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
+      return getUserTaskGroupsCompleted({
+        count: responseData.totalUserTaskGroups,
+        taskGroups: newUserTasks,
+        page: data.page
       });
-    });
-
-    const responseData = response.data;
-    const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
-    return getUserTaskGroupsCompleted({
-      count: responseData.totalUserTaskGroups,
-      taskGroups: newUserTasks,
-      page: data.page
-    });
+    }
   }
   catch (error) {
     store.dispatch(AppStateActions.stopLoading());

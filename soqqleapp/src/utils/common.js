@@ -9,3 +9,13 @@ export function deepFromJS(js) {
       Seq(js).map(deepFromJS).toList() :
       Seq(js).map(deepFromJS).toMap();
 }
+export function getGroupUserDetails(groupDetails) {
+  groupDetails.latestUserTaskGroups.map((group, groupIndex) => {
+      return group._team.emails.map((email, emailIndex) => {
+        return groupDetails.latestUserTaskGroups[groupIndex]._team.emails[emailIndex]['userDetails'] = groupDetails.userDetails.find((element) => {
+          return element.profile.email === email.email;
+        });
+    });
+  });
+  return groupDetails;
+}
