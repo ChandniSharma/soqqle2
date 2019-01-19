@@ -12,3 +12,4 @@ export const SAVE_ANSWERS_PATH_API = '/hangoutAnswersSave';
 export const SAVE_TASK_PATH_API = '/taskSavePost';
 export const UPDATE_USER_TASK_GROUP_API_PATH = '/taskGroup/{}';
 export const GET_OBJECTIVE_API_PATH = '/taskRefs/{}';
+export const STORY_CHALLENGES_LIST_API_PATH = '/challengeStory';

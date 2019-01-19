@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
+import { TASK_GROUP_TYPES } from './../constants';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
-import {
-    Thumbnail
-  } from "native-base";
+
+import { Thumbnail } from "native-base";
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -166,28 +166,28 @@ export default class UserTaskGroupView extends Component {
   render() {
     const { taskGroup } = this.state;
     const isCompleted = this.isTaskCompleted();
+    const story = taskGroup._typeObject;
+    const taskGroupType = taskGroup.type;
 
-        const story = taskGroup._typeObject;
-        let countExtraMember = 0;
-        countExtraMember = this.state.taskGroup._team.emails.length-2;
+    // Need refactoring -------------------------
+    const story = taskGroup._typeObject;
+    let countExtraMember = this.state.taskGroup._team.emails.length - 2;
 
-        // Now showing photos
-        let image1, image2;
 
-        if(this.state.taskGroup._team.emails.length>0){
-          let  arrayEmail = this.state.taskGroup._team.emails[0];
-                let dictUserDetail = arrayEmail.userDetails;
-                image1 =  <Thumbnail
-                style={styles.member1}
-                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
+    if (this.state.taskGroup._team.emails.length > 0) {
+      let arrayEmail = this.state.taskGroup._team.emails[0];
+      let dictUserDetail = arrayEmail.userDetails;
+      image1 = <Thumbnail
+        style={styles.member1}
+        source={{ uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}` }} />
     }
-        if(this.state.taskGroup._team.emails.length>1){
-            let  arrayEmail1 = this.state.taskGroup._team.emails[1];
-                let dictUserDetail = arrayEmail1.userDetails
-                image2 =  <Thumbnail
-                style={styles.member2}
-                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
-        }
+    if (this.state.taskGroup._team.emails.length > 1) {
+      let arrayEmail1 = this.state.taskGroup._team.emails[1];
+      let dictUserDetail = arrayEmail1.userDetails
+      image2 = <Thumbnail
+        style={styles.member2}
+        source={{ uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}` }} />
+    }
     return (
       <SafeAreaView style={styles.container}>
         <Header title='Chat'
@@ -198,52 +198,61 @@ export default class UserTaskGroupView extends Component {
           headerRightTextStyle={styles.headerRightTextStyle}
         />
         <View style={styles.storyDetailView}>
-            <View style={styles.storyDetailHeader}>
-              <Text style={styles.storyDetailTitle}>{story.name}</Text>
-              <Text style={styles.storyDetailXP}>Team 100 XP</Text>
-            </View>
+          <View style={styles.storyDetailHeader}>
+            <Text style={styles.storyDetailTitle}>{story.name}</Text>
+            <Text style={styles.storyDetailXP}>Team 100 XP</Text>
+          </View>
           <Text style={styles.storyDetailText} numberOfLines={2}>{story.description}</Text>
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
             <View style={styles.storyDetailTags}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Text style={styles.storyDetailTag}>50 xp</Text>
-                      <Text style={styles.storyDetailTag}>5 team xp</Text>
-                      {story.reward && (
-                        <Text style={styles.storyDetailTag}>
-                          {`${story.reward.type} ${story.reward.value || ''}`}
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.storyDetailTag}>50 xp</Text>
+                <Text style={styles.storyDetailTag}>5 team xp</Text>
+                {story.reward && (
+                  taskGroupType === TASK_GROUP_TYPES.CHALLENGE ? (
+                    <Text style={styles.storyDetailTag}>
+                      {`${story.reward} ${story.rewardValue || ''}`}
+                    </Text>
+                  ) : (
+                      <Text style={styles.storyDetailTag}>
+                        {`${story.reward.type} ${story.reward.value || ''}`}
+                      </Text>
+                    )
+                )}
+                <TouchableOpacity onPress={() => this.goToTask(story)}
+                  disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
+                  <View style={styles.storyDetailActionTag}>
+                    {this.state.processing ? (
+                      <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
+                    ) : (
+                        <Text style={{ color: '#ffffff' }}>
+                          {Object.keys(this.state.userTask).length ? (
+                            isCompleted ? 'Task Completed' : 'Task Started'
+                          ) : 'Start Task'}
                         </Text>
                       )}
-                      <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
-                <View style={styles.storyDetailActionTag}>
-                  {this.state.processing ? (
-                    <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
-                  ) : (
-                      <Text style={{ color: '#ffffff' }}>
-                        {Object.keys(this.state.userTask).length ? (
-                          isCompleted ? 'Task Completed' : 'Task Started'
-                        ) : 'Start Task'}
-                      </Text>
-                    )}
-                </View>
-              </TouchableOpacity>
-                    </View>
-                </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+
           </View>
         </View>
-        
-        <TouchableOpacity onPress={()=>this.props.navigation.navigate('UsersList',{taskGroupData:this.state.taskGroup})}>
+
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup })}>
           <View style={styles.viewShowMember}>
             {image1}
             {image2}
-            { countExtraMember > 0 && 
-            <View style={styles.plusMemberView}>
-                    <Text style={styles.plusTxt}>
-                        +{countExtraMember}
-                    </Text>
-            </View>
+            {countExtraMember > 0 &&
+              <View style={styles.plusMemberView}>
+                <Text style={styles.plusTxt}>
+                  +{countExtraMember}
+                </Text>
+              </View>
             }
-           </View>
+          </View>
         </TouchableOpacity>
       </SafeAreaView>
     );
