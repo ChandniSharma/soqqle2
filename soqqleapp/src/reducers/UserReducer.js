@@ -9,6 +9,7 @@ import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";
 import * as constants from '../constants';
 import { constant } from 'redux-loop-symbol-ponyfill/lib/effects';
+import {getGroupUserDetails} from "../utils/common";
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -262,8 +263,6 @@ export async function register(data) {
   }
 }
 
-
-
 export function getCompaniesRequest(email) {
   return {
     type: GET_COMPANIES_REQUESTED,
@@ -346,21 +345,15 @@ export async function getUserTaskGroups(data) {
     if (data.reset) {
       taskGroups = [];
     }
-    response.data.latestUserTaskGroups.map(function(group, groupIndex) {
-      return group._team.emails.map(function(email, emailIndex) {
-        response.data.latestUserTaskGroups[groupIndex]._team.emails[emailIndex]['userDetails'] = response.data.userDetails.find(function(element) {
-          return element.profile.email === email.email;
-        });
+    if(response){
+      const responseData = getGroupUserDetails(response.data);
+      const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
+      return getUserTaskGroupsCompleted({
+        count: responseData.totalUserTaskGroups,
+        taskGroups: newUserTasks,
+        page: data.page
       });
-    });
-    
-    const responseData = response.data;
-    const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
-    return getUserTaskGroupsCompleted({
-      count: responseData.totalUserTaskGroups,
-      taskGroups: newUserTasks,
-      page: data.page
-    });
+    }
   }
   catch (error) {
     store.dispatch(AppStateActions.stopLoading());

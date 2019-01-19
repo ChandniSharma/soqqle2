@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator,Platform} from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
-import UsersList from './UsersList';
 import {
     Thumbnail
   } from "native-base";
@@ -123,9 +122,7 @@ export default class UserTaskGroupView extends Component {
       this.updateUserTasks(response.data);
       this.updateUserTaskGroup(response.data, taskGroupId);
     }).catch(err => {
-      console.log(err.response)
     })
-
   };
 
   updateUserTaskGroup(task, taskGroupId) {
@@ -144,7 +141,6 @@ export default class UserTaskGroupView extends Component {
         task: this.state.userTask, task_group_id: taskGroupId
       });
     }).catch(err => {
-      console.log(err.response)
     })
   }
 
@@ -168,37 +164,28 @@ export default class UserTaskGroupView extends Component {
 
   render() {
     const { taskGroup } = this.state;
-    
     const isCompleted = this.isTaskCompleted();
 
         const story = taskGroup._typeObject;
-        let countExtraMbr = 0;
-
-        countExtraMbr = this.state.taskGroup._team.emails.length-2;
+        let countExtraMember = 0;
+        countExtraMember = this.state.taskGroup._team.emails.length-2;
 
         // Now showing photos
         let image1, image2;
 
         if(this.state.taskGroup._team.emails.length>0){
-          let  temp = this.state.taskGroup._team.emails[0];
-            
-                let dict = temp.userDetails
-                console.log('chat ')
+          let  arrayEmail = this.state.taskGroup._team.emails[0];
+                let dictUserDetail = arrayEmail.userDetails;
                 image1 =  <Thumbnail
                 style={styles.member1}
-                source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
-               
-        
+                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
     }
         if(this.state.taskGroup._team.emails.length>1){
-            let  temp1 = this.state.taskGroup._team.emails[1];
-            
-                let dict = temp1.userDetails
+            let  arrayEmail1 = this.state.taskGroup._team.emails[1];
+                let dictUserDetail = arrayEmail1.userDetails
                 image2 =  <Thumbnail
                 style={styles.member2}
-                source={{uri: dict.profile.pictureURL || `https://ui-avatars.com/api/?name=${dict.profile.firstName}+${dict.profile.lastName}`}}/>
-               
-           
+                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
         }
     return (
       <SafeAreaView style={styles.container}>
@@ -241,8 +228,6 @@ export default class UserTaskGroupView extends Component {
               </TouchableOpacity>
                     </View>
                 </View>
-              
-              
           </View>
         </View>
         
@@ -250,22 +235,16 @@ export default class UserTaskGroupView extends Component {
           <View style={styles.viewShowMember}>
             {image1}
             {image2}
-            { countExtraMbr > 0 && 
+            { countExtraMember > 0 && 
             <View style={styles.plusMemberView}>
                     <Text style={styles.plusTxt}>
-                        +{countExtraMbr}
+                        +{countExtraMember}
                     </Text>
-                    
             </View>
             }
            </View>
         </TouchableOpacity>
-                
-                
       </SafeAreaView>
     );
-  }
-  moveToUsersList(){
-    this.props.navigation.navigate('UsersList');
   }
 }
