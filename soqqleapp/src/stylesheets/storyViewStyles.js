@@ -37,7 +37,11 @@ const styles = StyleSheet.create({
         height: hp('82%'),
     },
     storyContainer: {
-        backgroundColor: '#171a54',
+        backgroundColor: '#56478C',
+        width: wp('90%'),
+    },
+    challengeContainer: {
+        backgroundColor: '#7D0080',
         width: wp('90%'),
     },
     storyItemImage: {
@@ -52,37 +56,51 @@ const styles = StyleSheet.create({
     },
     storyContent: {
         paddingHorizontal: wp('5%'),
-        paddingVertical: hp('2.5%'),
+        paddingVertical: hp('2%'),
     },
     challengeItemTitle: {
         color: '#fff',
-        fontSize: wp('4.6%'),
+        fontSize: wp('4.8%'),
+        fontWeight: '500',
     },
     storyItemText: {
-        color: '#fff',
+        color: '#ffffff',
         textAlign: 'center',
         fontSize: wp('4.6%'),
         minHeight: 80,
     },
     challengeItemText: {
-        color: '#fff',
-        marginTop: 2,
+        color: 'rgba(255,255,255,0.5)',
         fontSize: wp('4%'),
         minHeight: 70,
+        paddingTop: 2,
     },
     storyTagContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        paddingTop: hp('2.5%'),
+        justifyContent: 'space-between',
+        paddingTop: hp('2%'),
     },
     storyTag: {
-        backgroundColor: '#111e4a',
-        color: '#ffc500',
-        padding: wp('2%'),
-        fontSize: wp('3.5%'),
+        color: '#ffffff',
+        paddingVertical: wp('2%'),
+        paddingHorizontal: 10,
+        fontSize: 11,
         marginBottom: hp('1%'),
-        fontWeight: '700'
+        fontWeight: '700',
+        borderRadius: 15,
+        overflow: 'hidden'
+    },
+    objectiveTag: {
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#ffffff',
+    },
+    quotaTag: {
+        backgroundColor: '#1FBEB8'
+    },
+    rewardTag: {
+        backgroundColor: '#FFC600',
+        marginRight: 0,
     },
     storyActionsContainer: {
         flexDirection: 'row',
@@ -99,8 +117,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     storyActionIcon: {
-        width: wp('8%'),
-        height: hp('4%'),
+        width: wp('7%'),
+        height: hp('3.5%'),
     },
     footer: {
         backgroundColor: '#800094',

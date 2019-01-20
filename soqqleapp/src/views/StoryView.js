@@ -75,7 +75,7 @@ export default class StoryView extends Component {
     const imageBaseUrl = item.item_type === TASK_GROUP_TYPES.CHALLENGE ? CHALLENGE_IMAGE_BASE_URL : STORY_IMAGE_BASE_URL;
     return (
       <View>
-        <View style={styles.storyContainer}>
+        <View style={item.item_type === TASK_GROUP_TYPES.CHALLENGE ? styles.challengeContainer : styles.storyContainer}>
           {item.has_video && this.state.currentSlideIndex === index ? (
             <Video
               ref={(ref) => {
@@ -105,15 +105,15 @@ export default class StoryView extends Component {
               </Text>
               <View style={styles.storyTagContainer}>
                 {item._objective && (
-                  <Text style={styles.storyTag}>
+                  <Text style={{ ...styles.storyTag, ...styles.objectiveTag }}>
                     {`${item.objectiveValue || 0} ${item._objective.name.toUpperCase()}`}
                   </Text>
                 )}
-                <Text style={styles.storyTag}>
+                <Text style={{ ...styles.storyTag, ...styles.quotaTag }}>
                   {`0/${item.quota || 0} ${item.refresh.toUpperCase()}`}
                 </Text>
                 {item.reward && (
-                  <Text style={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}>
+                  <Text style={{ ...styles.storyTag, ...styles.rewardTag }}>
                     {`${item.reward.value || 0} ${item.reward.type.toUpperCase()}`}
                   </Text>
                 )}
@@ -129,21 +129,21 @@ export default class StoryView extends Component {
                 </Text>
                 <Text
                   style={styles.challengeItemText}
-                  numberOfLines={3}
+                  numberOfLines={4}
                 >
                   {item.description}
                 </Text>
                 <View style={styles.storyTagContainer}>
                   {item.type && (
-                    <Text style={styles.storyTag}>
+                    <Text style={{ ...styles.storyTag, ...styles.objectiveTag }}>
                       {item.type.toUpperCase()}
                     </Text>
                   )}
-                  <Text style={styles.storyTag}>
+                  <Text style={{ ...styles.storyTag, ...styles.quotaTag }}>
                     {`0/${item.quota || 0} ${item.refresh.toUpperCase()}`}
                   </Text>
                   {item.reward && (
-                    <Text style={{ ...styles.storyTag, ...{ 'marginRight': 0 } }}>
+                    <Text style={{ ...styles.storyTag, ...styles.rewardTag }}>
                       {`${item.rewardValue || 0} ${item.reward.toUpperCase()}`}
                     </Text>
                   )}
