@@ -306,7 +306,7 @@ export default class LoginView extends Component {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    paddingTop: hp('10%'),
+    paddingTop: hp('8%'),
     backgroundColor: '#130C38',
     flex: 1
   },
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   socialLogin: {
-    marginTop: 20,
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

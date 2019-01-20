@@ -49,7 +49,7 @@ export default class Step3 extends Component {
             onChangeText={value => onChange('repassword', value)}
           />
         </Item>
-        <View style={{height: 50, marginTop: 20, flexDirection: 'row'}}>
+        <View style={{height: 40, marginTop: 10, flexDirection: 'row'}}>
           <CheckBox style={styles.checkbox} checked={isAgree} onPress={() => onChange('isAgree', !isAgree)}/>
           <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to
             the </Text><TouchableOpacity onPress={() => this.openLink(PRIVACY_LINK)}><Text style={styles.inputLabel}>Privacy
@@ -57,7 +57,7 @@ export default class Step3 extends Component {
             onPress={() => this.openLink(TERM_OF_USE_LINK)}><Text style={styles.inputLabel}>Terms and Conditions.</Text></TouchableOpacity></View>
         </View>
         <View style={styles.margin10}>
-          <ImageBackground style={{width: '100%', height: 57}} source={require('../../images/Rectangle.png')}>
+          <ImageBackground style={{width: '100%', height: 50}} source={require('../../images/Rectangle.png')}>
             <TouchableOpacity
               style={styles.loginButton}
               onPress={onSignup}
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.3)',
   },
   margin10: {
-    marginTop: 20,
+    marginTop: 10,
   },
   loginButton: {
     flex: 1,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   inputWrapper: {
-    marginTop: 10
+    marginTop: 7
   },
   textInput: {
     color: "white",
