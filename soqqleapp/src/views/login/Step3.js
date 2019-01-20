@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import {
-  ImageBackground, Linking, Platform, StatusBar, StyleSheet, TouchableOpacity,
-  View
-} from 'react-native';
+import {ImageBackground, Linking, Platform, StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {CheckBox, Form, Input, Item, Label, Text} from 'native-base';
 import {MAIN_COLOR} from "../../constants";
 import LoginView from "../LoginView";
+
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 const PRIVACY_LINK = 'https://beta.soqqle.com/privacyPolicy';
 const TERM_OF_USE_LINK = 'https://beta.soqqle.com/termsOfUse';
@@ -20,51 +18,55 @@ export default class Step3 extends Component {
       }
     }).catch(err => LoginView.flashMessage("Can not open web browser"));
   };
+
   render() {
     const {password, repassword, name, onChange, onSignup, isAgree} = this.props;
     return (
-        <Form>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Your name</Label>
-            <Input
-              style={styles.textInput}
-              value={name}
-              onChangeText={value => onChange('name', value)}
-            />
-          </Item>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Password</Label>
-            <Input
-              style={styles.textInput}
-              secureTextEntry
-              value={password}
-              onChangeText={value => onChange('password', value)}
-            />
-          </Item>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Re-Password</Label>
-            <Input
-              style={styles.textInput}
-              secureTextEntry
-              value={repassword}
-              onChangeText={value => onChange('repassword', value)}
-            />
-          </Item>
-          <View style={{height: 50, marginTop: 20, flexDirection: 'row'}}>
-            <CheckBox style={styles.checkbox} checked={isAgree} onPress={() => onChange('isAgree',  !isAgree)}/>
-            <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to the </Text><TouchableOpacity onPress={() => this.openLink(PRIVACY_LINK)}><Text style={styles.inputLabel}>Privacy Policy</Text></TouchableOpacity><Text style={styles.text}> and </Text><TouchableOpacity onPress={() => this.openLink(TERM_OF_USE_LINK)}><Text style={styles.inputLabel}>Terms and Conditions.</Text></TouchableOpacity></View>
-          </View>
-          <View style={styles.margin10}>
-            <ImageBackground style={{width: '100%', height: 57}} source={require('../../images/Rectangle.png')}>
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={onSignup}
-              >
-                <Text style={styles.loginText}>Sign up</Text>
-              </TouchableOpacity>
-            </ImageBackground>
-          </View>
-        </Form>
+      <Form>
+        <Item rounded style={[styles.textInput, styles.inputWrapper]}>
+          <Input
+            style={styles.textInput}
+            value={name}
+            placeholder={"Enter your name"}
+            onChangeText={value => onChange('name', value)}
+          />
+        </Item>
+        <Item rounded style={[styles.textInput, styles.inputWrapper]}>
+          <Input
+            style={styles.textInput}
+            secureTextEntry
+            value={password}
+            placeholder="Password"
+            onChangeText={value => onChange('password', value)}
+          />
+        </Item>
+        <Item rounded style={[styles.textInput, styles.inputWrapper]}>
+          <Input
+            style={styles.textInput}
+            secureTextEntry
+            value={repassword}
+            placeholder="Re-password"
+            onChangeText={value => onChange('repassword', value)}
+          />
+        </Item>
+        <View style={{height: 50, marginTop: 20, flexDirection: 'row'}}>
+          <CheckBox style={styles.checkbox} checked={isAgree} onPress={() => onChange('isAgree', !isAgree)}/>
+          <View style={{marginLeft: 20, flexDirection: 'row', flexWrap: 'wrap'}}><Text style={styles.text}>I agree to
+            the </Text><TouchableOpacity onPress={() => this.openLink(PRIVACY_LINK)}><Text style={styles.inputLabel}>Privacy
+            Policy</Text></TouchableOpacity><Text style={styles.text}> and </Text><TouchableOpacity
+            onPress={() => this.openLink(TERM_OF_USE_LINK)}><Text style={styles.inputLabel}>Terms and Conditions.</Text></TouchableOpacity></View>
+        </View>
+        <View style={styles.margin10}>
+          <ImageBackground style={{width: '100%', height: 57}} source={require('../../images/Rectangle.png')}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={onSignup}
+            >
+              <Text style={styles.loginText}>Sign up</Text>
+            </TouchableOpacity>
+          </ImageBackground>
+        </View>
+      </Form>
     );
   }
 }
@@ -98,16 +100,14 @@ const styles = StyleSheet.create({
   text: {
     color: 'rgba(255, 255, 255, 0.3)'
   },
-  btnForgotPwd:{
-  right:0,
-  //backgroundColor:'red',
-
-  alignSelf: 'flex-end',
-  marginTop:5,
+  btnForgotPwd: {
+    right: 0,
+    //backgroundColor:'red',
+    alignSelf: 'flex-end',
+    marginTop: 5,
   },
-  textForgotpassword:{
+  textForgotpassword: {
     color: 'rgba(255, 255, 255, 0.3)',
-
   },
   margin10: {
     marginTop: 20,
@@ -127,14 +127,16 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50
   },
+  inputWrapper: {
+    marginTop: 10
+  },
   textInput: {
-    color: "white"
+    color: "white",
+    borderRadius: 5,
   },
   textInputPwd: {
     color: "black",
-
   },
-
   likeModalView: {
     flex: 1,
     justifyContent: 'center',
@@ -149,9 +151,9 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 5,
   },
-  itemPwd:{
-   marginTop:-15,
-   marginBottom:10,
+  itemPwd: {
+    marginTop: -15,
+    marginBottom: 10,
   },
   likeModalTitle: {
     fontSize: 20,
@@ -193,15 +195,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
 
   },
-  viewModal:{
-   backgroundColor:'rgba(52, 52, 52, 0.001)',
-   top:0,
-   bottom:0,
-  left:10,
-  right: 10,
-  width:'100%',
-  height:'100%',
-  position:'absolute',
-  alignSelf:'center'
+  viewModal: {
+    backgroundColor: 'rgba(52, 52, 52, 0.001)',
+    top: 0,
+    bottom: 0,
+    left: 10,
+    right: 10,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignSelf: 'center'
   },
 });

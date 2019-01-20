@@ -123,6 +123,7 @@ export default class LoginView extends Component {
     }
     userActions.loginRequest({email, password, name});
   };
+
   showforgotPasswordView = () => {
     this.setState({
       modalVisible: true,
@@ -216,9 +217,7 @@ export default class LoginView extends Component {
   render() {
     const {email, password, name, isAgree, modalVisible, step, repassword} = this.state;
     return (
-      <KeyboardAvoidingView behavior="padding"
-                            style={styles.container}
-      >
+      <View style={styles.container}>
         <Image style={styles.logo} source={require('../images/image2.1.png')} resizeMode="contain"/>
         <View style={styles.content}>
           {step === 1 && <Step1 onChange={this.onChange} email={email} onEmailSubmit={this.onEmailSubmit}/>}
@@ -227,10 +226,10 @@ export default class LoginView extends Component {
           {step === 3 &&
           <Step3 onChange={this.onChange} password={password} repassword={repassword} name={name} isAgree={isAgree}
                  onSignup={this.signup}/>}
-          <View style={styles.socialLogin}>
+          {step === 1 &&  <View style={styles.socialLogin}>
             <Text style={[styles.text]}>Or</Text>
-          </View>
-          <View style={styles.socialLogin}>
+          </View>}
+          {step === 1 && <View style={styles.socialLogin}>
             <TouchableOpacity style={{marginRight: 5}} onPress={
               () => {
                 RCTNetworking.clearCookies((cleared) => {
@@ -262,7 +261,7 @@ export default class LoginView extends Component {
                 this.linkedinLogin(token.access_token);
               }}
             />
-          </View>
+          </View>}
         </View>
         <Modal
           animationType="fade"
@@ -299,7 +298,7 @@ export default class LoginView extends Component {
             </View>
           </View>
         </Modal>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -377,11 +376,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   helpModalContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     paddingVertical: 30,
     paddingHorizontal: 10,
     width: '90%',
-    height: '20%',
+    height: 200,
     borderRadius: 5,
   },
   likeModalClose: {

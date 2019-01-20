@@ -1,36 +1,35 @@
 import React, {Component} from 'react';
-import {
-  ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity,
-  View
-} from 'react-native';
-import {Form, Input, Item, Label, Text} from 'native-base';
+import {ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Form, Input, Item, Text} from 'native-base';
 import {MAIN_COLOR} from "../../constants";
+
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class Step1 extends Component {
   render() {
     const {email, onChange, onEmailSubmit} = this.props;
     return (
-        <Form>
-          <Item floatingLabel>
-            <Label style={styles.inputLabel}>Enter your email</Label>
-            <Input
-              style={styles.textInput}
-              value={email}
-              onChangeText={value => onChange('email', value)}
-            />
-          </Item>
-          <View style={styles.margin10}>
-            <ImageBackground style={{width: '100%', height: 57}} source={require('../../images/Rectangle.png')}>
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={onEmailSubmit}
-              >
-                <Text style={styles.loginText}>Next</Text>
-              </TouchableOpacity>
-            </ImageBackground>
-          </View>
-        </Form>
+      <Form>
+        <Item rounded style={styles.textInput}>
+          {/*<Label style={styles.inputLabel}>Enter your email</Label>*/}
+          <Input
+            style={styles.textInput}
+            value={email}
+            placeholder="Enter your email"
+            onChangeText={value => onChange('email', value)}
+          />
+        </Item>
+        <View style={styles.margin10}>
+          <ImageBackground style={{width: '100%', height: 57}} source={require('../../images/Rectangle.png')}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={onEmailSubmit}
+            >
+              <Text style={styles.loginText}>Next</Text>
+            </TouchableOpacity>
+          </ImageBackground>
+        </View>
+      </Form>
     );
   }
 }
@@ -64,16 +63,13 @@ const styles = StyleSheet.create({
   text: {
     color: 'rgba(255, 255, 255, 0.3)'
   },
-  btnForgotPwd:{
-  right:0,
-  //backgroundColor:'red',
-
-  alignSelf: 'flex-end',
-  marginTop:5,
+  btnForgotPwd: {
+    right: 0,
+    alignSelf: 'flex-end',
+    marginTop: 5,
   },
-  textForgotpassword:{
+  textForgotpassword: {
     color: 'rgba(255, 255, 255, 0.3)',
-
   },
   margin10: {
     marginTop: 20,
@@ -94,11 +90,11 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   textInput: {
-    color: "white"
+    color: "white",
+    borderRadius: 5,
   },
   textInputPwd: {
     color: "black",
-
   },
 
   likeModalView: {
@@ -115,9 +111,9 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 5,
   },
-  itemPwd:{
-   marginTop:-15,
-   marginBottom:10,
+  itemPwd: {
+    marginTop: -15,
+    marginBottom: 10,
   },
   likeModalTitle: {
     fontSize: 20,
@@ -159,15 +155,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
 
   },
-  viewModal:{
-   backgroundColor:'rgba(52, 52, 52, 0.001)',
-   top:0,
-   bottom:0,
-  left:10,
-  right: 10,
-  width:'100%',
-  height:'100%',
-  position:'absolute',
-  alignSelf:'center'
+  viewModal: {
+    backgroundColor: 'rgba(52, 52, 52, 0.001)',
+    top: 0,
+    bottom: 0,
+    left: 10,
+    right: 10,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignSelf: 'center'
   },
 });

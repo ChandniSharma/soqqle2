@@ -10,12 +10,12 @@ export default class Step2 extends Component {
     const {password, onChange, onLogin, showforgotPasswordView, onOtherEmail} = this.props;
     return (
       <Form>
-        <Item floatingLabel>
-          <Label style={styles.inputLabel}>Password</Label>
+        <Item rounded style={styles.textInput}>
           <Input
             style={styles.textInput}
             secureTextEntry
             value={password}
+            placeholder='Password'
             onChangeText={value => onChange('password', value)}
           />
         </Item>
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   },
   textForgotpassword: {
     color: 'rgba(255, 255, 255, 0.3)',
-
   },
   margin10: {
     marginTop: 20,
@@ -103,7 +102,8 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   textInput: {
-    color: "white"
+    color: "white",
+    borderRadius: 5,
   },
   textInputPwd: {
     color: "black",
