@@ -10,8 +10,6 @@ import { getMessages } from '../utils/common';
 import { GiftedChat } from 'react-native-gifted-chat'
 import SocketIOClient from 'socket.io-client';
 
-const USER_ID = '@userId';
-
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -29,7 +27,6 @@ export default class UserTaskGroupView extends Component {
       messages: [],
       userId: null,
     };
-    //this.determineUser = this.determineUser.bind(this);
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
@@ -37,7 +34,6 @@ export default class UserTaskGroupView extends Component {
     let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
     this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query });
     this.socket.on('server:message', this.onReceivedMessage);
-    //this.determineUser();
   }
 
 
@@ -188,24 +184,6 @@ export default class UserTaskGroupView extends Component {
   isTaskCompleted() {
     return this.state.userTask.status === 'complete';
   }
-  // For chat 
-  determineUser() {
-    AsyncStorage.getItem(USER_ID)
-      .then((userId) => {
-        // If there isn't a stored userId, then fetch one from the server.
-        if (!userId) {
-          this.socket.emit('userJoined', null);
-          this.socket.on('userJoined', (userId) => {
-            AsyncStorage.setItem(USER_ID, userId);
-            this.setState({ userId });
-          });
-        } else {
-          this.socket.emit('userJoined', userId);
-          this.setState({ userId });
-        }
-      })
-      .catch((e) => alert(e));
-  }
   onReceivedMessage(message) {
     let groupDetails = this.state.taskGroup;
     let userData = groupDetails._team.emails.find((user) => {
@@ -252,6 +230,7 @@ export default class UserTaskGroupView extends Component {
       avatar: this.props.user.profile.pictureURL || `https://ui-avatars.com/api/?name=${this.props.user.profile.firstName}+${this.props.user.profile.lastName}`,
     };
     const story = taskGroup._typeObject;
+    const taskGroupType = taskGroup.type;
     let countExtraMember = 0;
     countExtraMember = this.state.taskGroup._team.emails.length - 2;
     // Now showing photos
@@ -292,11 +271,18 @@ export default class UserTaskGroupView extends Component {
                 <Text style={styles.storyDetailTag}>50 xp</Text>
                 <Text style={styles.storyDetailTag}>5 team xp</Text>
                 {story.reward && (
-                  <Text style={styles.storyDetailTag}>
-                    {`${story.reward.type} ${story.reward.value || ''}`}
-                  </Text>
+                  taskGroupType === TASK_GROUP_TYPES.CHALLENGE ? (
+                    <Text style={styles.storyDetailTag}>
+                      {`${story.reward} ${story.rewardValue || ''}`}
+                    </Text>
+                  ) : (
+                      <Text style={styles.storyDetailTag}>
+                        {`${story.reward.type} ${story.reward.value || ''}`}
+                      </Text>
+                    )
                 )}
-                <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
+                <TouchableOpacity onPress={() => this.goToTask(story)}
+                  disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
                   <View style={styles.storyDetailActionTag}>
                     {this.state.processing ? (
                       <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />

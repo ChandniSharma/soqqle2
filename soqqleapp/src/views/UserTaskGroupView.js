@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import {
     Platform, StyleSheet, TouchableWithoutFeedback,
-    Text, View, SafeAreaView, FlatList,TouchableOpacity
+    Text, View, SafeAreaView, FlatList
 } from 'react-native';
 import Header from './../components/Header';
 import { PAGE_SIZE } from './../constants';
-import Icon from 'react-native-vector-icons/FontAwesome'
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     listLoader: {
         paddingVertical: 10,
     },
-   
+
 });
 
 let pageNum = 0;
@@ -157,7 +156,7 @@ export default class UserTaskGroupView extends Component {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-               
+
             </View>
         );
     }
@@ -187,19 +186,6 @@ export default class UserTaskGroupView extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <Header title='Groups' navigation={this.props.navigation} />
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        onPress={() => this.handleBackAction()}
-                        style={styles.headerBackView}>
-                        <View>
-                            <Icon
-                                name='chevron-left'
-                                style={styles.headerBackIcon}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <Text style={styles.headerText}>Groups</Text>
-                </View>
                 <View style={{ flex: 1, marginTop: 5 }}>
                     <FlatList
                         data={this.state.userTasks}
