@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import * as axios from 'axios';
 import { API_BASE_URL } from '../config';
-import { USER_TASK_GROUP_LIST_PATH_API } from './../endpoints';
+import { USER_TASK_GROUP_LIST_PATH_API, GET_MESSAGE_LIST_API } from './../endpoints';
 import { Effects, loop } from 'redux-loop-symbol-ponyfill';
 import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
@@ -9,7 +9,7 @@ import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";
 import * as constants from '../constants';
 import { constant } from 'redux-loop-symbol-ponyfill/lib/effects';
-import {getGroupUserDetails} from "../utils/common";
+import { getGroupUserDetails } from "../utils/common";
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -25,7 +25,6 @@ const FORGOT_PASSWORD_REQUESTED = 'UserState/FORGOT_PASSWORD_REQUESTED';
 const FORGOT_PASSWORD_COMPLETED = 'UserState/FORGOT_PASSWORD_COMPLETED';
 const FORGOT_PASSWORD_FAILED = 'UserState/FORGOT_PASSWORD_FAILED';
 
-
 const GET_COMPANIES_REQUESTED = 'UserState/GET_COMPANIES_REQUESTED';
 const GET_COMPANIES_COMPLETED = 'UserState/GET_COMPANIES_COMPLETED';
 const GET_COMPANIES_FAILED = 'UserState/GET_COMPANIES_FAILED';
@@ -38,6 +37,10 @@ const LOG_OUT = 'UserState/LOG_OUT';
 const GET_USER_TASK_GROUPS_REQUESTED = 'UserState/GET_USER_TASK_GROUPS_REQUESTED';
 const GET_USER_TASK_GROUPS_COMPLETED = 'UserState/GET_USER_TASK_GROUPS_COMPLETED';
 const GET_USER_TASK_GROUPS_FAILED = 'UserState/GET_USER_TASK_GROUPS_FAILED';
+
+const GET_MESSAGELIST_REQUESTED = 'UserState/GET_MESSAGELIST_REQUESTED';
+const GET_MESSAGELIST_COMPLETED = 'UserState/GET_MESSAGELIST_COMPLETED';
+const GET_MESSAGELIST_FAILED = 'UserState/GET_MESSAGELIST_FAILED';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -82,20 +85,20 @@ export function loginFailed(error) {
   };
 }
 
-export function forgotpasswordRequested(data){
- 
+export function forgotpasswordRequested(data) {
+
   return {
     type: FORGOT_PASSWORD_REQUESTED,
     payload: data
   }
 }
-export function forgotpasswordCompleted(data){
+export function forgotpasswordCompleted(data) {
   return {
     type: FORGOT_PASSWORD_COMPLETED,
     payload: data
   }
 }
-export function forgotpasswordFailed(error){
+export function forgotpasswordFailed(error) {
   return {
     type: FORGOT_PASSWORD_FAILED,
     payload: error
@@ -140,36 +143,28 @@ export async function saveProfile(data) {
   }
 }
 
-
-export async function forgotPassword(data){
-  
-  let arrayParam =  {'email':data.email,'password':data.newPassword};
-
+export async function forgotPassword(data) {
+  let arrayParam = { 'email': data.email, 'password': data.newPassword };
   try {
     store.dispatch(AppStateActions.startLoading());
     const response = await instance.post('/auth/forget-password', arrayParam);
-    console.log("response=>", response.data)
     store.dispatch(AppStateActions.stopLoading());
-  
     return forgotpasswordCompleted(response.data);
   } catch (error) {
-    console.log("error=>", error.response)
     store.dispatch(AppStateActions.stopLoading());
-   
     if (error.response && error.response.data) {
       return forgotpasswordFailed({ code: error.response.status, message: "Forgot password failed! Please check your email." });
     }
     return forgotpasswordFailed({ code: 500, message: 'Unexpected error!' });
   }
-   
+
 }
 
 export async function login(data) {
- 
+
   try {
     store.dispatch(AppStateActions.startLoading());
     const response = await instance.post('/auth/sign-in', data);
-
     console.log("response=>", response)
     store.dispatch(AppStateActions.stopLoading());
     store.dispatch(AppStateActions.loginSuccess(response.data));
@@ -284,6 +279,7 @@ export function getCompaniesFailed(error) {
   };
 }
 
+
 export async function getCompanies(email) {
   try {
     store.dispatch(AppStateActions.startLoading());
@@ -308,7 +304,7 @@ export async function getCompanies(email) {
  */
 
 export const getUserTaskGroupsRequest = (data) => {
-  
+
   return {
     type: GET_USER_TASK_GROUPS_REQUESTED,
     payload: data
@@ -332,7 +328,7 @@ export const getUserTaskGroupsFailed = (error) => {
 export async function getUserTaskGroups(data) {
   let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', data.page || 1);
   endpoint = endpoint.replace('{type}', 'Story');
-  if(data.user_email) {
+  if (data.user_email) {
     endpoint = endpoint.concat('&user_email=', data.user_email);
   }
   let taskGroups = data.previousData || [];
@@ -345,7 +341,7 @@ export async function getUserTaskGroups(data) {
     if (data.reset) {
       taskGroups = [];
     }
-    if(response){
+    if (response) {
       const responseData = getGroupUserDetails(response.data);
       const newUserTasks = [...taskGroups, ...responseData.latestUserTaskGroups];
       return getUserTaskGroupsCompleted({
@@ -370,9 +366,44 @@ export async function logout() {
   return { type: LOG_OUT }
 }
 
+// MessageList 
+export function getMessageListRequest(teamId) {
+  return {
+    type: GET_MESSAGELIST_REQUESTED,
+    payload: teamId
+  };
+}
+
+export function getMessageListCompleted(data) {
+  return {
+    type: GET_MESSAGELIST_COMPLETED,
+    payload: data
+  };
+}
+
+export function getMessageListFailed(error) {
+  return {
+    type: GET_MESSAGELIST_FAILED,
+    payload: error
+  };
+}
+
+export async function getMessageList(teamId) {
+  let endpoint = GET_MESSAGE_LIST_API.replace('{team_id}', ';' + teamId);
+  try {
+    store.dispatch(AppStateActions.startLoading());
+    const response = await instance.get(endpoint)
+    store.dispatch(AppStateActions.stopLoading());
+    return getMessageListCompleted(response.data);
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return getMessageListFailed(error.response.data);
+    }
+    return getMessageListFailed({ code: 500, message: 'Unexpected error!' });
+  }
+}
 // Reducer
 export default function UserStateReducer(state = initialState, action = {}) {
-
   switch (action.type) {
     case REGISTER_REQUESTED:
       return loop(
@@ -383,19 +414,17 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('user', action.payload).set('registerSuccess', true);
     case REGISTER_FAILED:
       return state.set('error', action.payload).set('registerSuccess', false);
-    
-      case FORGOT_PASSWORD_REQUESTED:
-       return loop(
+
+    case FORGOT_PASSWORD_REQUESTED:
+      return loop(
         state.set('error', null).set('forgotpasswordSuccess', false),
         Effects.promise(forgotPassword, action.payload)
-       );
-       case FORGOT_PASSWORD_COMPLETED:
-          //console.log("****** forgot pwd payload ",action.payload,"******");
-        return state.set('user', action.payload).set('forgotpasswordSuccess', true);
+      );
+    case FORGOT_PASSWORD_COMPLETED:
+      return state.set('user', action.payload).set('forgotpasswordSuccess', true);
 
-      case FORGOT_PASSWORD_FAILED:
-      console.log("****** forgot pwd payload ",action.payload,"******");
-          return state.set('error', action.payload).set('forgotpasswordSuccess', false);
+    case FORGOT_PASSWORD_FAILED:
+      return state.set('error', action.payload).set('forgotpasswordSuccess', false);
 
     case GET_COMPANIES_REQUESTED:
       return loop(
@@ -406,6 +435,15 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('companies', action.payload).set('getCompaniesSuccess', true);
     case GET_COMPANIES_FAILED:
       return state.set('error', action.payload).set('getCompaniesSuccess', false);
+    case GET_MESSAGELIST_REQUESTED:
+      return loop(
+        state.set('error', null).set('getMessageListSuccess', false),
+        Effects.promise(getMessageList, action.payload)
+      );
+    case GET_MESSAGELIST_COMPLETED:
+      return state.set('messages', action.payload).set('getMessageListSuccess', true);
+    case GET_MESSAGELIST_FAILED:
+      return state.set('error', action.payload).set('getMessageListSuccess', false);
     case LOGIN_REQUESTED:
       return loop(
         state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),

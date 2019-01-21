@@ -8,6 +8,7 @@ export default connect(
     state => ({
         user: isImmutable(state.getIn(['user', 'user'])) ? state.getIn(['user', 'user']).toJS() : state.getIn(['user', 'user']),
         taskGroups: isImmutable(state.getIn(['user', 'task_groups'])) ? state.getIn(['user', 'task_groups']).toJS() : state.getIn(['user', 'task_groups']),
+        messages: state.getIn(['user', 'messages']),
     }),
     dispatch => {
         return {

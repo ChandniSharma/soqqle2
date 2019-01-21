@@ -112,41 +112,58 @@ const styles = StyleSheet.create({
         paddingVertical: 0,
         paddingHorizontal: 10,
     },
-    viewShowMember:{
-        flexDirection:'row',
+    viewShowMember: {
+        flexDirection: 'row',
         alignSelf: 'center',
         marginTop: 10,
     },
-    member1:{
-       width:40,
-       height:40,
-       borderRadius:20,
-       marginRight:-5
+    member1: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: -5
     },
-    member2:{
-        width:40,
-        height:40,
-        borderRadius:20,
-        marginRight:-5
+    member2: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: -5
     },
-    
-    plusMemberBtn:{
-
-    },
-    plusMemberView:{
-        width:40,
-        height:40,
-        borderRadius:20,
+    plusMemberView: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         borderColor: '#9600A1',
-        borderWidth:1,
-        alignItems:'center',
+        borderWidth: 1,
+        alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:'white',
+        backgroundColor: 'white',
     },
-    plusTxt:{
+    plusTxt: {
         color: '#9600A1',
         fontSize: 14,
-    }
+    },
+    viewChatContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#F2F2F2',
+        bottom: 10,
+        alignSelf: 'center',
+        position: 'absolute',
+    },
+    viewChat: {
+        flexDirection: 'row',
+        borderRadius: 5,
+        borderColor: 'green',
+        borderWidth: 1,
+    },
+    sendImage: {
+        width: 32,
+        height: 32,
+        alignSelf: 'flex-end',
+    },
+    textInput: {
+        alignSelf: 'flex-start',
+    },
 });
 
 export default styles;

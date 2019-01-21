@@ -19,3 +19,26 @@ export function getGroupUserDetails(groupDetails) {
   });
   return groupDetails;
 }
+
+export function getMessages(groupDetails, messages) {
+  let messagesWithUserDetails = [];
+  messages.map((message, messageIndex) => {
+    let userData = groupDetails._team.emails.find((user) => {
+      return user.userDetails._id === message.sender;
+    });
+    if(userData && userData.userDetails && userData.userDetails.profile){
+    messagesWithUserDetails.push(
+      {
+        _id: message._id,
+        text: message.message,
+        createdAt: new Date(message.time),
+        user: {
+          _id: userData.userDetails._id,
+          name: userData.userDetails.profile.firstName+ ' '+ userData.userDetails.profile.firstName,
+          avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName}+${userData.userDetails.profile.lastName}`
+        },
+      }
+    )}
+  });
+  return messagesWithUserDetails;
+}

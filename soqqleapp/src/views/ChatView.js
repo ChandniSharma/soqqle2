@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, AsyncStorage, TextInput, Image } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
-import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH } from './../endpoints';
+import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH,CHAT_SOCKET_URL } from './../endpoints';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
-import {
-    Thumbnail
-  } from "native-base";
+import { Thumbnail } from "native-base";
+import { getMessages } from '../utils/common';
+import { GiftedChat } from 'react-native-gifted-chat'
+import SocketIOClient from 'socket.io-client';
+
+const USER_ID = '@userId';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -23,16 +26,40 @@ export default class UserTaskGroupView extends Component {
       taskGroup: {},
       userTask: {},
       processing: false,
+      messages: [],
+      userId: null,
     };
+    //this.determineUser = this.determineUser.bind(this);
+    this.onReceivedMessage = this.onReceivedMessage.bind(this);
+    this.onSend = this.onSend.bind(this);
+    this._storeMessages = this._storeMessages.bind(this);
+    let user = this.props.user;
+    let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
+    this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query });
+    this.socket.on('server:message', this.onReceivedMessage);
+    //this.determineUser();
   }
+
 
   componentWillMount() {
     this.setTaskAndTaskGroup();
+  }
+  componentDidMount() {
+    let groupId = this.props.navigation.state.params.task_group_id;
+    const { userActions } = this.props;
+    userActions.getMessageListRequest(this.state.taskGroup._team._id);
+    console.log('=====',this.state.taskGroup);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigation.state.params.taskUpdated) {
       this.setTaskAndTaskGroup();
+    }
+    if (Array.isArray(nextProps.messages)) {
+      if (nextProps.messages.length > 0) {
+        let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages);       
+        this.setState({ messages: arrayMessages });
+      }
     }
   }
 
@@ -117,7 +144,6 @@ export default class UserTaskGroupView extends Component {
       },
       name: data.name
     };
-
     instance.post(SAVE_TASK_PATH_API, taskData).then(response => {
       this.setState({ userTask: response.data });
       this.updateUserTasks(response.data);
@@ -162,32 +188,88 @@ export default class UserTaskGroupView extends Component {
   isTaskCompleted() {
     return this.state.userTask.status === 'complete';
   }
-
+  // For chat 
+  determineUser() {
+    AsyncStorage.getItem(USER_ID)
+      .then((userId) => {
+        // If there isn't a stored userId, then fetch one from the server.
+        if (!userId) {
+          this.socket.emit('userJoined', null);
+          this.socket.on('userJoined', (userId) => {
+            AsyncStorage.setItem(USER_ID, userId);
+            this.setState({ userId });
+          });
+        } else {
+          this.socket.emit('userJoined', userId);
+          this.setState({ userId });
+        }
+      })
+      .catch((e) => alert(e));
+  }
+  onReceivedMessage(message) {
+    let groupDetails = this.state.taskGroup;
+    let userData = groupDetails._team.emails.find((user) => {
+      return user.userDetails._id === message.sender;
+    });
+    if (userData && userData.userDetails && userData.userDetails.profile) {
+      let messageReceived = [
+        {
+          _id: Math.random(),
+          text: message.message,
+          createdAt: new Date(),
+          user: {
+            _id: userData.userDetails._id,
+            name: userData.userDetails.profile.firstName + ' ' + userData.userDetails.profile.firstName,
+            avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName}+${userData.userDetails.profile.lastName}`
+          },
+        },
+      ];
+      this._storeMessages(messageReceived);
+    }
+  }
+  onSend(messages = []) {
+    this.socket.emit('client:message', {
+      sender: this.props.user._id,
+      receiver: this.state.taskGroup._team._id,
+      chatType: 'GROUP_MESSAGE',
+      message: messages && messages[0] && messages[0]['text'] ? messages[0]['text'] : ''
+    })
+    this._storeMessages(messages);
+  }
+  _storeMessages(messages) {
+    this.setState((previousState) => {
+      return {
+        messages: GiftedChat.append(previousState.messages, messages),
+      };
+    });
+  }
   render() {
     const { taskGroup } = this.state;
     const isCompleted = this.isTaskCompleted();
-
-        const story = taskGroup._typeObject;
-        let countExtraMember = 0;
-        countExtraMember = this.state.taskGroup._team.emails.length-2;
-
-        // Now showing photos
-        let image1, image2;
-
-        if(this.state.taskGroup._team.emails.length>0){
-          let  arrayEmail = this.state.taskGroup._team.emails[0];
-                let dictUserDetail = arrayEmail.userDetails;
-                image1 =  <Thumbnail
-                style={styles.member1}
-                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
+    var user = {
+      _id: this.props.user._id,
+      name: this.props.user.profile.firstName + ' ' + this.props.user.profile.lastName ? this.props.user.profile.lastName : '',
+      avatar: this.props.user.profile.pictureURL || `https://ui-avatars.com/api/?name=${this.props.user.profile.firstName}+${this.props.user.profile.lastName}`,
+    };
+    const story = taskGroup._typeObject;
+    let countExtraMember = 0;
+    countExtraMember = this.state.taskGroup._team.emails.length - 2;
+    // Now showing photos
+    let image1, image2;
+    if (this.state.taskGroup._team.emails.length > 0) {
+      let arrayEmail = this.state.taskGroup._team.emails[0];
+      let dictUserDetail = arrayEmail.userDetails;
+      image1 = <Thumbnail
+        style={styles.member1}
+        source={{ uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}` }} />
     }
-        if(this.state.taskGroup._team.emails.length>1){
-            let  arrayEmail1 = this.state.taskGroup._team.emails[1];
-                let dictUserDetail = arrayEmail1.userDetails
-                image2 =  <Thumbnail
-                style={styles.member2}
-                source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
-        }
+    if (this.state.taskGroup._team.emails.length > 1) {
+      let arrayEmail1 = this.state.taskGroup._team.emails[1];
+      let dictUserDetail = arrayEmail1.userDetails
+      image2 = <Thumbnail
+        style={styles.member2}
+        source={{ uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}` }} />
+    }
     return (
       <SafeAreaView style={styles.container}>
         <Header title='Chat'
@@ -198,53 +280,59 @@ export default class UserTaskGroupView extends Component {
           headerRightTextStyle={styles.headerRightTextStyle}
         />
         <View style={styles.storyDetailView}>
-            <View style={styles.storyDetailHeader}>
-              <Text style={styles.storyDetailTitle}>{story.name}</Text>
-              <Text style={styles.storyDetailXP}>Team 100 XP</Text>
-            </View>
+          <View style={styles.storyDetailHeader}>
+            <Text style={styles.storyDetailTitle}>{story.name}</Text>
+            <Text style={styles.storyDetailXP}>Team 100 XP</Text>
+          </View>
           <Text style={styles.storyDetailText} numberOfLines={2}>{story.description}</Text>
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
             <View style={styles.storyDetailTags}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Text style={styles.storyDetailTag}>50 xp</Text>
-                      <Text style={styles.storyDetailTag}>5 team xp</Text>
-                      {story.reward && (
-                        <Text style={styles.storyDetailTag}>
-                          {`${story.reward.type} ${story.reward.value || ''}`}
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.storyDetailTag}>50 xp</Text>
+                <Text style={styles.storyDetailTag}>5 team xp</Text>
+                {story.reward && (
+                  <Text style={styles.storyDetailTag}>
+                    {`${story.reward.type} ${story.reward.value || ''}`}
+                  </Text>
+                )}
+                <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
+                  <View style={styles.storyDetailActionTag}>
+                    {this.state.processing ? (
+                      <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
+                    ) : (
+                        <Text style={{ color: '#ffffff' }}>
+                          {Object.keys(this.state.userTask).length ? (
+                            isCompleted ? 'Task Completed' : 'Task Started'
+                          ) : 'Start Task'}
                         </Text>
                       )}
-                      <TouchableOpacity onPress={() => this.goToTask(story)} disabled={isCompleted}>
-                <View style={styles.storyDetailActionTag}>
-                  {this.state.processing ? (
-                    <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
-                  ) : (
-                      <Text style={{ color: '#ffffff' }}>
-                        {Object.keys(this.state.userTask).length ? (
-                          isCompleted ? 'Task Completed' : 'Task Started'
-                        ) : 'Start Task'}
-                      </Text>
-                    )}
-                </View>
-              </TouchableOpacity>
-                    </View>
-                </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
-        
-        <TouchableOpacity onPress={()=>this.props.navigation.navigate('UsersList',{taskGroupData:this.state.taskGroup})}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup })}>
           <View style={styles.viewShowMember}>
             {image1}
             {image2}
-            { countExtraMember > 0 && 
-            <View style={styles.plusMemberView}>
-                    <Text style={styles.plusTxt}>
-                        +{countExtraMember}
-                    </Text>
-            </View>
+            {countExtraMember > 0 &&
+              <View style={styles.plusMemberView}>
+                <Text style={styles.plusTxt}>
+                  +{countExtraMember}
+                </Text>
+              </View>
             }
-           </View>
+          </View>
         </TouchableOpacity>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={messages => this.onSend(messages)}
+          user={user}
+          showUserAvatar={true}
+          showAvatarForEveryMessage={true}
+        />
       </SafeAreaView>
     );
   }

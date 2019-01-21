@@ -12,3 +12,5 @@ export const SAVE_ANSWERS_PATH_API = '/hangoutAnswersSave';
 export const SAVE_TASK_PATH_API = '/taskSavePost';
 export const UPDATE_USER_TASK_GROUP_API_PATH = '/taskGroup/{}';
 export const GET_OBJECTIVE_API_PATH = '/taskRefs/{}';
+export const GET_MESSAGE_LIST_API = '/fetchConversationByParticipants?chatType=GROUP&ids={team_id}';
+export const CHAT_SOCKET_URL = 'stgapi.soqqle.com';
