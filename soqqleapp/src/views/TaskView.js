@@ -51,10 +51,9 @@ export default class TaskView extends Component {
 
   componentDidMount() {
     const skill = this.props.navigation.getParam('skill', null);
-    const number = this.props.navigation.getParam('questionsNum', null);
 
     if (skill) {
-      this.props.taskActions.getQuestions(skill, number)
+      this.props.taskActions.getQuestions(skill)
     }
   }
 

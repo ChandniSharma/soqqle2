@@ -8,7 +8,6 @@ import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
 import * as snapshot from "../utils/snapshot";
 import * as constants from '../constants';
-import { constant } from 'redux-loop-symbol-ponyfill/lib/effects';
 import {getGroupUserDetails} from "../utils/common";
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, AsyncStorage, TextInput, Image } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
+import { TASK_GROUP_TYPES } from './../constants';
 import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH,CHAT_SOCKET_URL } from './../endpoints';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
 import { Thumbnail } from "native-base";
 import { getMessages } from '../utils/common';
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
 
 const instance = axios.create({
@@ -84,7 +85,6 @@ export default class UserTaskGroupView extends Component {
       if (Object.keys(this.state.userTask).length) {
         this.props.navigation.navigate('Task', {
           skill, reward,
-          questionsNum: story.objectiveValue,
           task: this.state.userTask, task_group_id: taskGroupId
         })
       }
