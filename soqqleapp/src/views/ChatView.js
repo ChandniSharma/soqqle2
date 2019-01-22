@@ -10,6 +10,7 @@ import { Thumbnail } from "native-base";
 import { getMessages } from '../utils/common';
 import { GiftedChat } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
+import {TASK_GROUP_TYPES} from './../constants';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -45,13 +46,13 @@ export default class UserTaskGroupView extends Component {
     let groupId = this.props.navigation.state.params.task_group_id;
     const { userActions } = this.props;
     userActions.getMessageListRequest(this.state.taskGroup._team._id);
-    console.log('=====',this.state.taskGroup);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigation.state.params.taskUpdated) {
       this.setTaskAndTaskGroup();
     }
+    this.setState({ messages:[]});
     if (Array.isArray(nextProps.messages)) {
       if (nextProps.messages.length > 0) {
         let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages);       
