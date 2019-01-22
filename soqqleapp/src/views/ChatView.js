@@ -3,14 +3,14 @@ import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'r
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { TASK_GROUP_TYPES } from './../constants';
-import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH,CHAT_SOCKET_URL } from './../endpoints';
+import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH, CHAT_SOCKET_URL } from './../endpoints';
 import styles from './../stylesheets/chatViewStyles';
 import Header from './../components/Header';
 import { Thumbnail } from "native-base";
 import { getMessages } from '../utils/common';
 import { GiftedChat } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
-import {TASK_GROUP_TYPES} from './../constants';
+
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -32,10 +32,6 @@ export default class UserTaskGroupView extends Component {
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
-    let user = this.props.user;
-    let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
-    this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query });
-    this.socket.on('server:message', this.onReceivedMessage);
   }
 
 
@@ -43,19 +39,22 @@ export default class UserTaskGroupView extends Component {
     this.setTaskAndTaskGroup();
   }
   componentDidMount() {
-    let groupId = this.props.navigation.state.params.task_group_id;
     const { userActions } = this.props;
     userActions.getMessageListRequest(this.state.taskGroup._team._id);
+    let user = this.props.user;
+    let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
+    this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query, transports: ['websocket'] });
+    this.socket.on('server:message', this.onReceivedMessage);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigation.state.params.taskUpdated) {
       this.setTaskAndTaskGroup();
     }
-    this.setState({ messages:[]});
+    this.setState({ messages: [] });
     if (Array.isArray(nextProps.messages)) {
       if (nextProps.messages.length > 0) {
-        let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages);       
+        let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages);
         this.setState({ messages: arrayMessages });
       }
     }
