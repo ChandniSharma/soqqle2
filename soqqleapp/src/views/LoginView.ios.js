@@ -85,7 +85,7 @@ export default class LoginView extends Component {
     let result = {};
     try {
       this.setState({showLoadingModal: true});
-      LoginManager.setLoginBehavior('native');
+      // LoginManager.setLoginBehavior('native');
       result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
       processResult(result);
     } catch (nativeError) {
