@@ -42,6 +42,7 @@ export default class TaskView extends Component {
       helps: [],
       resultModalVisible: false,
       processing: false,
+      achievementCompletionDetail: {},
     };
   }
 
@@ -107,11 +108,55 @@ export default class TaskView extends Component {
       instance.post(SAVE_ANSWERS_PATH_API, data).then(response => {
         this.updateTaskStatus(response.data.foundTask);
         this.refreshSparks();
-        this.setState({ resultModalVisible: true, processing: false });
+        this.setState({
+          resultModalVisible: true,
+          processing: false,
+          achievementCompletionDetail: this.getAchievementDetails(response.data)
+        });
       }).catch((error) => {
         console.log(error);
       });
     }
+  }
+
+  getAchievementDetails(responseData, achievementIndex = 0) {
+    let data = {};
+    let { updatedAchievements, userAchievementResult, result } = responseData;
+
+    if (updatedAchievements && updatedAchievements.length) {
+      let updates = updatedAchievements[achievementIndex]; // for now take only 1
+      let achievementsInfo = userAchievementResult.achievements.filter(
+        info => info.achievementId === updates._id,
+      )[0] || {};
+      let achievementDescription = result.filter(
+        info => info._id === updates._id,
+      )[0] || {};
+      updates = { ...updates, conditions: achievementsInfo.conditions || [] };
+
+      data = {
+        ...updates,
+        countProgress: updates.conditions[0].counter,
+        countComplete: updates.conditions[0].count,
+        displayName: updates.name,
+        id: updates._id,
+        displayProgressVsComplete: `${this.getProgress(updates)}`,
+        generic: false,
+        description: achievementDescription.description
+      };
+    }
+    return data;
+  }
+
+  getProgress(updates) {
+    const conditionCounter = updates.conditions[0].counter;
+    const conditionCount = updates.conditions[0].count;
+
+    if (conditionCounter === conditionCount) {
+      return `${updates.conditions[0].taskType} Complete!`;
+    }
+
+    const mathFloor = ~~((conditionCounter / conditionCount) * 100);
+    return `${conditionCounter}/${conditionCount} ${updates.conditions[0].taskType} - ${mathFloor}% Complete!`;
   }
 
   updateTaskStatus(task) {
@@ -224,6 +269,7 @@ export default class TaskView extends Component {
           >
             <View style={styles.helpModal}>
               <View style={styles.resultModalContent}>
+                <Text style={[styles.buttonText, { fontSize: 18 }]}>{this.state.achievementCompletionDetail.displayProgressVsComplete}</Text>
                 <Text style={[styles.buttonText, { fontSize: 25 }]}>You gain {reward.value || 0} {reward.type || ''}</Text>
                 <Button style={styles.stepButton} onPress={this.onShowResult} medium rounded>
                   <Text style={[styles.buttonText, { fontSize: 25 }]}>OK</Text>
