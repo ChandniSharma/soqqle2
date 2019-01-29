@@ -28,8 +28,6 @@ var RCTNetworking = require('RCTNetworking');
 const faceBookProfileFields = ['id', 'email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
 const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
 
-const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
-
 export default class LoginView extends Component {
 
   static flashMessage = message => {
@@ -85,7 +83,7 @@ export default class LoginView extends Component {
     let result = {};
     try {
       this.setState({showLoadingModal: true});
-      LoginManager.setLoginBehavior('native');
+      // LoginManager.setLoginBehavior('native');
       result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
       processResult(result);
     } catch (nativeError) {

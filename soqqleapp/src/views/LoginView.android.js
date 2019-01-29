@@ -84,8 +84,7 @@ export default class LoginView extends Component {
     };
     let result = {};
     try {
-      this.setState({showLoadingModal: true});
-      LoginManager.setLoginBehavior('native');
+      // LoginManager.setLoginBehavior('native');
       result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
       processResult(result);
     } catch (nativeError) {
@@ -94,7 +93,7 @@ export default class LoginView extends Component {
         result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
         processResult(result);
       } catch (webError) {
-        console.log("web===error====", webError);
+        console.log("====web===error====", webError);
         LoginView.flashMessage('Can not login with your Facebook, please try again!');
       }
     }
