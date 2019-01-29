@@ -3,10 +3,8 @@ import {
   FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableWithoutFeedback,
   View
 } from 'react-native';
-import Swipeable from 'react-native-swipable';
 import Header from './../components/Header';
 import {PAGE_SIZE} from './../constants';
-import GestureRecognizer from "react-native-swipe-gestures";
 import TaskCard from "../components/TaskCard";
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
