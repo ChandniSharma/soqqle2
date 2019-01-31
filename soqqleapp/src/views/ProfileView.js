@@ -48,7 +48,11 @@ export default class ProfileView extends Component {
   };
 
   goBack = () => {
-    this.props.navigation.pop();
+    if(this.props.backToUserList){
+      this.props.navigation.navigate('UsersList', { taskGroupData: this.props.navigation.state.params.taskGroupData })
+    }else{
+      this.props.navigation.pop();
+    }
   };
   goAgendaView = () => {
     this.props.navigation.navigate("Agenda");
@@ -111,7 +115,7 @@ export default class ProfileView extends Component {
     const { userActions } = this.props;
     const { profile } = this.state;
     if (profile && profile.email) {
-      userActions.getCompaniesRequest(profile.email.toLowerCase());
+      userActions.getCompaniesRequest(profile.email.toLowerCase()); 
     }
   }
 

@@ -46,10 +46,12 @@ renderItem = (item,index) =>{
      style={styles.imageUser}
      source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
 }
-    
+
+
+
  return(
     <CardSection>
-        <TouchableOpacity onPress={()=>this.props.navigation.navigate('UserDetailView', {detailDict:item.item})}>
+        <TouchableOpacity onPress={()=>this.props.navigation.navigate('UserDetailView', {detailDict:item.item , taskGroupData:this.props.navigation.state.params.taskGroupData })}>
             <View style={styles.viewMain}>
             {imgUser}
                    <View>
