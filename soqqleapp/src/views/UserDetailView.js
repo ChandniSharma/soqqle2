@@ -78,7 +78,6 @@ export default connect(
         isLoading: state.getIn(['app', 'loading']),
         companies: isImmutable(state.getIn(['user', 'companies'])) ? state.getIn(['user', 'companies']).toJS() : state.getIn(['user', 'companies']),
         sparks: isImmutable(state.getIn(['spark', 'details'])) ? state.getIn(['spark', 'details']).toJS() : state.getIn(['spark', 'details']),
-
     }),
     dispatch => {
         return {

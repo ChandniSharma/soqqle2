@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationActions, StackActions } from 'react-navigation';
-import { StyleSheet, TextInput, View,alert } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import _ from 'lodash';
