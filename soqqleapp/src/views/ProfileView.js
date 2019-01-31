@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationActions, StackActions } from 'react-navigation';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View,alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import _ from 'lodash';
@@ -67,6 +67,10 @@ export default class ProfileView extends Component {
     this.props.navigation.dispatch(resetAction);
   };
   renderMenu = () => {
+
+    if (this.props.backToUserList) {
+      return null;
+    } else {
     return <Menu ref={ref => this.menu = ref}>
       <MenuTrigger>
         <Icon style={styles.headerIcon} name='settings' />
@@ -92,6 +96,7 @@ export default class ProfileView extends Component {
         </MenuOption>
       </MenuOptions>
     </Menu>;
+    }
   };
 
   constructor(props) {
@@ -144,11 +149,13 @@ export default class ProfileView extends Component {
                 <Icon style={styles.headerIcon} name='arrow-back' />
               </Button>
             </Left>
+            {/* {this.props.backToUserList?null: */}
             <Right>
               {isEdit ?
                 <Button transparent onPress={this.onSave}><Text
                   style={styles.headerIcon}>save</Text></Button> : this.renderMenu()}
             </Right>
+            {/* } */}
           </Header>
           <View style={styles.topProfile}>
             <CardItem style={styles.blurBg}>

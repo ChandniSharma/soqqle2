@@ -14,6 +14,7 @@ import { NavigationActions } from 'react-navigation';
 import styles from './../stylesheets/userDetailViewStyles';
 import ProfileView from './ProfileView';
 import * as UserActions from '../reducers/UserReducer';
+import { isImmutable } from 'immutable';
 
 class UserDetailView extends Component {
     constructor(props) {
@@ -62,19 +63,22 @@ class UserDetailView extends Component {
                  sparks={sparks} 
                  user={dictUserDetail}
                  navigation={this.props.navigation}
+                 companies={this.props.companies}
+                 sparks={this.props.sparks}
                  />
             )
         } else {
-
             return null;
         }
-
     }
 }
 
 export default connect(
     state => ({
         isLoading: state.getIn(['app', 'loading']),
+        companies: isImmutable(state.getIn(['user', 'companies'])) ? state.getIn(['user', 'companies']).toJS() : state.getIn(['user', 'companies']),
+        sparks: isImmutable(state.getIn(['spark', 'details'])) ? state.getIn(['spark', 'details']).toJS() : state.getIn(['spark', 'details']),
+
     }),
     dispatch => {
         return {
