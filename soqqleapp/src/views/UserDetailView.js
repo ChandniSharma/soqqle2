@@ -14,6 +14,7 @@ import { NavigationActions } from 'react-navigation';
 import styles from './../stylesheets/userDetailViewStyles';
 import ProfileView from './ProfileView';
 import * as UserActions from '../reducers/UserReducer';
+import * as actions from '../reducers/SparkReducer';
 import { isImmutable } from 'immutable';
 
 class UserDetailView extends Component {
@@ -83,6 +84,7 @@ export default connect(
         return {
             navigate: bindActionCreators(NavigationActions.navigate, dispatch),
             userActions: bindActionCreators(UserActions, dispatch),
+            sparkActions: bindActionCreators(actions, dispatch)
         };
     }
 )(UserDetailView);
