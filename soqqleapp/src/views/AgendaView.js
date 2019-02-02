@@ -132,7 +132,7 @@ export default class AgendaView extends Component {
 
         data.map(item => {
             const index = agendaItems.findIndex(obj => {
-                return obj.groupname.toLowerCase() === item.groupname.toLowerCase()
+                return obj.groupname.toLowerCase() === item.groupname.toLowerCase();
             });
             let taskItem = {
                 description: item.description,
@@ -141,7 +141,7 @@ export default class AgendaView extends Component {
                 unlock_time: item.unlocktime,
             };
             if (index > -1) {
-                agendaItems[index]['tasks'].push(taskItem)
+                agendaItems[index]['tasks'].push(taskItem);
             } else {
                 agendaItems.push({
                     groupname: item.groupname,
@@ -193,7 +193,7 @@ export default class AgendaView extends Component {
                                 <View style={styles.taskSeparator}/>
                                 : null}
                         </View>
-                    )
+                    );
                 })}
             </View>
         );
@@ -231,10 +231,10 @@ export default class AgendaView extends Component {
                 ) : (
                     <ScrollView onScroll={({nativeEvent}) => {
                         if (isCloseToBottom(nativeEvent)) {
-                            this.fetchMoreAgendaOnScroll()
+                            this.fetchMoreAgendaOnScroll();
                         }
                     }}
-                                scrollEventThrottle={400}>
+                    scrollEventThrottle={400}>
                         <Accordion
                             sections={this.state.agendaItems}
                             activeSections={this.state.activeSections}

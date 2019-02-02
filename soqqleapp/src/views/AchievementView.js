@@ -98,7 +98,7 @@ const generateAchievementGroups = data => {
 };
 
 const getAchievementTags = conditions => {
-    return conditions.filter(condition => ['Task', 'Action', 'Progression', 'Task and Progression', 'Level'].indexOf(condition.type) > -1)
+    return conditions.filter(condition => ['Task', 'Action', 'Progression', 'Task and Progression', 'Level'].indexOf(condition.type) > -1);
 };
 
 let userId = null;
@@ -143,7 +143,7 @@ export default class AchievementView extends Component {
         if (userId) {
             let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', userId);
             instance.get(endpoint).then(response => {
-                this.setState({userAchievements: response.data.achievements || []})
+                this.setState({userAchievements: response.data.achievements || []});
             }).catch(err => {
             });
         }
@@ -169,13 +169,13 @@ export default class AchievementView extends Component {
                                 <Text key={index} style={styles.achievementTag}>
                                     {`${tag.count} ${tag.taskType || tag.levelType || tag.type}`}
                                 </Text>
-                            )
+                            );
                         })}
                         <Text style={styles.achievementStatus}>{this.getAchievementStatus(item._id)}</Text>
                     </View>
                 </View>
             </View>
-        )
+        );
     };
 
     getAchievementStatus(achievementId) {
@@ -217,7 +217,7 @@ export default class AchievementView extends Component {
                                         } : styles.groupTag}
                                     >{group.name}</Text>
                                 </TouchableWithoutFeedback>
-                            )
+                            );
                         })}
                     </ScrollView>
                 </View>
