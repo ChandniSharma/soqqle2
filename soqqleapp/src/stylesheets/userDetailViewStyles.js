@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     },
     txtName:{
         fontSize:20,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         marginLeft:4,
     },
     txtDesignation:{
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         color:'#000000',
         marginLeft:10,
     },
-   viewBottomBtn:{
+    viewBottomBtn:{
         flexDirection:'row',
         width:'100%',
         height: 40,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     txtSelected:{
-       color:'white'
+        color:'white'
     },
     txtNotSelected:{
         color:'#9600A1'

@@ -1,10 +1,10 @@
 import { Platform, StyleSheet } from 'react-native';
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
- const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         padding: 0,
         paddingTop: statusBarHeight,
-       backgroundColor:'white',
+        backgroundColor:'white',
         flex: 1,
     },
     viewMain:{
@@ -34,7 +34,7 @@ const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
     },
     txtName:{
         fontSize:16,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         marginLeft:3,
     },
     txtDesignation:{
@@ -64,6 +64,6 @@ const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
     avatar: {
         width: 60,
         height: 60,
-      },
+    },
 });
 export default styles;
