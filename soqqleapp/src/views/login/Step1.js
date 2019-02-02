@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import { ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-import { Form, Input, Item, Text } from 'native-base';
-import { MAIN_COLOR } from './../../constants';
+import {Form, Input, Item, Text} from 'native-base';
+import {MAIN_COLOR} from './../../constants';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class Step1 extends Component {
     render() {
-        const { email, onChange, onEmailSubmit } = this.props;
+        const {email, onChange, onEmailSubmit} = this.props;
 
         return (
             <Form>

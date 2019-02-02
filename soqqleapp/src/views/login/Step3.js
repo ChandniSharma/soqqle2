@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { ImageBackground, Linking, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { CheckBox, Form, Input, Item, Text } from 'native-base';
+import {ImageBackground, Linking, Platform, StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {CheckBox, Form, Input, Item, Text} from 'native-base';
 
-import { MAIN_COLOR } from '../../constants';
+import {MAIN_COLOR} from '../../constants';
 import LoginView from './../LoginView';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;

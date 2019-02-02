@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import { ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-import { Button, Form, Input, Item, Text } from 'native-base';
-import { MAIN_COLOR } from './../../constants';
+import {Button, Form, Input, Item, Text} from 'native-base';
+import {MAIN_COLOR} from './../../constants';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
 export default class Step2 extends Component {
     render() {
-        const { password, onChange, onLogin, showforgotPasswordView, onOtherEmail } = this.props;
+        const {password, onChange, onLogin, showforgotPasswordView, onOtherEmail} = this.props;
         return (
             <Form>
                 <Item rounded style={styles.textInput}>
