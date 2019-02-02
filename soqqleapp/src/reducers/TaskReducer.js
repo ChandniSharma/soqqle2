@@ -4,7 +4,7 @@ import {Effects, loop} from 'redux-loop-symbol-ponyfill';
 
 import {API_BASE_URL} from './../config';
 import store from './../redux/store';
-import * as AppStateActions from './../AppReducer';
+import * as AppStateActions from './AppReducer';
 
 const GET_QUESTIONS_REQUESTED = 'TaskState/GET_QUESTIONS_REQUESTED';
 const GET_QUESTIONS_COMPLETED = 'TaskState/GET_QUESTIONS_COMPLETED';
