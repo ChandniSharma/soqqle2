@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Form, Input, Item, Text } from 'native-base';
-import { MAIN_COLOR } from '../../constants';
+import { MAIN_COLOR } from './../../constants';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
