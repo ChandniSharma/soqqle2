@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Image, StyleSheet } from 'react-native';
+import {Text, View, Image, StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
     item: {
@@ -25,15 +25,15 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ReceiverChatItem = (props) => {
+export default ReceiverChatItem = props => {
     return (
         <View style={styles.item}>
             <Text style={styles.itemText}>Identity Verification</Text>
             <Image
-                source={{ uri: 'https://randomuser.me/api/portraits/women/74.jpg' }}
+                source={{uri: 'https://randomuser.me/api/portraits/women/74.jpg'}}
                 resizeMode='cover'
                 style={styles.itemImage}
             />
         </View>
-    )
-}
+    );
+};
