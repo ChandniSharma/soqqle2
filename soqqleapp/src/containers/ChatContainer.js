@@ -1,6 +1,6 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { isImmutable } from 'immutable';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {isImmutable} from 'immutable';
 
 import * as UserActions from './../reducers/UserReducer';
 import ChatView from './../views/ChatView';

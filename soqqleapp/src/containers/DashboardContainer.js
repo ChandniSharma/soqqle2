@@ -1,7 +1,7 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { NavigationActions } from 'react-navigation';
-import { isImmutable } from 'immutable';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {NavigationActions} from 'react-navigation';
+import {isImmutable} from 'immutable';
 
 import * as achievementActions from './../reducers/AchievementReducer';
 import * as sparkActions from './../reducers/SparkReducer';

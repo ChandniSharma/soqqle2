@@ -1,4 +1,4 @@
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import {isImmutable} from 'immutable';
 import {bindActionCreators} from 'redux';
 import {NavigationActions} from 'react-navigation';
