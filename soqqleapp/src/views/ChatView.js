@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
+import {SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Platform} from 'react-native';
 import * as axios from 'axios';
 import {Thumbnail} from 'native-base';
 import {GiftedChat} from 'react-native-gifted-chat';
