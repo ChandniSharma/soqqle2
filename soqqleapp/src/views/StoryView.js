@@ -34,6 +34,7 @@ const instance = axios.create({
 
 let selectedItemId = null;
 let selectedItemType = null;
+let selectedItemBonusSparks = null;
 
 export default class StoryView extends Component {
 
@@ -153,7 +154,7 @@ export default class StoryView extends Component {
         </View>
         <View style={styles.storyActionsContainer}>
           <TouchableOpacity onPress={() => {
-            this.setModalVisible(!this.state.modalVisible, item._id, item.item_type);
+            this.setModalVisible(!this.state.modalVisible, item._id, item.item_type, item.bonusSparks);
           }}>
             <View style={{ ...styles.storyActionBlock, ...{ 'backgroundColor': '#ffc500' } }}>
               <Image
@@ -173,10 +174,11 @@ export default class StoryView extends Component {
     );
   };
 
-  setModalVisible(visible, itemId, itemType) {
+  setModalVisible(visible, itemId, itemType, itemBonusSparks) {
     this.setState({ modalVisible: visible, tasksFetching: !!itemId, userTaskGroups: [] });
     selectedItemId = itemId;
-    selectedItemType = itemType
+    selectedItemType = itemType;
+    selectedItemBonusSparks = itemBonusSparks;
     if (itemId) {
       this.fetchUserTaskGroupsBasedOnStory(itemId);
     }
@@ -249,7 +251,11 @@ export default class StoryView extends Component {
       type: selectedItemType,
       _typeObject: selectedItemId,
       _user: this.props.user._id,
-      _team: teamId
+      _team: teamId,
+      ...(selectedItemBonusSparks ? {
+        leftBonusSparks: selectedItemBonusSparks,
+        lastBonusSparksRefreshed: new Date()
+      } : {})
     };
     fetch(SAVE_USER_TASK_GROUP_API, {
       method: 'POST',
