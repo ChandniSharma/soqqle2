@@ -65,5 +65,16 @@ const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
         width: 60,
         height: 60,
       },
+      eyeImg:{
+        width: 20,
+        height:20,
+      },
+      eyeWithCross:{
+        width:25,
+        height:25,
+      },
+      eyeBtn:{
+         marginRight:30
+      }
 });
 export default styles;

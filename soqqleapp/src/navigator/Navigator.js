@@ -9,6 +9,7 @@ import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
 import ChatContainer from '../containers/ChatContainer';
 import DashboardContainer from '../containers/DashboardContainer';
 import TaskContainer from "../containers/TaskContainer";
+import UserListContainer from "../containers/UserListContainer";
 
 import UsersList from '../views/UsersList';
 import UserDetailView from '../views/UserDetailView';
@@ -23,7 +24,7 @@ const AppNavigator = createStackNavigator({
     Chat: {screen: ChatContainer},
     Agenda: {screen: AgendaContainer},
     Dashboard: {screen: DashboardContainer},
-    UsersList:{screen: UsersList},
+    UsersList:{screen: UserListContainer},
     UserDetailView:{screen:UserDetailView},
   },
   {

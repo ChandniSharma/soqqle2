@@ -12,6 +12,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
 
 
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -54,7 +55,7 @@ export default class UserTaskGroupView extends Component {
     this.setState({ messages: [] });
     if (Array.isArray(nextProps.messages)) {
       if (nextProps.messages.length > 0) {
-        let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages);
+        let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages, this.props.user.blockUserIds);
         this.setState({ messages: arrayMessages });
       }
     }
@@ -189,7 +190,11 @@ export default class UserTaskGroupView extends Component {
     let userData = groupDetails._team.emails.find((user) => {
       return user.userDetails._id === message.sender;
     });
-    if (userData && userData.userDetails && userData.userDetails.profile) {
+    let isUnBlocked = true, blockUserIds = this.props.user.blockUserIds;
+    if (blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
+      isUnBlocked = false;
+    }
+    if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
       let messageReceived = [
         {
           _id: Math.random(),

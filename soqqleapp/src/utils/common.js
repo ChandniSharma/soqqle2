@@ -19,16 +19,19 @@ export function getGroupUserDetails(groupDetails) {
   });
   return groupDetails;
 }
-
-export function getMessages(groupDetails, messages) {
+export function getMessages(groupDetails, messages,blockUserIds) {
   let messagesWithUserDetails = [];
   messages.map((message, messageIndex) => {
     let userData = groupDetails._team.emails.find((user) => {
       return user.userDetails._id === message.sender;
     });
-    if(userData && userData.userDetails && userData.userDetails.profile){
-    messagesWithUserDetails.push(
-      {
+    let isUnBlocked = true;
+    if(blockUserIds.length>0 && blockUserIds.indexOf(userData.userDetails._id)!==-1){
+      isUnBlocked = false;
+    }
+    if(userData && userData.userDetails && userData.userDetails.profile && isUnBlocked){
+      messagesWithUserDetails.push(
+        {
         _id: message._id,
         text: message.message,
         createdAt: new Date(message.time),

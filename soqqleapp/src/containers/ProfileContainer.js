@@ -12,6 +12,8 @@ export default connect(
     companies: isImmutable(state.getIn(['user', 'companies'])) ? state.getIn(['user', 'companies']).toJS() : state.getIn(['user', 'companies']),
     getCompaniesSuccess: state.getIn(['user', 'getCompaniesSuccess']),
     isLoading: state.getIn(['app', 'loading']),
+    blockUserListSuccess:state.getIn(['user','blockUserListSuccess']),
+    blockUserList:state.getIn(['user','blockUserList']),
     sparks: isImmutable(state.getIn(['spark', 'details'])) ? state.getIn(['spark', 'details']).toJS() : state.getIn(['spark', 'details']),
   }),
   dispatch => {

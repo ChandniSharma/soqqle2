@@ -67,7 +67,6 @@ class UserDetailView extends Component {
                  companies={this.props.companies}
                  sparks={this.props.sparks}
                  sparkActions={this.props.sparkActions} 
-
                  />
             )
         } else {

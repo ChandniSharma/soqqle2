@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationActions, StackActions } from 'react-navigation';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View,Image } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import _ from 'lodash';
@@ -57,6 +57,10 @@ export default class ProfileView extends Component {
   goAgendaView = () => {
     this.props.navigation.navigate("Agenda");
   };
+  goUserListView = () =>{
+    const { userActions } = this.props;
+    userActions.blockUserListRequested(this.props.user.blockUserIds);
+    }
   logout = () => {
     this.menu.close();
     this.props.userActions.logout();
@@ -67,7 +71,6 @@ export default class ProfileView extends Component {
     this.props.navigation.dispatch(resetAction);
   };
   renderMenu = () => {
-
     if (this.props.backToUserList) {
       return null;
     } else {
@@ -87,6 +90,12 @@ export default class ProfileView extends Component {
             <Icon type="FontAwesome" style={styles.headerMenuIcon} name='calendar' />
             <Text style={styles.headerMenuIcon}>Agenda</Text>
           </Button>
+        </MenuOption>
+        <MenuOption>
+        <Button transparent onPress={() => this.goUserListView()}>
+        <Image style={styles.blockIcon} source={require('../../assets/images/eyeCross.png')} />
+        <Text style={styles.headerMenuIcon}>View Block User</Text>
+        </Button>
         </MenuOption>
         <MenuOption onSelect={() => this.logout()}>
           <Button transparent onPress={this.logout}>
@@ -136,6 +145,9 @@ export default class ProfileView extends Component {
         nextProps.sparks.transactions.length != this.props.sparks.transactions.length)) {
       this.setState({ tokensCount: nextProps.sparks.tokensCount });
     }
+    if(nextProps.blockUserListSuccess && nextProps.blockUserListSuccess != this.props.blockUserListSuccess ){
+     this.props.navigation.navigate('UsersList',{blockUserList:nextProps.blockUserList});
+    }
   }
 
   render() {
@@ -149,13 +161,11 @@ export default class ProfileView extends Component {
                 <Icon style={styles.headerIcon} name='arrow-back' />
               </Button>
             </Left>
-            {/* {this.props.backToUserList?null: */}
             <Right>
               {isEdit ?
                 <Button transparent onPress={this.onSave}><Text
                   style={styles.headerIcon}>save</Text></Button> : this.renderMenu()}
             </Right>
-            {/* } */}
           </Header>
           <View style={styles.topProfile}>
             <CardItem style={styles.blurBg}>
@@ -228,6 +238,12 @@ const styles = StyleSheet.create({
   headerMenuIcon: {
     fontSize: 15,
     color: 'black'
+  },
+  blockIcon:{
+   width:20,
+   height:20,
+   marginLeft:15,
+   marginRight:10,
   },
   blurBg: {
     backgroundColor: '#F8F8F8'

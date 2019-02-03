@@ -1,37 +1,101 @@
 import React, { Component } from 'react';
 import {
     TouchableOpacity,
-    Text, View, SafeAreaView, Image, FlatList
+    Text, View, SafeAreaView, Image, FlatList, Alert
 } from 'react-native';
+import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Card from '../components/Card';
 import CardSection from '../components/CardSection';
 import {
     Thumbnail
   } from "native-base";
 import styles from './../stylesheets/userListViewStyles'; 
 
-class UsersList extends Component{
+
+export default class UsersList extends Component{
 constructor(props){
     super(props);
     this.state={
      dataUser : [],
     };
+    
 }
 componentDidMount(){
-    let dictUserDetail = this.props.navigation.state.params.taskGroupData;
-     if(dictUserDetail._team){
-        this.setState({dataUser:dictUserDetail._team.emails})  ;
+    console.log("User list ======= ",this.props.navigation.state.params);
+    if(this.props.navigation.state.params.blockUserList){
+        this.setState({dataUser:this.props.navigation.state.params.blockUserList});
+    }else{
+        if(this.props.navigation.state.params.taskGroupData){
+            let dictUserDetail = this.props.navigation.state.params.taskGroupData;
+            if(dictUserDetail._team){
+                this.setState({dataUser:dictUserDetail._team.emails})  ;
+            }
+        }
     }
 }
+componentWillReceiveProps(nextProps) {
+    if (nextProps.error && nextProps.error.message) {
+      alert(nextProps.error.message);
+    }
+    if (nextProps.blockUserSuccess && nextProps.blockUserSuccess !== this.props.blockUserSuccess) {
+      }
+}
 handleBackAction() {
-    this.props.navigation.navigate({ routeName: 'Chat' })
+    this.props.navigation.goBack();
 }
 
+blockUnblockConfirmation(userId,isBlocked){
+    var alertTitle = '', alertMessage=''
+    if(isBlocked==0){
+        alertTitle = 'Unblock?';
+        alertMessage ='Are you sure to unblock this user?';
+    }else{
+        alertTitle = 'Block?';
+        alertMessage ='Are you sure to block this user?'; 
+    }
+    Alert.alert(
+    alertTitle,
+    alertMessage,
+    [
+        {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+        },
+        {text: 'Ok', onPress: () => this.callApiToBlockUnblock(userId,isBlocked)},  
+    ]
+    )
+}
+callApiToBlockUnblock(userId,isBlocked){
+    const {userActions} = this.props;
+    var loginUserId = this.props.user._id;
+    let arrayParam = { 'loginUserId': loginUserId, 'blockedUserId': userId, 'isBlocked':isBlocked };
+    userActions.blockUserRequested(arrayParam);
+    let profile = {...this.props.user};
+    let blockUserIds = [...this.props.user.blockUserIds];
+    if(isBlocked){
+        blockUserIds.push(userId);
+        profile.blockUserIds = blockUserIds; 
+        userActions.blockUnlockUserCompleted(profile);
+    }else{
+        let blockedUserArray = blockUserIds.filter(e => e != userId)
+        profile.blockUserIds = blockedUserArray; 
+        userActions.blockUnlockUserCompleted(profile);
+    }
+    this.setState({dataUser:this.state.dataUser});
+}
 renderItem = (item,index) =>{
-    var name = '', designation = '',imgUser;
+   
+    let arrayBlockedUser = this.props.user.blockUserIds;
+    var name = '', designation = '',imgUser, imgEyes, userId=0,isBlocked = 1;
+    imgEyes =  <Image source={require('../../assets/images/eyeOpen.png')} />
+    let dictUserDetail;
     if(item.item){
-     let dictUserDetail = item.item.userDetails;
+        if(this.props.navigation.state.params.blockUserList){
+            dictUserDetail = item.item
+        }else{
+            dictUserDetail = item.item.userDetails;
+        }
 
      if(dictUserDetail.profile.firstName){
         name = dictUserDetail.profile.firstName
@@ -42,13 +106,24 @@ renderItem = (item,index) =>{
      if(dictUserDetail.profile.title){
         designation = dictUserDetail.profile.title;
       }
-   imgUser =  <Thumbnail
+      if(dictUserDetail._id){
+        userId = dictUserDetail._id;
+      }
+      var index=-1;
+      if(arrayBlockedUser.length>0){
+        index= arrayBlockedUser.indexOf(userId);
+      }
+      if(index>=0){
+        imgEyes = <Image style={styles.eyeWithCross} source={require('../../assets/images/eyeCross.png')} /> 
+        isBlocked=0;
+      }else{
+        imgEyes =  <Image source={require('../../assets/images/eyeOpen.png')} />
+        isBlocked =1;
+      }
+     imgUser =  <Thumbnail
      style={styles.imageUser}
      source={{uri: dictUserDetail.profile.pictureURL || `https://ui-avatars.com/api/?name=${dictUserDetail.profile.firstName}+${dictUserDetail.profile.lastName}`}}/>
-}
-
-
-
+    }
  return(
     <CardSection>
         <TouchableOpacity onPress={()=>this.props.navigation.navigate('UserDetailView', {detailDict:item.item , taskGroupData:this.props.navigation.state.params.taskGroupData })}>
@@ -58,6 +133,9 @@ renderItem = (item,index) =>{
                     <Text style={styles.txtName}> {name} </Text>
                     <Text style={styles.txtDesignation}> {designation} </Text>
                 </View>
+                <TouchableOpacity style={styles.eyeBtn} onPress={()=>this.blockUnblockConfirmation(userId,isBlocked)}>
+                    {imgEyes}
+                </TouchableOpacity>
             </View>
         </TouchableOpacity>
     </CardSection>
@@ -92,6 +170,7 @@ renderItem = (item,index) =>{
                                 <FlatList
                                 style={styles.listStyle}
                                     data = { this.state.dataUser }
+                                    extraData={this.props.user}
                                     scrollEnabled={true}
                                     marginBottom={50}
                                     keyExtractor={(item, index) => index.toString()}
@@ -102,5 +181,3 @@ renderItem = (item,index) =>{
         );
     }
 }
-
-export default UsersList;
