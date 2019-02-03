@@ -255,7 +255,7 @@ export default class TaskView extends Component {
                                 onPress={this.onSave}
                             >
                                 {this.state.processing ? (
-                                    <ActivityIndicator size={18} style={{paddingHorizontal: 14}} color="#ffffff"/>
+                                    <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{paddingHorizontal: 14}} color="#ffffff"/>
                                 ) : (
                                     <Text style={styles.submitText}>SAVE</Text>
                                 )}

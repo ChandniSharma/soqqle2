@@ -287,7 +287,7 @@ export default class UserTaskGroupView extends Component {
                                                   disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
                                     <View style={styles.storyDetailActionTag}>
                                         {this.state.processing ? (
-                                            <ActivityIndicator size={18} style={{paddingHorizontal: 14}}
+                                            <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{paddingHorizontal: 14}}
                                                                color="#ffffff"/>
                                         ) : (
                                             <Text style={{color: '#ffffff'}}>
