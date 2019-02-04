@@ -62,16 +62,16 @@ export async function getAchievements(data) {
 // Reducer
 export default function AchievementStateReducer(state = initialState, action = {}) {
     switch (action.type) {
-        case GET_ACHIEVEMENTS_REQUESTED:
-            return loop(
-                state.set('error', null).set('getAchievementsSuccess', false),
-                Effects.promise(getAchievements, action.payload)
-            );
-        case GET_ACHIEVEMENTS_COMPLETED:
-            return state.set('details', action.payload).set('getAchievementsSuccess', true);
-        case GET_ACHIEVEMENTS_FAILED:
-            return state.set('error', action.payload).set('getAchievementsSuccess', false);
-        default:
-            return state;
+    case GET_ACHIEVEMENTS_REQUESTED:
+        return loop(
+            state.set('error', null).set('getAchievementsSuccess', false),
+            Effects.promise(getAchievements, action.payload)
+        );
+    case GET_ACHIEVEMENTS_COMPLETED:
+        return state.set('details', action.payload).set('getAchievementsSuccess', true);
+    case GET_ACHIEVEMENTS_FAILED:
+        return state.set('error', action.payload).set('getAchievementsSuccess', false);
+    default:
+        return state;
     }
 }

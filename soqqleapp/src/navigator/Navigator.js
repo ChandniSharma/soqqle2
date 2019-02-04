@@ -14,20 +14,20 @@ import UsersList from './../views/UsersList';
 import UserDetailView from './../views/UserDetailView';
 
 const AppNavigator = createStackNavigator({
-        Login: {screen: LoginContainer},
-        UserTaskGroup: {screen: UserTaskGroupContainer},
-        Profile: {screen: ProfileContainer},
-        Story: {screen: StoryContainer},
-        Task: {screen: TaskContainer},
-        CompanyProfile: {screen: CompanyProfileContainer},
-        Chat: {screen: ChatContainer},
-        Agenda: {screen: AgendaContainer},
-        Dashboard: {screen: DashboardContainer},
-        UsersList:{screen: UsersList},
-        UserDetailView:{screen:UserDetailView},
-    }, {
-        headerMode: 'none'
-    }
+    Login: {screen: LoginContainer},
+    UserTaskGroup: {screen: UserTaskGroupContainer},
+    Profile: {screen: ProfileContainer},
+    Story: {screen: StoryContainer},
+    Task: {screen: TaskContainer},
+    CompanyProfile: {screen: CompanyProfileContainer},
+    Chat: {screen: ChatContainer},
+    Agenda: {screen: AgendaContainer},
+    Dashboard: {screen: DashboardContainer},
+    UsersList:{screen: UsersList},
+    UserDetailView:{screen:UserDetailView},
+}, {
+    headerMode: 'none'
+}
 );
 
 export default AppNavigator;

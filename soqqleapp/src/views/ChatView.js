@@ -254,11 +254,11 @@ export default class UserTaskGroupView extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <Header title='Chat'
-                        navigation={this.props.navigation}
-                        rightText={story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}
-                        headerStyle={styles.headerStyle}
-                        headerIconStyle={styles.headerIconStyle}
-                        headerRightTextStyle={styles.headerRightTextStyle}
+                    navigation={this.props.navigation}
+                    rightText={story.quota ? `${taskGroup._team.emails.length}/${story.quota}` : ''}
+                    headerStyle={styles.headerStyle}
+                    headerIconStyle={styles.headerIconStyle}
+                    headerRightTextStyle={styles.headerRightTextStyle}
                 />
                 <View style={styles.storyDetailView}>
                     <View style={styles.storyDetailHeader}>
@@ -284,11 +284,11 @@ export default class UserTaskGroupView extends Component {
                                     )
                                 )}
                                 <TouchableOpacity onPress={() => this.goToTask(story)}
-                                                  disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
+                                    disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
                                     <View style={styles.storyDetailActionTag}>
                                         {this.state.processing ? (
                                             <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{paddingHorizontal: 14}}
-                                                               color="#ffffff"/>
+                                                color="#ffffff"/>
                                         ) : (
                                             <Text style={{color: '#ffffff'}}>
                                                 {Object.keys(this.state.userTask).length ? (

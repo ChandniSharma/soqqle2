@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
         borderRadius: 50
     },
     textInput: {
-        color: "white",
+        color: 'white',
         borderRadius: 5,
     },
     textInputPwd: {
-        color: "black",
+        color: 'black',
     },
 
     likeModalView: {
