@@ -1,17 +1,19 @@
 import React from 'react';
 import {createStackNavigator} from 'react-navigation';
 
-import LoginContainer from './../containers/LoginContainer';
-import ProfileContainer from './../containers/ProfileContainer';
-import CompanyProfileContainer from './../containers/CompanyContainer';
-import StoryContainer from './../containers/StoryContainer';
-import AgendaContainer from './../containers/AgendaContainer';
-import UserTaskGroupContainer from './../containers/UserTaskGroupContainer';
-import ChatContainer from './../containers/ChatContainer';
-import DashboardContainer from './../containers/DashboardContainer';
-import TaskContainer from './../containers/TaskContainer';
-import UsersList from './../views/UsersList';
-import UserDetailView from './../views/UserDetailView';
+import LoginContainer from '../containers/LoginContainer';
+import ProfileContainer from '../containers/ProfileContainer';
+import CompanyProfileContainer from '../containers/CompanyContainer';
+import StoryContainer from '../containers/StoryContainer';
+import AgendaContainer from '../containers/AgendaContainer';
+import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
+import ChatContainer from '../containers/ChatContainer';
+import DashboardContainer from '../containers/DashboardContainer';
+import TaskContainer from '../containers/TaskContainer';
+import UserListContainer from '../containers/UserListContainer';
+
+import UsersList from '../views/UsersList';
+import UserDetailView from '../views/UserDetailView';
 
 const AppNavigator = createStackNavigator({
     Login: {screen: LoginContainer},
@@ -23,9 +25,10 @@ const AppNavigator = createStackNavigator({
     Chat: {screen: ChatContainer},
     Agenda: {screen: AgendaContainer},
     Dashboard: {screen: DashboardContainer},
-    UsersList:{screen: UsersList},
+    UsersList:{screen: UserListContainer},
     UserDetailView:{screen:UserDetailView},
-}, {
+},
+{
     headerMode: 'none'
 }
 );

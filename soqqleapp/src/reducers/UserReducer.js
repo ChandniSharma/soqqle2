@@ -2,13 +2,14 @@ import {Map} from 'immutable';
 import * as axios from 'axios';
 import {Effects, loop} from 'redux-loop-symbol-ponyfill';
 
-import {API_BASE_URL} from './../config';
+import {API_BASE_URL} from '../config';
 import {USER_TASK_GROUP_LIST_PATH_API, GET_MESSAGE_LIST_API} from './../endpoints';
 import * as SessionStateActions from '../session/SessionState';
 import * as AppStateActions from './AppReducer';
-import store from './../redux/store';
-import * as snapshot from './../utils/snapshot';
-import {getGroupUserDetails} from './../utils/common';
+import store from '../redux/store';
+import * as snapshot from '../utils/snapshot';
+import * as constants from '../constants';
+import {getGroupUserDetails} from '../utils/common';
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -44,6 +45,16 @@ const GET_USER_TASK_GROUPS_FAILED = 'UserState/GET_USER_TASK_GROUPS_FAILED';
 const GET_MESSAGELIST_REQUESTED = 'UserState/GET_MESSAGELIST_REQUESTED';
 const GET_MESSAGELIST_COMPLETED = 'UserState/GET_MESSAGELIST_COMPLETED';
 const GET_MESSAGELIST_FAILED = 'UserState/GET_MESSAGELIST_FAILED';
+
+const BLOCK_USER_REQUESTED = 'UserState/BLOCK_USER_REQUESTED';
+const BLOCK_USER_COMPLETED = 'UserState/BLOCK_USER_COMPLETED';
+const BLOCK_USER_FAILED = 'UserState/BLOCK_USER_FAILED';
+
+const BLOCK_USER_LIST_REQUESTED = 'UserState/BLOCK_USER_LIST_REQUESTED';
+const BLOCK_USER_LIST_COMPLETED = 'UserState/BLOCK_USER_LIST_COMPLETED';
+const BLOCK_USER_LIST_FAILED = 'UserState/BLOCK_USER_LIST_FAILED';
+
+const BLOCK_UNBLOCK_USER_COMPLETED = 'UserState/BLOCK_UNBLOCK_USER_COMPLETED';
 
 const instance = axios.create({
     baseURL: API_BASE_URL,
@@ -89,7 +100,6 @@ export function loginFailed(error) {
 }
 
 export function forgotpasswordRequested(data) {
-
     return {
         type: FORGOT_PASSWORD_REQUESTED,
         payload: data
@@ -130,16 +140,74 @@ export function saveProfileFailed(error) {
         payload: error
     };
 }
+export function blockUserRequested(data) {
+    return {
+        type: BLOCK_USER_REQUESTED,
+        payload: data
+    };
+}
 
+export function blockUserCompleted(data) {
+    return {
+        type: BLOCK_USER_COMPLETED,
+        payload: data
+    };
+}
+
+export function blockUserFailed(error) {
+    return {
+        type: BLOCK_USER_FAILED,
+        payload: error
+    };
+}
+export function blockUnlockUserCompleted(data) {
+    return {
+        type: BLOCK_UNBLOCK_USER_COMPLETED,
+        payload: data
+    };
+}
+export function blockUserListRequested(data) {
+    return {
+        type: BLOCK_USER_LIST_REQUESTED,
+        payload: data
+    };
+}
+
+export function blockUserListCompleted(data) {
+    return {
+        type: BLOCK_USER_LIST_COMPLETED,
+        payload: data
+    };
+}
+
+export function blockUserListFailed(error) {
+    return {
+        type: BLOCK_USER_LIST_FAILED,
+        payload: error
+    };
+}
+export async function getBlockUserList(data) {
+    let postData = {'blockUserIds':data};
+    try {
+        store.dispatch(AppStateActions.startLoading());
+        const response = await instance.post('/getBlockedUsers', postData);
+        store.dispatch(AppStateActions.stopLoading());
+        return blockUserListCompleted(response.data);
+    } catch (error) {
+        store.dispatch(AppStateActions.stopLoading());
+        if (error.response && error.response.data) {
+            return blockUserListFailed({code: error.response.status, message: 'Please try again'});
+        }
+        return blockUserListFailed({code: 500, message: 'Unexpected error!'});
+    }
+}
 export async function saveProfile(data) {
     try {
         store.dispatch(AppStateActions.startLoading());
         const response = await instance.post('/mobile/user-profile', data);
-        console.log('response Save profile=>', response);
         store.dispatch(AppStateActions.stopLoading());
         return saveProfileCompleted(response.data);
     } catch (error) {
-        console.log('error=>', error.response);
         store.dispatch(AppStateActions.stopLoading());
         if (error.response && error.response.data) {
             return saveProfileFailed({code: error.response.status, message: 'Save failed ! Please try again'});
@@ -405,7 +473,25 @@ export async function getUserTaskGroups(data) {
         return getUserTaskGroupsFailed({code: 500, message: 'Unexpected error!'});
     }
 }
+export async function blockUser(data) {
+    let arrayParam = { 'loginUserId': data.loginUserId, 'blockedUserId': data.blockedUserId, 'isBlocked':data.isBlocked };
+    try {
+        store.dispatch(AppStateActions.startLoading());
+        const response = await instance.post('/blockUnblockUser', arrayParam);
+        store.dispatch(AppStateActions.stopLoading());
+        return blockUserCompleted(response.data);
+    } catch (error) {
+        store.dispatch(AppStateActions.stopLoading());
+        if (error.response && error.response.data) {
+            return blockUserFailed({
+                code: error.response.status,
+                message: 'block user failed! Please check your user.'
+            });
+        }
+        return blockUserFailed({code: 500, message: 'Unexpected error!'});
+    }
 
+}
 export async function logout() {
     await snapshot.clearSnapshot();
     store.dispatch(SessionStateActions.resetSessionStateFromSnapshot());
@@ -536,6 +622,26 @@ export default function UserStateReducer(state = initialState, action = {}) {
         return state.set('task_groups', action.payload).set('getUserTaskGroups', true);
     case GET_USER_TASK_GROUPS_FAILED:
         return state.set('error', action.payload).set('getUserTaskGroups', false);
+    case BLOCK_USER_REQUESTED:
+        return loop(
+            state.set('error', null).set('blockUserSuccess', false),
+            Effects.promise(blockUser, action.payload)
+        );
+    case BLOCK_USER_COMPLETED:
+        return state.set('blockUserSuccess', true);
+    case BLOCK_USER_FAILED:
+        return state.set('error', action.payload).set('blockUserSuccess', false);
+    case BLOCK_UNBLOCK_USER_COMPLETED:
+        return state.set('user', action.payload);
+    case BLOCK_USER_LIST_REQUESTED:
+        return loop(
+            state.set('error', null).set('blockUserListSuccess', false),
+            Effects.promise(getBlockUserList, action.payload)
+        );
+    case BLOCK_USER_LIST_COMPLETED:
+        return state.set('blockUserList', action.payload).set('blockUserListSuccess', true);
+    case BLOCK_USER_LIST_FAILED:
+        return state.set('error', action.payload).set('blockUserListSuccess', false);
     default:
         return state;
     }

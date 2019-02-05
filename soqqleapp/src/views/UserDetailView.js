@@ -1,34 +1,34 @@
 import React, {Component} from 'react';
-import {
-    TouchableOpacity,
-    Text, View, SafeAreaView
-} from 'react-native';
-import {
-    Thumbnail
-} from 'native-base';
-import {isImmutable} from 'immutable';
+import {TouchableOpacity, Text, View, SafeAreaView} from 'react-native';
+import {Thumbnail} from 'native-base';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {NavigationActions} from 'react-navigation';
+import {isImmutable} from 'immutable';
 
 import styles from './../stylesheets/userDetailViewStyles';
 import ProfileView from './ProfileView';
-import * as UserActions from './../reducers/UserReducer';
-import * as actions from './../reducers/SparkReducer';
+import * as UserActions from '../reducers/UserReducer';
+import * as actions from '../reducers/SparkReducer';
 
 class UserDetailView extends Component {
     constructor(props) {
         super(props);
-        this.state = {dataUser: {},};
+        this.state = {
+            dataUser: {},
+        };
     }
 
     componentDidMount() {
-        let dictUserDetail = this.props.navigation.state.params.detailDict;
-        this.setState({dataUser: dictUserDetail});
+        this.setState({
+            dataUser: this.props.navigation.state.params.detailDict
+        });
     }
 
     handleBackAction() {
-        this.props.navigation.navigate({routeName: 'UsersList'});
+        this.props.navigation.navigate({
+            routeName: 'UsersList'
+        });
     }
 
     render() {
@@ -36,10 +36,8 @@ class UserDetailView extends Component {
         let designation = '';
         let imgUser;
         let bio = '';
-
-        let dictUserDetail = this.state.dataUser.userDetails;
+        const dictUserDetail = this.state.dataUser.userDetails;
         if (dictUserDetail) {
-            // TODO: name is not used?
             if (dictUserDetail.profile.firstName) {
                 name = dictUserDetail.profile.firstName;
             }
@@ -57,8 +55,9 @@ class UserDetailView extends Component {
                 bio = dictUserDetail.profile.bio;
             }
         }
-
-        let sparks = {tokensCount: 0};
+        let sparks = {
+            tokensCount: 0
+        };
         if (dictUserDetail) {
             return (
                 <ProfileView
@@ -71,12 +70,10 @@ class UserDetailView extends Component {
                     companies={this.props.companies}
                     sparks={this.props.sparks}
                     sparkActions={this.props.sparkActions}
-
                 />
             );
-        } else {
-            return null;
         }
+        return null;
     }
 }
 

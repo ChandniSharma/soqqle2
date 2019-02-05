@@ -1,11 +1,12 @@
 import React from 'react';
-import {Platform, StyleSheet, Text, View, SafeAreaView} from 'react-native';
-import {Tab, Tabs, ScrollableTab} from 'native-base';
+import { Platform, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { Tab, Tabs, ScrollableTab } from 'native-base';
 
 import Header from './../components/Header';
 import AchievementView from './AchievementView';
 import LevelView from './LevelView';
 import SparkView from './SparkView';
+import RewardsView from './RewardsView';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 
@@ -25,11 +26,12 @@ const styles = StyleSheet.create({
 });
 
 const DashboardView = props => {
+
     const tabs = [
         {
             key: 'rewards',
             label: 'Rewards',
-            component: <Text style={{color: '#000000'}}>Rewards coming soon..</Text>
+            component: (<RewardsView {...props} />)
         },
         {
             key: 'achievements',
@@ -52,12 +54,12 @@ const DashboardView = props => {
             <Header navigation={props.navigation}
                 headerStyle={{
                     elevation: 0
-                }}/>
+                }} />
             <View style={styles.contentView}>
                 <Tabs
                     locked={true}
-                    renderTabBar={() => <ScrollableTab style={{borderWidth: 0}}/>}
-                    tabBarUnderlineStyle={{backgroundColor: '#1FBEB8'}}>
+                    renderTabBar={() => <ScrollableTab style={{ borderWidth: 0 }} />}
+                    tabBarUnderlineStyle={{ backgroundColor: '#1FBEB8' }}>
                     {tabs.map(tab => {
                         return (
                             <Tab heading={tab.label}

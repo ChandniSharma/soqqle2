@@ -1,5 +1,7 @@
 import { Platform, StyleSheet } from 'react-native';
+
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
+
 const styles = StyleSheet.create({
     container: {
         padding: 0,
@@ -65,5 +67,17 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
     },
+    eyeImg:{
+        width: 20,
+        height:20,
+    },
+    eyeWithCross:{
+        width:25,
+        height:25,
+    },
+    eyeBtn:{
+        marginRight:30
+    }
 });
+
 export default styles;
