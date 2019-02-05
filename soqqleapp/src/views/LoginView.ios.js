@@ -4,27 +4,23 @@ import {
     Keyboard,
     KeyboardAvoidingView,
     Modal,
-    Platform,
-    StatusBar,
-    StyleSheet,
     TouchableOpacity,
     View
 } from 'react-native';
 import {GraphRequest, GraphRequestManager, LoginManager} from 'react-native-fbsdk';
 import {Button, Input, Item, Label, Text, Thumbnail} from 'native-base';
 import {showMessage} from 'react-native-flash-message';
-import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinkedInModal from 'react-native-linkedin';
 
-import {isValidEmail} from './../utils/common';
-import * as constants from './../constants';
-import {MAIN_COLOR} from './../constants';
+import {isValidEmail} from '../utils/common';
+import * as constants from '../constants';
+import {MAIN_COLOR} from '../constants';
 import Step1 from './login/Step1';
 import Step3 from './login/Step3';
 import Step2 from './login/Step2';
-import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from './../config';
-
+import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from '../config';
+import styles from '../stylesheets/loginView.iosStyles';
 
 const baseApi = 'https://api.linkedin.com/v1/people/';
 const RCTNetworking = require('RCTNetworking');
@@ -297,100 +293,3 @@ export default class LoginView extends Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-        paddingTop: hp('10%'),
-        backgroundColor: '#130C38',
-        flex: 1
-    },
-    content: {
-        justifyContent: 'center',
-        flex: 1
-    },
-    inputLabel: {
-        color: MAIN_COLOR
-    },
-    logo: {
-        alignSelf: 'center',
-    },
-    socialLogin: {
-        marginTop: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    text: {
-        color: 'rgba(255, 255, 255, 0.3)'
-    },
-    btnForgotPwd: {
-        right: 0,
-        alignSelf: 'flex-end',
-        marginTop: 5,
-    },
-    textForgotpassword: {
-        color: 'rgba(255, 255, 255, 0.3)',
-    },
-    margin10: {
-        marginTop: 20,
-    },
-    loginButton: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loginText: {
-        fontSize: 20,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    button: {
-        width: 100,
-        height: 100,
-        borderRadius: 50
-    },
-    textInput: {
-        color: 'white'
-    },
-    textInputPwd: {
-        color: 'black',
-    },
-    helpModal: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    },
-    resultModalContent: {
-        flex: 1,
-        paddingVertical: 10,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    helpModalContent: {
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        paddingVertical: 30,
-        paddingHorizontal: 10,
-        width: '90%',
-        height: '20%',
-        borderRadius: 5,
-    },
-    likeModalClose: {
-        position: 'absolute',
-        padding: 10,
-        right: 5,
-        top: 0
-    },
-    likeModalCloseIcon: {
-        color: '#333333',
-        fontSize: 20,
-    },
-    stepButton: {
-        alignSelf: 'center',
-        backgroundColor: MAIN_COLOR,
-        marginTop: 5,
-    },
-});

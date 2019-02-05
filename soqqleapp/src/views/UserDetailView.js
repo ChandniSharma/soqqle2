@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 import {NavigationActions} from 'react-navigation';
 import {isImmutable} from 'immutable';
 
-import styles from './../stylesheets/userDetailViewStyles';
+import styles from '../stylesheets/userDetailViewStyles';
 import ProfileView from './ProfileView';
 import * as UserActions from '../reducers/UserReducer';
 import * as actions from '../reducers/SparkReducer';

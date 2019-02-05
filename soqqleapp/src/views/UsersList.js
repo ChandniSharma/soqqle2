@@ -7,7 +7,7 @@ import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Thumbnail} from 'native-base';
 
-import styles from './../stylesheets/userListViewStyles';
+import styles from '../stylesheets/userListViewStyles';
 import CardSection from '../components/CardSection';
 
 export default class UsersList extends Component {

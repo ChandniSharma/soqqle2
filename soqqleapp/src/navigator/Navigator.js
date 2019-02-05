@@ -12,7 +12,6 @@ import DashboardContainer from '../containers/DashboardContainer';
 import TaskContainer from '../containers/TaskContainer';
 import UserListContainer from '../containers/UserListContainer';
 
-import UsersList from '../views/UsersList';
 import UserDetailView from '../views/UserDetailView';
 
 const AppNavigator = createStackNavigator({

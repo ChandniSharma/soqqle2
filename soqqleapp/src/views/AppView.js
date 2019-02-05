@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, StatusBar, ActivityIndicator} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 import * as snapshotUtil from '../utils/snapshot';
 import * as SessionStateActions from '../session/SessionState';
 import store from '../redux/store';
 import DeveloperMenu from '../components/DeveloperMenu';
 import NavigatorViewContainer from '../navigator/NavigatorViewContainer';
-import Spinner from 'react-native-loading-spinner-overlay';
 import {MAIN_COLOR} from '../constants';
+import styles from '../stylesheets/appViewStyles'
 
 class AppView extends Component {
 
@@ -55,12 +57,5 @@ class AppView extends Component {
       );
   }
 }
-
-const styles = StyleSheet.create({
-    centered: {
-        flex: 1,
-        alignSelf: 'center'
-    }
-});
 
 export default AppView;

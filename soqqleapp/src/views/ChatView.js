@@ -5,11 +5,11 @@ import { Thumbnail } from 'native-base';
 import { GiftedChat } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
 
-import { API_BASE_URL } from './../config';
-import { TASK_GROUP_TYPES } from './../constants';
-import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH, CHAT_SOCKET_URL } from './../endpoints';
-import styles from './../stylesheets/chatViewStyles';
-import Header from './../components/Header';
+import { API_BASE_URL } from '../config';
+import { TASK_GROUP_TYPES } from '../constants';
+import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_PATH, CHAT_SOCKET_URL } from '../endpoints';
+import styles from '../stylesheets/chatViewStyles';
+import Header from '../components/Header';
 import { getMessages } from '../utils/common';
 
 const instance = axios.create({

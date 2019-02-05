@@ -1,29 +1,13 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { Text, View, SafeAreaView } from 'react-native';
 import { Tab, Tabs, ScrollableTab } from 'native-base';
 
-import Header from './../components/Header';
+import Header from '../components/Header';
 import AchievementView from './AchievementView';
 import LevelView from './LevelView';
 import SparkView from './SparkView';
 import RewardsView from './RewardsView';
-
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 0,
-        paddingTop: statusBarHeight,
-        backgroundColor: '#ffffff',
-        flex: 1,
-        flexDirection: 'column'
-    },
-    contentView: {
-        flex: 1,
-        backgroundColor: '#2C2649',
-        padding: 0,
-    }
-});
+import styles from '../stylesheets/dashboardViewStyles';
 
 const DashboardView = props => {
 

@@ -15,15 +15,15 @@ import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
 
-import {STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, CHALLENGE_IMAGE_BASE_URL, TASK_GROUP_TYPES} from './../constants';
-import {API_BASE_URL} from './../config';
+import {STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, CHALLENGE_IMAGE_BASE_URL, TASK_GROUP_TYPES} from '../constants';
+import {API_BASE_URL} from '../config';
 import {
     SAVE_USER_TASK_GROUP_API, STORIES_LIST_API, STORY_HAS_VIDEO_API, USER_TASK_GROUP_LIST_PATH_API,
     TEAM_UPDATE_API, STORY_CHALLENGES_LIST_API_PATH, USER_ACHIEVEMENT_LIST_PATH_API
-} from './../endpoints';
-import CustomText from './../components/CustomText';
-import {getGroupUserDetails} from './../utils/common';
-import styles from './../stylesheets/storyViewStyles';
+} from '../endpoints';
+import CustomText from '../components/CustomText';
+import {getGroupUserDetails} from '../utils/common';
+import styles from '../stylesheets/storyViewStyles';
 
 const width = Dimensions.get('window').width; //full width
 
