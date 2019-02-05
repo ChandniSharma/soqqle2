@@ -38,6 +38,7 @@ let selectedItemType = null;
 let selectedItemBonusSparks = null;
 
 // TODO: Update this class to new Lifecycle methods
+// TODO: Split this render component into smaller one
 export default class StoryView extends Component {
 
     constructor(props) {
@@ -179,6 +180,7 @@ export default class StoryView extends Component {
         }
     }
 
+    // TODO: We should define this outside view
     fetchUserTaskGroupsBasedOnStory(storyId) {
         let endpoint = USER_TASK_GROUP_LIST_PATH_API.replace('{page}', 1);
         endpoint = endpoint.replace('{type}', selectedItemType);
@@ -311,6 +313,10 @@ export default class StoryView extends Component {
         Promise.all(results).then(completed => this.setState({stories: completed, storiesFetching: false}));
     }
 
+    onRequestCloseModal() {
+        this.setModalVisible(!this.state.modalVisible);
+    }
+
     _renderStoryTaskItem = item => {
         const data = item._typeObject;
         const teamLength = item._team.emails.length;
@@ -398,7 +404,7 @@ export default class StoryView extends Component {
                     animationType="fade"
                     transparent={true}
                     visible={this.state.modalVisible}
-                    onRequestClose={() => this.setModalVisible(!this.state.modalVisible)}
+                    onRequestClose={this.onRequestCloseModal.bind(this)}
                 >
                     <View style={styles.likeModalView}>
                         <View style={styles.likeModalInnerView}>
@@ -436,7 +442,7 @@ export default class StoryView extends Component {
                                 )
                             )}
                             <TouchableOpacity
-                                onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                                onPress={this.onRequestCloseModal.bind(this)}
                                 style={styles.likeModalClose}
                             >
                                 <View>
