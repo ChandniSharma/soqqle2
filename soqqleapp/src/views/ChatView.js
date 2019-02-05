@@ -221,6 +221,9 @@ export default class UserTaskGroupView extends Component {
           };
       });
   }
+  navigateToUserList() {
+      this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup });
+  }
   render() {
       const { taskGroup } = this.state;
       const isCompleted = this.isTaskCompleted();
@@ -300,7 +303,7 @@ export default class UserTaskGroupView extends Component {
                       </View>
                   </View>
               </View>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup })}>
+              <TouchableOpacity onPress={this.navigateToUserList.bind(this)}>
                   <View style={styles.viewShowMember}>
                       {image1}
                       {image2}
