@@ -1,7 +1,7 @@
-import {heightPercentageToDP as hp} from "react-native-responsive-screen";
-import {StyleSheet} from "react-native";
+import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {StyleSheet} from 'react-native';
 
-import {MAIN_COLOR} from "../constants";
+import {MAIN_COLOR} from '../constants';
 
 export default StyleSheet.create({
     container: {

@@ -136,4 +136,4 @@ export default StyleSheet.create({
         position: 'absolute',
         alignSelf: 'center'
     },
-})
+});

@@ -25,7 +25,7 @@ import {
 } from 'react-native-popup-menu';
 
 import {MAIN_COLOR} from '../constants';
-import styles from '../stylesheets/companyViewStyles'
+import styles from '../stylesheets/companyViewStyles';
 
 export default class ProfileView extends Component {
     constructor(props) {

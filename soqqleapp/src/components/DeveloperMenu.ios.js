@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {TouchableOpacity, ActionSheetIOS} from 'react-native';
 
 import * as snapshot from '../utils/snapshot';
-import styles from './../stylesheets/DeveloperMenu.iosStyles'
+import styles from './../stylesheets/DeveloperMenu.iosStyles';
 
 /**
  * Simple developer menu, which allows e.g. to clear the app state.

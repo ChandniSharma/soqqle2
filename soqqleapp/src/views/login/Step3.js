@@ -3,7 +3,7 @@ import {ImageBackground, Linking, TouchableOpacity, View} from 'react-native';
 import {CheckBox, Form, Input, Item, Text} from 'native-base';
 
 import LoginView from '../LoginView';
-import styles from '../../stylesheets/login/step3Styles'
+import styles from '../../stylesheets/login/step3Styles';
 
 const PRIVACY_LINK = 'https://beta.soqqle.com/privacyPolicy';
 const TERM_OF_USE_LINK = 'https://beta.soqqle.com/termsOfUse';

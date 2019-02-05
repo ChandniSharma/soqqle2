@@ -1,6 +1,6 @@
-import {Platform, StatusBar, StyleSheet} from "react-native";
+import {Platform, StatusBar, StyleSheet} from 'react-native';
 
-import {MAIN_COLOR} from "../../constants";
+import {MAIN_COLOR} from '../../constants';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 

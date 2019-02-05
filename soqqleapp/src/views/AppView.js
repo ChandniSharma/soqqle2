@@ -9,7 +9,7 @@ import store from '../redux/store';
 import DeveloperMenu from '../components/DeveloperMenu';
 import NavigatorViewContainer from '../navigator/NavigatorViewContainer';
 import {MAIN_COLOR} from '../constants';
-import styles from '../stylesheets/appViewStyles'
+import styles from '../stylesheets/appViewStyles';
 
 class AppView extends Component {
 

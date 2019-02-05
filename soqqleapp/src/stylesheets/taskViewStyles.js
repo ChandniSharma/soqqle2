@@ -1,7 +1,7 @@
-import {widthPercentageToDP as wp} from "react-native-responsive-screen";
-import {Dimensions, Platform, StatusBar, StyleSheet} from "react-native";
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import {Dimensions, Platform, StatusBar, StyleSheet} from 'react-native';
 
-import {MAIN_COLOR, PLACEHOLDER_COLOR} from "../constants";
+import {MAIN_COLOR, PLACEHOLDER_COLOR} from '../constants';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
 
