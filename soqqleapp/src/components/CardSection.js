@@ -1,18 +1,8 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, Text, View} from 'react-native';
 
 import {Card} from './Card';
-
-const styles = {
-    viewContainer: {
-        borderBottomWidth: 0,
-        backgroundColor: 'fff',
-        padding: 5,
-        justifyContent: 'flex-start',
-        flexDirection: 'row',
-        position: 'relative',
-    }
-};
+import styles from './../stylesheets/CardSectionStyles';
 
 const CardSection = props => {
     return (

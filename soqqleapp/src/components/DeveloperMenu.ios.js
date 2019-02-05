@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {TouchableOpacity, ActionSheetIOS, StyleSheet} from 'react-native';
+import {TouchableOpacity, ActionSheetIOS} from 'react-native';
 
 import * as snapshot from '../utils/snapshot';
+import styles from './../stylesheets/DeveloperMenu.iosStyles'
 
 /**
  * Simple developer menu, which allows e.g. to clear the app state.
@@ -44,17 +45,5 @@ class DeveloperMenu extends Component {
       );
   }
 }
-
-const styles = StyleSheet.create({
-    circle: {
-        position: 'absolute',
-        bottom: 5,
-        right: 5,
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: '#fff'
-    }
-});
 
 export default DeveloperMenu;
