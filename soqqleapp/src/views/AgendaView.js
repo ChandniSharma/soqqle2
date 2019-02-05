@@ -49,7 +49,10 @@ export default class AgendaView extends Component {
                     this.getAgendaItems(pageNum + 1);
                 }
             })
-            .catch(() => this.setState({initialLoading: false, loading: false}));
+            .catch(() => this.setState({
+                initialLoading: false,
+                loading: false
+            }));
     }
 
     mapAgendaItems(data) {
@@ -77,7 +80,11 @@ export default class AgendaView extends Component {
                 });
             }
         });
-        this.setState({agendaItems, initialLoading: false, loading: false});
+        this.setState({
+            agendaItems,
+            initialLoading: false,
+            loading: false
+        });
     }
 
     _renderHeader = (section, index) => {
