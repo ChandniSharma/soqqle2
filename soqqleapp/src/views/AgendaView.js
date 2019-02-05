@@ -146,6 +146,12 @@ export default class AgendaView extends Component {
         }
     }
 
+    onScroll({nativeEvent}) {
+        if (isCloseToBottom(nativeEvent)) {
+            this.fetchMoreAgendaOnScroll();
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -161,12 +167,7 @@ export default class AgendaView extends Component {
                         <ActivityIndicator size="large" color="#0000ff"/>
                     </View>
                 ) : (
-                    <ScrollView onScroll={({nativeEvent}) => {
-                        if (isCloseToBottom(nativeEvent)) {
-                            this.fetchMoreAgendaOnScroll();
-                        }
-                    }}
-                    scrollEventThrottle={400}>
+                    <ScrollView onScroll={this.onScroll.bind(this)} scrollEventThrottle={400}>
                         <Accordion
                             sections={this.state.agendaItems}
                             activeSections={this.state.activeSections}
