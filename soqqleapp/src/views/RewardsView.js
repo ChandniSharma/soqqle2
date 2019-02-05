@@ -351,8 +351,8 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   buyReward: {
-    margin: 5,
-    padding: 10,
+    margin: 2,
+    padding: 5,
     textAlign: 'center',
     borderRadius: 20,
     borderWidth: 1,
