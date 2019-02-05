@@ -27,6 +27,7 @@ import {
 import {MAIN_COLOR} from '../constants';
 import styles from '../stylesheets/companyViewStyles';
 
+// TODO: Update this class to new Lifecycle methods
 export default class ProfileView extends Component {
     constructor(props) {
         super(props);

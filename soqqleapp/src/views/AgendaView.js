@@ -19,6 +19,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height;
 };
 
+// TODO: Update this class to new Lifecycle methods
 export default class AgendaView extends Component {
     constructor(props) {
         super(props);

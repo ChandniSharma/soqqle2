@@ -10,6 +10,7 @@ import {Thumbnail} from 'native-base';
 import styles from '../stylesheets/userListViewStyles';
 import CardSection from '../components/CardSection';
 
+// TODO: Update this class to new Lifecycle methods
 export default class UsersList extends Component {
     constructor(props) {
         super(props);

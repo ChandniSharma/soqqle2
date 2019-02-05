@@ -22,6 +22,7 @@ function sortByKey(array, key) {
     });
 }
 
+// TODO: Update this class to new Lifecycle methods
 export default class SparkView extends Component {
 
     constructor(props) {

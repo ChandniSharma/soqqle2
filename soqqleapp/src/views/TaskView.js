@@ -32,6 +32,7 @@ const instance = axios.create({
     headers: { 'Content-type': 'application/json' }
 });
 
+// TODO: Update this class to new Lifecycle methods
 export default class TaskView extends Component {
     constructor(props) {
         super(props);

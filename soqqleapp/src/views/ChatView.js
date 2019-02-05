@@ -18,6 +18,7 @@ const instance = axios.create({
     headers: { 'Content-type': 'application/json' }
 });
 
+// TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
 
     constructor(props) {

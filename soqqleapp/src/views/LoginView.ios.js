@@ -27,6 +27,7 @@ const RCTNetworking = require('RCTNetworking');
 const faceBookProfileFields = ['id', 'email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
 const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
 
+// TODO: Update this class to new Lifecycle methods
 export default class LoginView extends Component {
 
     static flashMessage = message => showMessage({message, type: MAIN_COLOR});

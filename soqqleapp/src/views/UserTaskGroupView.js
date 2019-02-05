@@ -13,6 +13,7 @@ let totalCount = 0;
 let pageSize = PAGE_SIZE;
 let userEmail = null;
 
+// TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
 
     _renderItem = ({item}) => {

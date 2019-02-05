@@ -23,6 +23,7 @@ import { MAIN_COLOR } from '../constants';
 import { USER_SPARK_LIST_PATH_API } from '../endpoints';
 import styles from '../stylesheets/profileView';
 
+// TODO: Update this class to new Lifecycle methods
 export default class ProfileView extends Component {
 
   static flashMessage = message => {

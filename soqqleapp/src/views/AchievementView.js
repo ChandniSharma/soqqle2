@@ -33,6 +33,7 @@ const getAchievementTags = conditions => {
 
 let userId = null;
 
+// TODO: Update this class to new Lifecycle methods
 export default class AchievementView extends Component {
     constructor(props) {
         super(props);

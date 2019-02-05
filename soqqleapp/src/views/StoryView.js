@@ -37,6 +37,7 @@ let selectedItemId = null;
 let selectedItemType = null;
 let selectedItemBonusSparks = null;
 
+// TODO: Update this class to new Lifecycle methods
 export default class StoryView extends Component {
 
     constructor(props) {

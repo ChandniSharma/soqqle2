@@ -42,6 +42,7 @@ function generateAchievementGroups(data) {
     });
 }
 
+// TODO: Update this class to new Lifecycle methods
 export default class RewardsView extends React.Component {
     constructor(props) {
         super(props);
