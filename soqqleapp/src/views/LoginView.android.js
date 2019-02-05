@@ -209,7 +209,22 @@ export default class LoginView extends Component {
                 modalVisible: false,
             });
         }
+    }
 
+    clearCookiesOpenModal() {
+        RCTNetworking.clearCookies(() => this.modal.open());
+    }
+
+    clearCookiesFacebookLogin() {
+        RCTNetworking.clearCookies(() => this.facebookLogin());
+    }
+
+    toggleModalVisibility() {
+        this.setState({modalVisible: !modalVisible});
+    }
+
+    modalOnPasswordChange(newPassword) {
+        this.setState({newPassword});
     }
 
     render() {
@@ -230,32 +245,21 @@ export default class LoginView extends Component {
                         <Text style={[styles.text]}>Or</Text>
                     </View>}
                     {step === 1 && <View style={styles.socialLogin}>
-                        <TouchableOpacity style={{marginRight: 5}} onPress={
-                            () => {
-                                RCTNetworking.clearCookies((cleared) => {
-                                    this.facebookLogin();
-                                });
-                            }
-                        }>
+                        <TouchableOpacity style={{marginRight: 5}}
+                                          onPress={this.clearCookiesFacebookLogin.bind(this)}>
                             <Thumbnail square large source={require('../images/facebook.png')}/>
                         </TouchableOpacity>
                         <LinkedInModal
                             ref={ref => {
                                 this.modal = ref;
                             }}
-                            renderButton={() => <TouchableOpacity style={{marginLeft: 5}} onPress={
-                                () => {
-                                    RCTNetworking.clearCookies((cleared) => {
-                                        this.modal.open();
-                                    });
-                                }}>
+                            renderButton={() => <TouchableOpacity style={{marginLeft: 5}}
+                                                                  onPress={this.clearCookiesOpenModal.bind(this)}>
                                 <Thumbnail square large source={require('../images/in.png')}/>
                             </TouchableOpacity>}
                             clientID={LINKEDIN_LOGIN_APP_ID}
                             clientSecret={LINKEDIN_LOGIN_APP_SECRET}
-                            onError={error => {
-                                LoginView.flashMessage('LinkedIn Login is cancelled');
-                            }}
+                            onError={() => LoginView.flashMessage('LinkedIn Login is cancelled')}
                             redirectUri={LINKEDIN_LOGIN_CALLBACK}
                             onSuccess={token => {
                                 this.linkedinLogin(token.access_token);
@@ -267,7 +271,7 @@ export default class LoginView extends Component {
                     animationType="fade"
                     transparent
                     visible={modalVisible}
-                    onRequestClose={() => this.setState({modalVisible: !modalVisible})}
+                    onRequestClose={this.toggleModalVisibility.bind(this)}
                 >
                     <View style={styles.helpModal}>
                         <View style={styles.helpModalContent}>
@@ -277,7 +281,7 @@ export default class LoginView extends Component {
                                     style={styles.textInputPwd}
                                     secureTextEntry
                                     value={this.state.newPassword}
-                                    onChangeText={newPassword => this.setState({newPassword})}
+                                    onChangeText={this.modalOnPasswordChange.bind(this)}
                                 />
                             </Item>
                             <Button
@@ -286,9 +290,7 @@ export default class LoginView extends Component {
                                 <Text style={styles.likeModalAction}>Forgot Password</Text>
                             </Button>
                             <TouchableOpacity
-                                onPress={() => {
-                                    this.setState({modalVisible: !modalVisible});
-                                }}
+                                onPress={this.toggleModalVisibility.bind(this)}
                                 style={styles.likeModalClose}
                             >
                                 <View>
