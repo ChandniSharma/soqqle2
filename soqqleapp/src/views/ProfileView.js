@@ -25,14 +25,15 @@ import styles from '../stylesheets/profileView';
 
 // TODO: Update this class to new Lifecycle methods
 export default class ProfileView extends Component {
-
   static flashMessage = message => {
       showMessage({ message, type: MAIN_COLOR });
   };
+
   onChange = (field, value) => {
       const { profile } = this.state;
       this.setState({ profile: { ...profile, [field]: value } });
   };
+
   onSave = () => {
       const { profile } = this.state;
       const { userActions } = this.props;
@@ -57,13 +58,14 @@ export default class ProfileView extends Component {
           this.props.navigation.pop();
       }
   };
-  goAgendaView = () => {
-      this.props.navigation.navigate('Agenda');
-  };
+
+  goAgendaView = () => this.props.navigation.navigate('Agenda');
+
   goUserListView = () => {
       const { userActions } = this.props;
       userActions.blockUserListRequested(this.props.user.blockUserIds);
   };
+
   logout = () => {
       this.menu.close();
       this.props.userActions.logout();
@@ -73,6 +75,7 @@ export default class ProfileView extends Component {
       });
       this.props.navigation.dispatch(resetAction);
   };
+
   renderMenu = () => {
       if (this.props.backToUserList) {
           return null;
@@ -175,7 +178,8 @@ export default class ProfileView extends Component {
                           <Left>
                               <Thumbnail
                                   style={styles.avatar}
-                                  source={{ uri: profile.pictureURL || `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}` }} />
+                                  source={{ uri: profile.pictureURL ||
+                                      `https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}` }} />
                               <Body>
                                   {isEdit ? <Item>
                                       <TextInput placeholder="First Name" onChangeText={value => this.onChange('firstName', value)}

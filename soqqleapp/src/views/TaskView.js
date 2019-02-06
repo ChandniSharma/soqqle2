@@ -67,7 +67,9 @@ export default class TaskView extends Component {
 
   onChange = (index, field, value) => {
       const { questions } = this.state;
-      this.setState({ modalVisible: false, questions: questions.map((question, i) => index === i ? { ...question, [field]: value } : question) });
+      this.setState({
+          modalVisible: false,
+          questions: questions.map((question, i) => index === i ? { ...question, [field]: value } : question) });
   };
 
   onSave = () => {
@@ -102,7 +104,8 @@ export default class TaskView extends Component {
           userId: this.props.user._id,
           tokenCount: reward.value || 0,
           answers: questions.reduce((obj, item) => {
-              obj[item._id] = { text: item.answer, timeChanged: Date.now() }; return obj;
+              obj[item._id] = { text: item.answer, timeChanged: Date.now() };
+              return obj;
           }, {})
       };
       instance.post(SAVE_ANSWERS_PATH_API, data).then(response => {
@@ -235,6 +238,11 @@ export default class TaskView extends Component {
               </View>
           </TouchableOpacity>
       </View>;
+  };
+
+  toggleModalVisibility() {
+      const { modalVisible} = this.state;
+      this.setState({ modalVisible: !modalVisible });
   }
 
   render() {
@@ -261,7 +269,10 @@ export default class TaskView extends Component {
                           sliderWidth={width}
                           itemHeight={hp('70%')}
                           itemWidth={wp('90%')}
-                          onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || [] })}
+                          onBeforeSnapToItem={slideIndex => this.setState({
+                              currentSlideIndex: slideIndex,
+                              helps: questions[slideIndex].preLoad || []
+                          })}
                       />
                   </View>
                   <View style={styles.actionPrevNextBtn}>
@@ -271,7 +282,8 @@ export default class TaskView extends Component {
                           onPress={this.goToPreviousQuestion}>
                           <Text style={currentSlideIndex ? styles.actionBtnTxt: styles.actionBtnTxtDisabled}>Back</Text>
                       </TouchableOpacity>
-                      {processing && <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{ paddingHorizontal: 14 }} color="#ffffff" />}
+                      {processing && <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18}
+                                                        style={{ paddingHorizontal: 14 }} color="#ffffff" />}
                       {!processing && <TouchableOpacity
                           style={styles.actionBtn}
                           onPress={questions.length === currentSlideIndex + 1 ? this.onSave : this.goToNextQuestion}>
@@ -299,7 +311,7 @@ export default class TaskView extends Component {
                       animationType="fade"
                       transparent
                       visible={modalVisible}
-                      onRequestClose={() => this.setState({ modalVisible: !modalVisible })}
+                      onRequestClose={this.toggleModalVisibility.bind(this)}
                   >
                       <View style={styles.helpModal}>
                           <View style={styles.helpModalContent}>
@@ -311,11 +323,7 @@ export default class TaskView extends Component {
                               <View>
                               </View>
                               <TouchableOpacity
-                                  onPress={() => {
-                                      this.setState({
-                                          modalVisible: !modalVisible
-                                      });
-                                  }}
+                                  onPress={this.toggleModalVisibility.bind(this)}
                                   style={styles.likeModalClose}
                               >
                                   <View>

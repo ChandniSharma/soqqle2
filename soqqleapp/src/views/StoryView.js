@@ -295,7 +295,7 @@ export default class StoryView extends Component {
                     });
                     this.setState({challenges: challenges, challengesFetching: false});
                 })
-                .catch(error => this.setState({challengesFetching: false}));
+                .catch(() => this.setState({challengesFetching: false}));
         }
     }
 

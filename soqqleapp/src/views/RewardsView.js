@@ -61,7 +61,6 @@ export default class RewardsView extends React.Component {
         userId = this.props.user._id || null;
     }
 
-
     async fetchUserAchievements() {
         if (userId) {
 
@@ -99,7 +98,7 @@ export default class RewardsView extends React.Component {
       );
   };
 
-  onPressSectionContentItem = (item) => {
+  onPressSectionContentItem = item => {
       this.setState({
           sortBy: item,
           sortByClicked: false
@@ -117,9 +116,7 @@ export default class RewardsView extends React.Component {
       );
   };
 
-  _updateSections = activeSections => {
-      this.setState({ activeSections });
-  };
+  _updateSections = activeSections => this.setState({ activeSections })};
 
   renderRewardsItem = ({item}) => {
       return (
@@ -132,7 +129,7 @@ export default class RewardsView extends React.Component {
                   </View>
                   <Text style={styles.rewardsDescription}>{item.description}</Text>
                   {item.state === 'Completed' ? 
-                      <TouchableOpacity style={{width: 70, marginLeft: screenWidth - 125}}><Text style={styles.buyReward}>Buy</Text></TouchableOpacity> : 
+                      <TouchableOpacity style={{width: 70, marginLeft: screenWidth - 125}}><Text style={styles.buyReward}>Buy</Text></TouchableOpacity> :
                       <Text style={styles.rewardsState}>{item.state}</Text>}
               </View>
           </View>
@@ -232,12 +229,10 @@ export default class RewardsView extends React.Component {
                 style={{...styles.accordion, ...accordionBorder}}
             />
                   }
-
                   <FlatList style={styles.rewardsList}
                       data={this.state.rewardsListData}
                       renderItem={this.renderRewardsItem}
                   />
-
               </ScrollView>
           </View>
       );

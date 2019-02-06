@@ -20,7 +20,6 @@ const instance = axios.create({
 
 // TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -43,7 +42,8 @@ export default class UserTaskGroupView extends Component {
         const { userActions } = this.props;
         userActions.getMessageListRequest(this.state.taskGroup._team._id);
         let user = this.props.user;
-        let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
+        let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ?
+            user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
         this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query, transports: ['websocket'] });
         this.socket.on('server:message', this.onReceivedMessage);
     }
@@ -64,9 +64,7 @@ export default class UserTaskGroupView extends Component {
     setTaskAndTaskGroup() {
         let id = this.props.navigation.state.params.task_group_id;
         let userTask = {};
-        let taskGroup = id && this.props.taskGroups.taskGroups.filter(t => {
-            return t._id === id;
-        })[0] || {};
+        let taskGroup = id && this.props.taskGroups.taskGroups.filter(t => t._id === id)[0] || {};
         if (Object.keys(taskGroup).length && taskGroup._tasks.length) {
             userTask = taskGroup._tasks.filter(task => {
                 return task.userID == this.props.user._id &&
@@ -102,7 +100,7 @@ export default class UserTaskGroupView extends Component {
               }
           }).catch(() => ({}));
       }
-  }
+  };
 
   createTask(data, objectiveType, taskGroupId) {
       const userId = this.props.user._id;
@@ -289,7 +287,8 @@ export default class UserTaskGroupView extends Component {
                                   disabled={isCompleted || taskGroupType === TASK_GROUP_TYPES.CHALLENGE}>
                                   <View style={styles.storyDetailActionTag}>
                                       {this.state.processing ? (
-                                          <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
+                                          <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18}
+                                                             style={{ paddingHorizontal: 14 }} color="#ffffff" />
                                       ) : (
                                           <Text style={{ color: '#ffffff' }}>
                                               {Object.keys(this.state.userTask).length ? (

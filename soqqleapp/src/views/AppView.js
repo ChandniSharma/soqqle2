@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, StatusBar, ActivityIndicator} from 'react-native';
+import {View, StatusBar, ActivityIndicator} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import * as snapshotUtil from '../utils/snapshot';
@@ -29,9 +29,7 @@ class AppView extends Component {
                   dispatch(SessionStateActions.initializeSessionState());
               }
 
-              store.subscribe(() => {
-                  snapshotUtil.saveSnapshot(store.getState());
-              });
+              store.subscribe(() => snapshotUtil.saveSnapshot(store.getState()));
           });
   }
 

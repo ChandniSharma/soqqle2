@@ -82,7 +82,6 @@ export default class LoginView extends Component {
         };
         let result = {};
         try {
-            // LoginManager.setLoginBehavior('native');
             result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
             processResult(result);
         } catch (nativeError) {
@@ -171,10 +170,6 @@ export default class LoginView extends Component {
         }
     }
 
-    setModalVisible(visible) {
-        this.setState({modalVisible: visible});
-    }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.error && nextProps.error.message) {
             LoginView.flashMessage(nextProps.error.message);
@@ -194,10 +189,6 @@ export default class LoginView extends Component {
                 this.setState({email: nextProps.checkEmailResult.email, step: 3});
             }
         }
-
-        // if (nextProps.checkEmailSuccess !== this.props.checkEmailSuccess && nextProps.checkEmailSuccess === false) {
-        //   LoginView.flashMessage('Unexpected error, please try again');
-        // }
 
         if (nextProps.forgotpasswordSuccess && nextProps.forgotpasswordSuccess !== this.props.forgotpasswordSuccess) {
             LoginView.flashMessage(constants.KFORGOT_PWD_SUCCESS_ALERT);
@@ -220,6 +211,7 @@ export default class LoginView extends Component {
     }
 
     toggleModalVisibility() {
+        const {modalVisible} = this.state;
         this.setState({modalVisible: !modalVisible});
     }
 

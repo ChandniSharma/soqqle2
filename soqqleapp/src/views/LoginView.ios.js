@@ -25,7 +25,8 @@ import styles from '../stylesheets/loginView.iosStyles';
 const baseApi = 'https://api.linkedin.com/v1/people/';
 const RCTNetworking = require('RCTNetworking');
 const faceBookProfileFields = ['id', 'email', 'friends', 'picture.type(large)', 'first_name', 'last_name'];
-const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)', 'picture-url::(original)', 'headline', 'specialties', 'industry'];
+const linkedInProfileFields = ['id', 'first-name', 'last-name', 'email-address', 'picture-urls::(original)',
+    'picture-url::(original)', 'headline', 'specialties', 'industry'];
 
 // TODO: Update this class to new Lifecycle methods
 export default class LoginView extends Component {
@@ -84,7 +85,6 @@ export default class LoginView extends Component {
         let result = {};
         try {
             this.setState({showLoadingModal: true});
-            // LoginManager.setLoginBehavior('native');
             result = await LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'email']);
             processResult(result);
         } catch (nativeError) {
@@ -106,7 +106,7 @@ export default class LoginView extends Component {
         if (!password) {
             return LoginView.flashMessage('Please enter your password');
         }
-        userActions.loginRequest({email, password, name: 'hardcoded'});//API required name in login case??
+        userActions.loginRequest({email, password, name: 'hardcoded'}); //API required name in login case??
     };
 
     signup = () => {
@@ -197,10 +197,6 @@ export default class LoginView extends Component {
             }
         }
 
-        // if (nextProps.checkEmailSuccess !== this.props.checkEmailSuccess && nextProps.checkEmailSuccess === false) {
-        //   LoginView.flashMessage('Unexpected error, please try again');
-        // }
-
         if (nextProps.forgotpasswordSuccess && nextProps.forgotpasswordSuccess !== this.props.forgotpasswordSuccess) {
             LoginView.flashMessage(constants.KFORGOT_PWD_SUCCESS_ALERT);
             this.setState({modalVisible: false,});
@@ -208,6 +204,23 @@ export default class LoginView extends Component {
             this.setState({modalVisible: false,});
         }
 
+    }
+
+    clearCookiesFacebookLogin() {
+        RCTNetworking.clearCookies(() => this.facebookLogin());
+    }
+
+    clearCookiesOpenModal() {
+        RCTNetworking.clearCookies(() => this.modal.open());
+    }
+
+    toggleModalVisibility() {
+        const {modalVisible} = this.state;
+        this.setState({modalVisible: !modalVisible});
+    }
+
+    modalOnPasswordChange(newPassword) {
+        this.setState({newPassword});
     }
 
     render() {
@@ -230,21 +243,15 @@ export default class LoginView extends Component {
                         <Text style={[styles.text]}>Or</Text>
                     </View>}
                     {step === 1 && <View style={styles.socialLogin}>
-                        <TouchableOpacity style={{marginRight: 5}} onPress={
-                            () => {
-                                RCTNetworking.clearCookies(() => this.facebookLogin());
-                            }
-                        }>
+                        <TouchableOpacity style={{marginRight: 5}} onPress={this.clearCookiesFacebookLogin.bind(this)}>
                             <Thumbnail square large source={require('../images/facebook.png')}/>
                         </TouchableOpacity>
                         <LinkedInModal
                             ref={ref => {
                                 this.modal = ref;
                             }}
-                            renderButton={() => <TouchableOpacity style={{marginLeft: 5}} onPress={
-                                () => {
-                                    RCTNetworking.clearCookies(cleared => this.modal.open());
-                                }}>
+                            renderButton={() => <TouchableOpacity style={{marginLeft: 5}}
+                                                                  onPress={this.clearCookiesOpenModal.bind(this)}>
                                 <Thumbnail square large source={require('../images/in.png')}/>
                             </TouchableOpacity>}
                             clientID={LINKEDIN_LOGIN_APP_ID}
@@ -259,7 +266,7 @@ export default class LoginView extends Component {
                     animationType="fade"
                     transparent
                     visible={modalVisible}
-                    onRequestClose={() => this.setState({modalVisible: !modalVisible})}
+                    onRequestClose={this.toggleModalVisibility.bind(this)}
                 >
                     <View style={styles.helpModal}>
                         <View style={styles.helpModalContent}>
@@ -269,7 +276,7 @@ export default class LoginView extends Component {
                                     style={styles.textInputPwd}
                                     secureTextEntry
                                     value={this.state.newPassword}
-                                    onChangeText={newPassword => this.setState({newPassword})}
+                                    onChangeText={this.modalOnPasswordChange.bind(this)}
                                 />
                             </Item>
                             <Button
@@ -278,9 +285,7 @@ export default class LoginView extends Component {
                                 <Text style={styles.likeModalAction}>Forgot Password</Text>
                             </Button>
                             <TouchableOpacity
-                                onPress={() => {
-                                    this.setState({modalVisible: !modalVisible});
-                                }}
+                                onPress={this.toggleModalVisibility.bind(this)}
                                 style={styles.likeModalClose}
                             >
                                 <View>

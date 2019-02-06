@@ -8,23 +8,22 @@ import styles from '../stylesheets/sparkViewStyles';
 let userId = null;
 let profile = null;
 
-function getDateFromTimestamp(timestamp) {
+const getDateFromTimestamp = timestamp => {
     if (!timestamp) return null;
     let dateObj = new Date(timestamp);
     return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
-}
+};
 
-function sortByKey(array, key) {
+const sortByKey = (array, key) => {
     return array.sort((a, b) => {
         const x = a[key];
         const y = b[key];
         return ((x > y) ? -1 : ((x < y) ? 1 : 0));
     });
-}
+};
 
 // TODO: Update this class to new Lifecycle methods
 export default class SparkView extends Component {
-
     constructor(props) {
         super(props);
         this.state = {

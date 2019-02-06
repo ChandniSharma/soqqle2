@@ -75,7 +75,6 @@ export default class AgendaView extends Component {
                     groupname: item.groupname,
                     category: item.category,
                     name: item.name,
-                    // unlocktime: item.unlocktime,
                     tasks: [taskItem]
                 });
             }
@@ -103,7 +102,6 @@ export default class AgendaView extends Component {
                         style={styles.accordionIcon}/>
                 </View>
                 <View>
-                    {/* <Text style={styles.itemTime}>{section.unlocktime}</Text> */}
                     <Text style={styles.itemCount}>{`${section.tasks.length} items`}</Text>
                 </View>
             </View>
