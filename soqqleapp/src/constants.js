@@ -1,6 +1,7 @@
 export const STORY_IMAGE_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/storyImages/{}'
 export const STORY_VIDEO_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/storyVideos/{}.webm'
 export const MAIN_COLOR = "#841584"
+export const PLACEHOLDER_COLOR="#928ea3"
 export const PAGE_SIZE = 10
 export const ACHIEVEMENT_IMAGE_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/achievementImages/{}'
 export const QUESTION_IMAGE_BASE_URL = 'https://s3.us-east-2.amazonaws.com/admin.soqqle.com/questionImages/'

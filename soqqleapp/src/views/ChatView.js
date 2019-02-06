@@ -274,7 +274,9 @@ export default class UserTaskGroupView extends Component {
             <View style={styles.storyDetailTags}>
               <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.storyDetailTag}>50 xp</Text>
-                <Text style={styles.storyDetailTag}>5 team xp</Text>
+                {taskGroup.leftBonusSparks ? (
+                  <Text style={styles.storyDetailTag}>Bonus: {taskGroup.leftBonusSparks} sparks</Text>
+                ) : null}
                 {story.reward && (
                   taskGroupType === TASK_GROUP_TYPES.CHALLENGE ? (
                     <Text style={styles.storyDetailTag}>

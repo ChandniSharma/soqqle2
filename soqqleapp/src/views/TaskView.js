@@ -2,24 +2,24 @@ import React, { Component } from 'react';
 import * as axios from 'axios';
 import {
   Dimensions,
-  Image,
-  ImageBackground, KeyboardAvoidingView, Modal,
+  Image, Modal,
+  KeyboardAvoidingView,
   Platform, ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  View,
+  View, TextInput,
   ActivityIndicator
 } from 'react-native';
-import { Button, Icon, Text, Textarea } from 'native-base';
+import { Button, Icon, Text } from 'native-base';
 import { showMessage } from 'react-native-flash-message';
-import { MAIN_COLOR, QUESTION_IMAGE_BASE_URL } from "../constants";
+import { MAIN_COLOR, QUESTION_IMAGE_BASE_URL, PLACEHOLDER_COLOR } from "../constants";
 import { API_BASE_URL } from './../config';
 import { SAVE_ANSWERS_PATH_API, USER_SPARK_LIST_PATH_API } from './../endpoints';
 import { SafeAreaView } from "react-navigation";
 import Header from "../components/Header";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import Carousel from "react-native-snap-carousel";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import _ from 'lodash';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBar.currentHeight;
@@ -75,7 +75,8 @@ export default class TaskView extends Component {
     for (let i = 0; i < questions.length; i++) {
       if (_.isEmpty(questions[i].answer)) {
         TaskView.flashMessage('Please complete all questions!');
-        this.setState({ currentSlideIndex: i })
+        this.setState({ currentSlideIndex: i });
+        this._carousel.snapToItem(i, true);
         isCompleted = false;
         break;
       }
@@ -179,25 +180,50 @@ export default class TaskView extends Component {
     this.props.navigation.navigate('Chat', { taskUpdated: true })
   }
 
+  goToPreviousQuestion = () => {
+    if (!this._carousel ){
+      return;
+    }
+
+    this._carousel.snapToPrev(true);
+  }
+
+    goToNextQuestion = () => {
+    if (!this._carousel ){
+      return;
+    }
+
+    this._carousel.snapToNext(true);
+  }
+
   renderIlluminate = ({ item, index }) => {
-    const { helps } = this.state;
-    return <View style={styles.questionCard}>
-      <View style={styles.question}>
+    const { helps, questions = [] } = this.state;
+    return <KeyboardAvoidingView style={styles.questionCard} enabled={true} behavior="padding">
         <Text style={styles.questionText}>{item.question}</Text>
         {!item.noImage && <Image resizeMode="cover" style={styles.image}
           source={{ uri: `${QUESTION_IMAGE_BASE_URL}${item._id}_cover` }}
           onError={() => this.onChange(index, 'noImage', true)}
 
         />}
-      </View>
-      <View style={styles.answers}>
-        <Textarea placeholderTextColor={MAIN_COLOR} onChangeText={value => this.onChange(index, 'answer', value)} placeholder="Type your answer here!" style={styles.textArea} value={item.answer || ''} />
-
-        {helps.length > 0 && <Button style={styles.stepButton} onPress={() => this.setState({ modalVisible: true })} small rounded>
-          <Text style={styles.buttonText}>Get Help</Text>
-        </Button>}
-      </View>
-    </View>;
+      <Pagination
+          dotsLength={questions.length}
+          activeDotIndex={index}
+          inactiveDotOpacity={0.6}
+          carouselRef={this._carousel}
+          tappableDots={true}
+          inactiveDotScale={0.6}
+          dotStyle={styles.paginationDots}/>
+      <TextInput multiline={true} placeholderTextColor={PLACEHOLDER_COLOR}
+                onChangeText={value => this.onChange(index, 'answer', value)}
+                placeholder="Enter answer"
+                style={[styles.textArea, questions[index]['answer'] ? styles.answerBorder : styles.placeholderBorder]}
+                value={item.answer || ''} />
+      {helps.length > 0 && <View style={styles.helpOption}>
+       <Button style={styles.stepButton} onPress={() => this.setState({ modalVisible: true })}>
+        <Text style={styles.buttonText}>Get Help</Text>
+      </Button>
+      </View>}
+    </KeyboardAvoidingView>;
   };
 
   renderHelpItem = (item, index, questionIndex) => {
@@ -213,7 +239,7 @@ export default class TaskView extends Component {
   }
 
   render() {
-    const { questions, currentSlideIndex, modalVisible, helps, resultModalVisible } = this.state;
+    const { questions = [], currentSlideIndex, modalVisible, helps, resultModalVisible, processing = false } = this.state;
     const reward = this.props.navigation.getParam('reward', null);
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled={Platform.OS === 'ios'}>
@@ -229,10 +255,6 @@ export default class TaskView extends Component {
 
           />
           <View style={styles.body}>
-            <Button style={styles.stepButton} onPress={() => {
-            }} small rounded>
-              <Text style={styles.buttonText}>{currentSlideIndex + 1}/{questions.length}</Text>
-            </Button>
             <Carousel
               ref={(c) => {
                 this._carousel = c;
@@ -244,18 +266,22 @@ export default class TaskView extends Component {
               itemWidth={wp('90%')}
               onBeforeSnapToItem={(slideIndex) => this.setState({ currentSlideIndex: slideIndex, helps: questions[slideIndex].preLoad || [] })}
             />
-            <ImageBackground style={{ width: '100%', height: 57 }} source={require('../images/RectangleBlue.png')}>
+          </View>
+          <View style={styles.actionPrevNextBtn}>
               <TouchableOpacity
-                style={styles.submitButton}
-                onPress={this.onSave}
-              >
-                {this.state.processing ? (
-                  <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />
-                ) : (
-                    <Text style={styles.submitText}>SAVE</Text>
-                  )}
+                  style={styles.actionBtn}
+                  disabled={currentSlideIndex === 0}
+                  onPress={this.goToPreviousQuestion}>
+                  <Text style={currentSlideIndex ? styles.actionBtnTxt: styles.actionBtnTxtDisabled}>Back</Text>
               </TouchableOpacity>
-            </ImageBackground>
+              {processing && <ActivityIndicator size={18} style={{ paddingHorizontal: 14 }} color="#ffffff" />}
+              {!processing && <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={questions.length === currentSlideIndex + 1 ? this.onSave : this.goToNextQuestion}>
+                  <Text style={styles.actionBtnTxt}>
+                      {questions.length === currentSlideIndex + 1 ? 'Save': 'Next'}
+                  </Text>
+              </TouchableOpacity>}
           </View>
           <Modal
             animationType="fade"
@@ -323,8 +349,6 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingTop: 5,
     paddingHorizontal: 15,
   },
   question: {
@@ -341,11 +365,13 @@ const styles = StyleSheet.create({
   questionCard: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'center'
   },
-  answers: {
-    width: wp('90%'),
-    marginBottom: 10,
+  helpOption: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0
   },
   answer: {
     flexDirection: 'row',
@@ -394,12 +420,11 @@ const styles = StyleSheet.create({
   stepButton: {
     alignSelf: 'center',
     backgroundColor: 'transparent',
-    borderColor: '#FFC600',
-    borderWidth: 1,
     marginTop: 5,
   },
   buttonText: {
     color: '#FFC600',
+    fontSize: 18
   },
   submitButton: {
     flex: 1,
@@ -412,11 +437,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textArea: {
-    borderWidth: 1,
-    borderColor: MAIN_COLOR,
+    borderWidth: 2,
     color: 'white',
     fontSize: 20,
+    padding: 15,
     borderRadius: 4,
+  },
+  answerBorder: {
+    borderColor: MAIN_COLOR,
+  },
+  placeholderBorder:{
+    borderColor: PLACEHOLDER_COLOR,
   },
   likeModalClose: {
     position: 'absolute',
@@ -438,5 +469,32 @@ const styles = StyleSheet.create({
     fontSize: 15,
     letterSpacing: 1,
     color: '#ffffff',
+  },
+  actionBtn: {
+    padding: 15,
+    alignItems: 'center'
+  },
+  actionBtnTxt: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  actionBtnTxtDisabled: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#7e828a'
+  },
+  actionPrevNextBtn: {
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
+    width: wp('100%'),
+    justifyContent:'space-between',
+    padding: 5
+  },
+  paginationDots: {
+    width: 9,
+    height: 9,
+    backgroundColor: MAIN_COLOR
   }
 });

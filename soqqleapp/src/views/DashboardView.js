@@ -6,6 +6,7 @@ import Header from './../components/Header';
 import AchievementView from './AchievementView';
 import LevelView from './LevelView';
 import SparkView from './SparkView';
+import RewardsView from './RewardsView';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 
@@ -30,7 +31,7 @@ const DashboardView = (props) => {
     {
       key: 'rewards',
       label: 'Rewards',
-      component: <Text style={{ color: '#000000' }}>Rewards coming soon..</Text>
+      component: (<RewardsView {...props} />)
     },
     {
       key: 'achievements',

@@ -8,6 +8,7 @@ import SparkReducer from '../reducers/SparkReducer';
 import AppReducer from '../reducers/AppReducer';
 import SessionStateReducer, { RESET_STATE } from '../session/SessionState';
 import TaskReducer from "../reducers/TaskReducer";
+import RewardsReducer from "../reducers/RewardsReducer"
 
 const reducers = {
   user: UserReducer,
@@ -18,6 +19,7 @@ const reducers = {
   task: TaskReducer,
   navigatorState: NavigatorStateReducer,
   session: SessionStateReducer,
+  rewards: RewardsReducer
 };
 const immutableStateContainer = Map();
 const getImmutable = (child, key) => child ? child.get(key) : void 0;
