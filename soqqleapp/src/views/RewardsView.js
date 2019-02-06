@@ -149,24 +149,28 @@ export default class RewardsView extends React.Component {
     if (nextProps.rewards.rewards.length && (!this.props.rewards.details || nextProps.sparks.details.length != this.props.sparks.details.length)) {
       
       let rewards = nextProps.rewards.rewards.map((item) => {
-        let state = "In Progress";
+        let state = "Not Started";
         if(item.requirement === 'Achievement') {
           const achievement = nextProps.rewards.achievements.find((ac) => {return ac.achievementId === item.requirementValue});
-          if(achievement.conditions[0].counter === 0) {
-            state = "Not Started";
-          } else if(achievement.conditions[0].counter >= achievement.conditions[0].count) {
-            state = "Completed";
+          if(achievement) {
+            if(achievement.conditions[0].counter < achievement.conditions[0].count) {
+              state = "In Progress";
+            } else if(achievement.conditions[0].counter >= achievement.conditions[0].count) {
+              state = "Completed";
+            }
           }
         } else if(item.requirement === 'Story') {
           const story = nextProps.rewards.stories.find((ac) => {return ac._id === item.requirementValue});
-          if(story._achievements.length === 0) {
-            state = "No Achievement";
-          } else {
-            const achievement = nextProps.rewards.achievements.find((ac) => {return ac.achievementId === story._achievements[0]._id});
-            if(achievement.conditions[0].counter === 0) {
-              state = "Not Started";
-            } else if(achievement.conditions[0].counter >= achievement.conditions[0].count) {
-              state = "Completed";
+          if (story) {
+            if(story._achievements.length === 0) {
+              state = "No Achievement";
+            } else {
+              const achievement = nextProps.rewards.achievements.find((ac) => {return ac.achievementId === story._achievements[0]._id});
+              if(achievement.conditions[0].counter < achievement.conditions[0].count) {
+                state = "Not Started";
+              } else if(achievement.conditions[0].counter >= achievement.conditions[0].count) {
+                state = "Completed";
+              }
             }
           }
         }
