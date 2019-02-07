@@ -15,3 +15,4 @@ export const GET_OBJECTIVE_API_PATH = '/taskRefs/{}';
 export const GET_MESSAGE_LIST_API = '/fetchConversationByParticipants?chatType=GROUP&ids={team_id}';
 export const CHAT_SOCKET_URL = 'http://stgapi.soqqle.com';
 export const STORY_CHALLENGES_LIST_API_PATH = '/challengeStory';
+export const GET_TASK_GROUPS_API = '/taskgroupGetAll';
