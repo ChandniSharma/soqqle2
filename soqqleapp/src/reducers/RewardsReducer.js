@@ -46,12 +46,12 @@ export async function getRewards(data) {
     const response = await instance.get('/upgrades', data);
 
     let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', data.userId);
-    const achievements = await instance.get(endpoint)
+    let achievements = await instance.get(endpoint)
 
-    const stories = await instance.get(STORIES_LIST_API);
+    let stories = await instance.get(STORIES_LIST_API);
 
     store.dispatch(AppStateActions.stopLoading());
-    return getRewardsCompleted({rewards: response.data.list, achievements: achievements.data.achievements, stories: stories.data});
+    return getRewardsCompleted({rewards: response.data.list, achievements: achievements.data ? achievements.data.achievements : [], stories: stories.data ? stories.data : []});
   } catch (error) {
     console.log("error=>", error)
     store.dispatch(AppStateActions.stopLoading());
