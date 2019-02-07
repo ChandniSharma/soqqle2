@@ -1,111 +1,35 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
-    Platform, StyleSheet, ActivityIndicator,
+    ActivityIndicator,
     Text, View, SafeAreaView, ScrollView
 } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Header from './../components/Header';
-import { AGENDA_LIST_API } from './../endpoints';
-import { PAGE_SIZE } from './../constants';
 
-
-const statusBarHeight = Platform.OS === 'ios' ? 0 : 20;
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 0,
-        paddingTop: statusBarHeight,
-        backgroundColor: '#ffffff',
-        flex: 1,
-    },
-    activityLoaderContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    item: {
-        color: '#ffffff',
-    },
-    separator: {
-        flex: 1,
-        height: 2,
-        backgroundColor: '#8E8E8E',
-    },
-    accordionHeader: {
-        backgroundColor: '#120B34',
-        paddingHorizontal: 22,
-        paddingVertical: 12,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    accordionIcon: {
-        color: '#1FBEB8',
-        marginTop: 5,
-        fontSize: 15,
-    },
-    itemName: {
-        fontSize: 18,
-        color: '#FFFFFF',
-    },
-    itemTime: {
-        fontSize: 15,
-        color: 'rgba(255, 255, 255, 0.6)',
-        marginBottom: 5
-    },
-    itemCount: {
-        fontSize: 15,
-        color: '#1FBEB8',
-    },
-    taskView: {
-        backgroundColor: '#FFFFFF',
-        paddingVertical: 10,
-    },
-    taskTime: {
-        textAlign: 'right',
-        paddingRight: 32,
-        fontSize: 13,
-        color: 'rgba(19, 12, 56, 0.4)',
-    },
-    taskText: {
-        lineHeight: 18,
-        fontSize: 15,
-        color: 'rgba(19, 12, 56, 0.6)',
-        paddingHorizontal: 32,
-        paddingVertical: 5,
-        textAlign: 'justify',
-    },
-    taskSeparator: {
-        marginVertical: 5,
-        height: 1,
-        backgroundColor: '#E5E5E5',
-    },
-    listLoader: {
-        paddingVertical: 10,
-    }
-});
+import Header from '../components/Header';
+import {AGENDA_LIST_API} from '../endpoints';
+import {PAGE_SIZE} from '../constants';
+import styles from '../stylesheets/agendaViewStyles';
 
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
 
-const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height;
 };
 
+// TODO: Update this class to new Lifecycle methods
 export default class AgendaView extends Component {
-
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             agendaItems: [],
             initialLoading: true,
             loading: false,
             activeSections: [0],
             totalCount: null,
-        }
+        };
     }
 
     componentWillMount() {
@@ -114,8 +38,8 @@ export default class AgendaView extends Component {
 
     getAgendaItems(page = 1) {
         fetch(AGENDA_LIST_API.replace('{}', page))
-            .then((response) => response.json())
-            .then((responseJson) => {
+            .then(response => response.json())
+            .then(responseJson => {
                 totalCount = responseJson.total;
                 pageNum = page;
                 this.mapAgendaItems(responseJson.listTaskgroup);
@@ -125,37 +49,41 @@ export default class AgendaView extends Component {
                     this.getAgendaItems(pageNum + 1);
                 }
             })
-            .catch((error) => {
-                this.setState({ initialLoading: false, loading: false });
-            });
+            .catch(() => this.setState({
+                initialLoading: false,
+                loading: false
+            }));
     }
 
     mapAgendaItems(data) {
         let agendaItems = this.state.agendaItems;
 
         data.map(item => {
-            const index = agendaItems.findIndex((obj) => {
-                return obj.groupname.toLowerCase() === item.groupname.toLowerCase()
+            const index = agendaItems.findIndex(obj => {
+                return obj.groupname.toLowerCase() === item.groupname.toLowerCase();
             });
             let taskItem = {
                 description: item.description,
                 sequence: item.sequence,
                 id: item._id,
                 unlock_time: item.unlocktime,
-            }
+            };
             if (index > -1) {
-                agendaItems[index]['tasks'].push(taskItem)
+                agendaItems[index]['tasks'].push(taskItem);
             } else {
                 agendaItems.push({
                     groupname: item.groupname,
                     category: item.category,
                     name: item.name,
-                    // unlocktime: item.unlocktime,
                     tasks: [taskItem]
                 });
             }
-        })
-        this.setState({ agendaItems, initialLoading: false, loading: false });
+        });
+        this.setState({
+            agendaItems,
+            initialLoading: false,
+            loading: false
+        });
     }
 
     _renderHeader = (section, index) => {
@@ -164,17 +92,16 @@ export default class AgendaView extends Component {
             <View
                 style={!isActive ?
                     styles.accordionHeader :
-                    { ...styles.accordionHeader, ...{ 'backgroundColor': '#2C2649' } }
+                    {...styles.accordionHeader, ...{'backgroundColor': '#2C2649'}}
                 }
             >
                 <View>
                     <Text style={styles.itemName}>{section.groupname}</Text>
                     <Icon
                         name={`chevron-${isActive ? 'up' : 'down'}`}
-                        style={styles.accordionIcon} />
+                        style={styles.accordionIcon}/>
                 </View>
                 <View>
-                    {/* <Text style={styles.itemTime}>{section.unlocktime}</Text> */}
                     <Text style={styles.itemCount}>{`${section.tasks.length} items`}</Text>
                 </View>
             </View>
@@ -185,7 +112,7 @@ export default class AgendaView extends Component {
         return (
             <View style={styles.taskView}>
                 {(section.tasks.sort((a, b) => a.sequence - b.sequence)).map((task, index) => {
-                    const isLastItem = section.tasks.length - 1 == index;
+                    const isLastItem = section.tasks.length - 1 === index;
                     return (
                         <View key={task.id}>
                             <Text style={styles.taskTime}>{task.unlock_time}</Text>
@@ -193,17 +120,17 @@ export default class AgendaView extends Component {
                                 {task.description}
                             </Text>
                             {!isLastItem ?
-                                <View style={styles.taskSeparator} />
+                                <View style={styles.taskSeparator}/>
                                 : null}
                         </View>
-                    )
+                    );
                 })}
             </View>
         );
     };
 
     _updateSections = activeSections => {
-        this.setState({ activeSections });
+        this.setState({activeSections});
     };
 
     handleBackAction() {
@@ -212,8 +139,14 @@ export default class AgendaView extends Component {
 
     fetchMoreAgendaOnScroll() {
         if (pageNum * pageSize < totalCount && !this.state.loading) {
-            this.setState({ loading: true });
+            this.setState({loading: true});
             this.getAgendaItems(pageNum + 1);
+        }
+    }
+
+    onScroll({nativeEvent}) {
+        if (isCloseToBottom(nativeEvent)) {
+            this.fetchMoreAgendaOnScroll();
         }
     }
 
@@ -229,30 +162,25 @@ export default class AgendaView extends Component {
                 />
                 {this.state.initialLoading ? (
                     <View style={styles.activityLoaderContainer}>
-                        <ActivityIndicator size="large" color="#0000ff" />
+                        <ActivityIndicator size="large" color="#0000ff"/>
                     </View>
                 ) : (
-                        <ScrollView onScroll={({ nativeEvent }) => {
-                            if (isCloseToBottom(nativeEvent)) {
-                                this.fetchMoreAgendaOnScroll()
-                            }
-                        }}
-                            scrollEventThrottle={400}>
-                            <Accordion
-                                sections={this.state.agendaItems}
-                                activeSections={this.state.activeSections}
-                                renderHeader={this._renderHeader}
-                                renderContent={this._renderContent}
-                                onChange={this._updateSections}
-                                expandMultiple={true}
-                            />
-                            {this.state.loading ? (
-                                <View style={styles.listLoader}>
-                                    <ActivityIndicator size="large" color="#120B34" />
-                                </View>
-                            ) : null}
-                        </ScrollView>
-                    )}
+                    <ScrollView onScroll={this.onScroll.bind(this)} scrollEventThrottle={400}>
+                        <Accordion
+                            sections={this.state.agendaItems}
+                            activeSections={this.state.activeSections}
+                            renderHeader={this._renderHeader}
+                            renderContent={this._renderContent}
+                            onChange={this._updateSections}
+                            expandMultiple={true}
+                        />
+                        {this.state.loading ? (
+                            <View style={styles.listLoader}>
+                                <ActivityIndicator size="large" color="#120B34"/>
+                            </View>
+                        ) : null}
+                    </ScrollView>
+                )}
             </SafeAreaView>
         );
     }

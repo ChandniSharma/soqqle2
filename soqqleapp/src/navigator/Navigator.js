@@ -1,5 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from 'react-navigation';
+
 import LoginContainer from '../containers/LoginContainer';
 import ProfileContainer from '../containers/ProfileContainer';
 import CompanyProfileContainer from '../containers/CompanyContainer';
@@ -8,10 +9,9 @@ import AgendaContainer from '../containers/AgendaContainer';
 import UserTaskGroupContainer from '../containers/UserTaskGroupContainer';
 import ChatContainer from '../containers/ChatContainer';
 import DashboardContainer from '../containers/DashboardContainer';
-import TaskContainer from "../containers/TaskContainer";
-import UserListContainer from "../containers/UserListContainer";
+import TaskContainer from '../containers/TaskContainer';
+import UserListContainer from '../containers/UserListContainer';
 
-import UsersList from '../views/UsersList';
 import UserDetailView from '../views/UserDetailView';
 
 const AppNavigator = createStackNavigator({
@@ -26,10 +26,10 @@ const AppNavigator = createStackNavigator({
     Dashboard: {screen: DashboardContainer},
     UsersList:{screen: UserListContainer},
     UserDetailView:{screen:UserDetailView},
-  },
-  {
+},
+{
     headerMode: 'none'
-  }
+}
 );
 
 export default AppNavigator;

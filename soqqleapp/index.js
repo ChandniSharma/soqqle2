@@ -1,19 +1,20 @@
 /** @format */
-import AppContainer from './src/containers/AppContainer';
+import React, {Component} from 'react';
 import {Provider} from 'react-redux';
-import { name as appName } from './app.json';
-import React, { Component } from 'react';
+import {AppRegistry} from 'react-native';
+
+import AppContainer from './src/containers/AppContainer';
 import store from './src/redux/store';
-import { AppRegistry } from 'react-native';
+import {name} from './app.json';
 
 class SoqqleApp extends Component {
     render() {
         return (
-          <Provider store={store}>
-            <AppContainer />
-          </Provider>
+            <Provider store={store}>
+                <AppContainer/>
+            </Provider>
         );
     }
 }
 
-AppRegistry.registerComponent(appName, () => SoqqleApp);
+AppRegistry.registerComponent(name, () => SoqqleApp);
