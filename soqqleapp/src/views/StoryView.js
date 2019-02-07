@@ -5,6 +5,7 @@ import * as axios from 'axios';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
+import moment from 'moment';
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
@@ -48,10 +49,14 @@ export default class StoryView extends Component {
           groupName: group.groupname,
           sequence: group.sequence,
           startdate: group.unlockdate,
-          starttime: group.unlocktime
         }
       }
       return story
+    }).filter(story => {
+      if (story.startdate) {
+        return moment(story.startdate).isBefore(moment())
+      }
+      return true
     });
     this.setState({stories: mappedStories});
   };
@@ -65,10 +70,14 @@ export default class StoryView extends Component {
           groupName: group.groupname,
           sequence: group.sequence,
           startdate: group.unlockdate,
-          starttime: group.unlocktime
         }
       }
       return challenge
+    }).filter(challenge => {
+      if (challenge.startdate) {
+        return moment(challenge.startdate).isBefore(moment())
+      }
+      return true
     });
     this.setState({challenges: mappedChallenges});
   };
@@ -122,16 +131,16 @@ export default class StoryView extends Component {
               >
                 {item.description}
               </Text>
-              {item.sequence && <View style={{flexDirection: 'row'}}>
-                <View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>
-                <View>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={styles.dateTimeText}>Start: </Text>
-                    <Text style={styles.startTimeText}>{`${item.startdate || ''} ${item.starttime || ''}`}</Text>
-                  </View>
-                  <Text style={styles.dateTimeText}>End</Text>
-                </View>
-              </View>}
+              {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
+                {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
+                {/*<View>*/}
+                  {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+                    {/*<Text style={styles.dateTimeText}>Start: </Text>*/}
+                    {/*<Text style={styles.startTimeText}>{`${item.startdate || ''}`}</Text>*/}
+                  {/*</View>*/}
+                  {/*<Text style={styles.dateTimeText}>End</Text>*/}
+                {/*</View>*/}
+              {/*</View>}*/}
               <View style={styles.storyTagContainer}>
                 {item._objective && (
                   <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
@@ -162,13 +171,13 @@ export default class StoryView extends Component {
                 >
                   {item.description}
                 </Text>
-                {item.sequence && <View style={{flexDirection: 'row'}}>
-                  <View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>
-                  <View>
-                      <Text style={styles.dateTimeText}>Start: {`${item.startdate || ''} ${item.starttime || ''}`}</Text>
-                      <Text style={styles.dateTimeText}>End:</Text>
-                    </View>
-                </View>}
+                {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
+                  {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
+                  {/*<View>*/}
+                      {/*<Text style={styles.dateTimeText}>Start: {`${item.startdate || ''}`}</Text>*/}
+                      {/*<Text style={styles.dateTimeText}>End:</Text>*/}
+                  {/*</View>*/}
+                {/*</View>}*/}
                 <View style={styles.storyTagContainer}>
                   {item.type && (
                     <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
