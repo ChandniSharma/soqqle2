@@ -108,7 +108,7 @@ export default class RewardsView extends React.Component {
   _renderContent = section => {
       return (
           <View style={styles.content}>
-              <FlatList style={styles.sectionContentList} 
+              <FlatList style={styles.sectionContentList}
                   data={section.content}
                   renderItem={this._renderSectionContentItem}
               />
@@ -116,7 +116,7 @@ export default class RewardsView extends React.Component {
       );
   };
 
-  _updateSections = activeSections => this.setState({ activeSections })};
+  _updateSections = activeSections => this.setState({ activeSections });
 
   renderRewardsItem = ({item}) => {
       return (
@@ -128,7 +128,7 @@ export default class RewardsView extends React.Component {
                       <Text style={styles.rewardsSparks}>{item.sparks + ' Sparks'}</Text>
                   </View>
                   <Text style={styles.rewardsDescription}>{item.description}</Text>
-                  {item.state === 'Completed' ? 
+                  {item.state === 'Completed' ?
                       <TouchableOpacity style={{width: 70, marginLeft: screenWidth - 125}}><Text style={styles.buyReward}>Buy</Text></TouchableOpacity> :
                       <Text style={styles.rewardsState}>{item.state}</Text>}
               </View>
@@ -147,7 +147,7 @@ export default class RewardsView extends React.Component {
   componentWillReceiveProps(nextProps) {
       if (nextProps.rewards.rewards.length && (!this.props.rewards.details ||
               nextProps.sparks.details.length !== this.props.sparks.details.length)) {
-      
+
           let rewards = nextProps.rewards.rewards.map(item => {
               let state = 'Not Started';
               if(item.requirement === 'Achievement') {
@@ -191,7 +191,7 @@ export default class RewardsView extends React.Component {
           });
       }
   }
-  
+
   render = () => {
       const bottomRadius = this.state.sortByClicked ? 0 : 5;
       const sortButtonBorder = {
@@ -218,8 +218,8 @@ export default class RewardsView extends React.Component {
                           <Text style={styles.triangle}>{this.state.sortByClicked ? '▲' : '▼' }</Text>
                       </View>
                   </TouchableOpacity>
-        
-                  {this.state.sortByClicked && 
+
+                  {this.state.sortByClicked &&
             <Accordion
                 sections={SECTIONS}
                 activeSections={this.state.activeSections}
