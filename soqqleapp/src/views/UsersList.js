@@ -85,7 +85,7 @@ callApiToBlockUnblock(userId,isBlocked){
 }
 renderItem = (item,index) =>{
    
-    let arrayBlockedUser = this.props.user.blockUserIds;
+    let arrayBlockedUser = this.props.user.blockUserIds,btnBlockConfirmation='';
     var name = '', designation = '',imgUser, imgEyes, userId=0,isBlocked = 1;
     imgEyes =  <Image source={require('../../assets/images/eyeOpen.png')} />
     let dictUserDetail;
@@ -109,15 +109,23 @@ renderItem = (item,index) =>{
         userId = dictUserDetail._id;
       }
       var index=-1;
-      if(arrayBlockedUser.length>0){
+      if(arrayBlockedUser && arrayBlockedUser.length>0){
         index= arrayBlockedUser.indexOf(userId);
       }
       if(index>=0){
-        imgEyes = <Image style={styles.eyeWithCross} source={require('../../assets/images/eyeCross.png')} /> 
         isBlocked=0;
+        btnBlockConfirmation = <TouchableOpacity style={styles.eyeBtn} onPress={()=>this.blockUnblockConfirmation(userId,isBlocked)}>
+                                     <Image style={styles.eyeWithCross} source={require('../../assets/images/eyeCross.png')} /> 
+                                   </TouchableOpacity>
+
       }else{
-        imgEyes =  <Image source={require('../../assets/images/eyeOpen.png')} />
         isBlocked =1;
+        btnBlockConfirmation = <TouchableOpacity style={styles.eyeBtn} onPress={()=>this.blockUnblockConfirmation(userId,isBlocked)}>
+                                    <Image source={require('../../assets/images/eyeOpen.png')} />
+                                   </TouchableOpacity>
+      }
+      if(userId === this.props.user._id){
+        btnBlockConfirmation = <TouchableOpacity style={styles.eyeBtn} />
       }
      imgUser =  <Thumbnail
      style={styles.imageUser}
@@ -132,9 +140,7 @@ renderItem = (item,index) =>{
                     <Text style={styles.txtName}> {name} </Text>
                     <Text style={styles.txtDesignation}> {designation} </Text>
                 </View>
-                <TouchableOpacity style={styles.eyeBtn} onPress={()=>this.blockUnblockConfirmation(userId,isBlocked)}>
-                    {imgEyes}
-                </TouchableOpacity>
+               {btnBlockConfirmation}
             </View>
         </TouchableOpacity>
     </CardSection>

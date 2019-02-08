@@ -561,7 +561,7 @@ export async function reportUser(data){
   try {
     const response = await instance.post('/ticket', data);
     store.dispatch(AppStateActions.stopLoading());
-    return reportUserCompleted(response.data);
+    return reportUserCompleted(response);
   } catch (error) {
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {

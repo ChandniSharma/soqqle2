@@ -18,6 +18,7 @@ const instance = axios.create({
   timeout: 25000,
   headers: { 'Content-type': 'application/json' }
 });
+console.disableYellowBox=true;
 export default class UserTaskGroupView extends Component {
 
   constructor(props) {
@@ -33,6 +34,7 @@ export default class UserTaskGroupView extends Component {
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
+    
   }
 
   componentWillMount() {
@@ -45,6 +47,13 @@ export default class UserTaskGroupView extends Component {
     let query = `userID=${user._id}&username=${user._id}&firstName=${user.profile.firstName ? user.profile.firstName : ''}&lastName=${user.profile.lastName ? user.profile.lastName : ''}&userType=test`;
     this.socket = SocketIOClient(CHAT_SOCKET_URL, { query: query, transports: ['websocket'] });
     this.socket.on('server:message', this.onReceivedMessage);
+    
+    this.props.navigation.addListener(
+      'willFocus',
+      () => {
+          userActions.getMessageListRequest(this.state.taskGroup._team._id);
+      }
+    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -189,11 +198,12 @@ export default class UserTaskGroupView extends Component {
   }
   onReceivedMessage(message) {
     let groupDetails = this.state.taskGroup;
+    console.log(' Emails length =====',groupDetails._team.emails);
     let userData = groupDetails._team.emails.find((user) => {
-      return user.userDetails._id === message.sender;
+      return user.userDetails && user.userDetails._id === message.sender;
     });
     let isUnBlocked = true, blockUserIds = this.props.user.blockUserIds;
-    if (blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
+    if (userData.userDetails && blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
       isUnBlocked = false;
     }
     if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
@@ -225,19 +235,21 @@ export default class UserTaskGroupView extends Component {
     alert('You need to long press on the chat for reporting it to the admin.')
   }
   reportConfirmation(message){
-    var alertTitle = 'Report?', alertMessage='Are you sure to report this chat?'
-    Alert.alert(
-      alertTitle,
-      alertMessage,
-      [
-          {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-          },
-          {text: 'Ok', onPress: () => this.callApiToReportUser(message)},  
-      ]
-      )
+    if(message.user._id != this.props.user._id){
+      var alertTitle = 'Report?', alertMessage='Are you sure to report this chat?'
+      Alert.alert(
+        alertTitle,
+        alertMessage,
+        [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {text: 'Ok', onPress: () => this.callApiToReportUser(message)},  
+        ]
+        )
+    }
   }
   callApiToReportUser(message){
         let username = '';
