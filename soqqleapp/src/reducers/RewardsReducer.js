@@ -4,7 +4,7 @@ import {API_BASE_URL} from '../config';
 import {Effects, loop} from 'redux-loop-symbol-ponyfill';
 import * as AppStateActions from './AppReducer';
 import store from '../redux/store';
-import {USER_ACHIEVEMENT_LIST_PATH_API, STORIES_LIST_API} from '../endpoints'
+import {STORIES_LIST_API, USER_ACHIEVEMENT_LIST_PATH_API} from '../endpoints';
 
 const GET_REWARDS_REQUESTED = 'RewardsState/GET_REWARDS_REQUESTED';
 const GET_REWARDS_COMPLETED = 'RewardsState/GET_REWARDS_COMPLETED';
@@ -46,19 +46,22 @@ export async function getRewards(data) {
     const response = await instance.get('/upgrades', data);
 
     let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', data.userId);
-    const achievements = await instance.get(endpoint)
+    let achievements = await instance.get(endpoint);
 
-    const stories = await instance.get(STORIES_LIST_API);
+    let stories = await instance.get(STORIES_LIST_API);
 
     store.dispatch(AppStateActions.stopLoading());
-    return getRewardsCompleted({rewards: response.data.list, achievements: achievements.data.achievements, stories: stories.data});
+    return getRewardsCompleted({
+      rewards: response.data.list,
+      achievements: achievements.data ? achievements.data.achievements : [],
+      stories: stories.data ? stories.data : []
+    });
   } catch (error) {
-    console.log("error=>", error)
+    console.log("error=>", error);
     store.dispatch(AppStateActions.stopLoading());
     if (error.response && error.response.data) {
       return getRewardsFailed(error.response.data);
     }
-    return getRewardsFailed({code: 500, message: 'Unexpected error!'});
   }
 }
 

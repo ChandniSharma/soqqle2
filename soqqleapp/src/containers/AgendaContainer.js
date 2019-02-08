@@ -1,8 +1,9 @@
-import { connect } from 'react-redux';
-import AgendaView from '../views/AgendaView';
+import {connect} from 'react-redux';
+
+import AgendaView from './../views/AgendaView';
 
 export default connect(
-  state => ({
-    isReady: state.getIn(['session', 'isReady'])
-  })
+    state => ({
+        isReady: state.getIn(['session', 'isReady'])
+    })
 )(AgendaView);

@@ -18,7 +18,6 @@ constructor(props){
     this.state={
      dataUser : [],
     };
-    
 }
 componentDidMount(){
     if(this.props.navigation.state.params.blockUserList){
