@@ -59,7 +59,6 @@ const REPORT_USER_REQUESTED = 'UserState/REPORT_USER_REQUESTED';
 const REPORT_USER_COMPLETED = 'UserState/REPORT_USER_COMPLETED';
 const REPORT_USER_FAILED = 'UserState/REPORT_USER_FAILED';
 
-
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -560,8 +559,6 @@ export const reportUserFailed = (error) => {
 };
 export async function reportUser(data){
   try {
-    // store.dispatch(AppStateActions.stopLoading());
-    // store.dispatch(AppStateActions.startLoading());
     const response = await instance.post('/ticket', data);
     store.dispatch(AppStateActions.stopLoading());
     return reportUserCompleted(response.data);

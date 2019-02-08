@@ -262,25 +262,9 @@ return(
         <Image styles={styles.flag} source={require('../../assets/images/flag.png')}/>
         <Text>{message}</Text>
     </TouchableOpacity>
-)
-    //   if (this.state.isReport) {
-    //   this.setState({isReport:false});
-    //   return(
-    //     <View style={styles.viewBubble}>
-    //       <Text>{message}</Text>
-    //       <Image styles={styles.flag} source={require('../../assets/images/flag.png')}/>
-    //     </View>)
-    // } else {
-    //   return(
-    //     <View style={styles.viewBubble}>
-    //       <Text>{message}</Text>
-    //     </View>
-    //   )
-    // }
+  )
   }
   render() {
-    console.log('Render method ======',this.state.isReport);
-
     const { taskGroup } = this.state;
     const isCompleted = this.isTaskCompleted();
     var user = {

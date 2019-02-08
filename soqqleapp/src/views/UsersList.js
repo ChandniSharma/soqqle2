@@ -21,7 +21,6 @@ constructor(props){
     
 }
 componentDidMount(){
-    console.log("User list ======= ",this.props.navigation.state.params);
     if(this.props.navigation.state.params.blockUserList){
         this.setState({dataUser:this.props.navigation.state.params.blockUserList});
     }else{
@@ -41,7 +40,6 @@ componentWillReceiveProps(nextProps) {
       }
 }
 handleBackAction() {
-    // this.props.navigation.state.params.refrshView;
     this.props.navigation.goBack();
 }
 
