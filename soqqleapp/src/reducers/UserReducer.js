@@ -55,6 +55,11 @@ const BLOCK_USER_LIST_FAILED = 'UserState/BLOCK_USER_LIST_FAILED';
 
 const BLOCK_UNBLOCK_USER_COMPLETED = 'UserState/BLOCK_UNBLOCK_USER_COMPLETED';
 
+const REPORT_USER_REQUESTED = 'UserState/REPORT_USER_REQUESTED';
+const REPORT_USER_COMPLETED = 'UserState/REPORT_USER_COMPLETED';
+const REPORT_USER_FAILED = 'UserState/REPORT_USER_FAILED';
+
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -533,6 +538,44 @@ export async function getMessageList(teamId) {
     return getMessageListFailed({ code: 500, message: 'Unexpected error!' });
   }
 }
+export const reportUserRequested = (data) => {
+  return {
+    type: REPORT_USER_REQUESTED,
+    payload: data
+  };
+};
+
+export const reportUserCompleted = (data) => {
+  return {
+    type: REPORT_USER_COMPLETED,
+    payload: data
+  };
+};
+
+export const reportUserFailed = (error) => {
+  return {
+    type: REPORT_USER_FAILED,
+    payload: error
+  };
+};
+export async function reportUser(data){
+  try {
+    // store.dispatch(AppStateActions.stopLoading());
+    // store.dispatch(AppStateActions.startLoading());
+    const response = await instance.post('/ticket', data);
+    store.dispatch(AppStateActions.stopLoading());
+    return reportUserCompleted(response.data);
+  } catch (error) {
+    store.dispatch(AppStateActions.stopLoading());
+    if (error.response && error.response.data) {
+      return reportUserFailed({
+        code: error.response.status,
+        message: "Report user failed! Please try again."
+      });
+    }
+    return reportUserFailed({code: 500, message: 'Unexpected error!'});
+  }
+}
 // Reducer
 export default function UserStateReducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -641,6 +684,16 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('blockUserList', action.payload).set('blockUserListSuccess', true);
     case BLOCK_USER_LIST_FAILED:
       return state.set('error', action.payload).set('blockUserListSuccess', false);
+      case REPORT_USER_REQUESTED:
+      return loop(
+        state.set('error', null).set('reportUserSuccess', false),
+        Effects.promise(reportUser, action.payload)
+      );
+    case REPORT_USER_COMPLETED:
+      return state.set('reportUserResponse', action.payload).set('reportUserSuccess', true);
+    case REPORT_USER_FAILED:
+      return state.set('error', action.payload).set('reportUserSuccess', false);
+  
     default:
       return state;
   }

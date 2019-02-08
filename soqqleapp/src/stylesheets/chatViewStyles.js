@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
+import { Right } from 'native-base';
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 const styles = StyleSheet.create({
@@ -164,6 +165,24 @@ const styles = StyleSheet.create({
     textInput: {
         alignSelf: 'flex-start',
     },
+    viewBubble:{
+     flexDirection:'row',
+     justifyContent:'center',
+     alignItems:'center',
+    },
+    flag:{
+        width:15,
+        height:15,
+        },
+    flagButton:{
+        right:10,
+        width:30,
+        height:30,
+        alignSelf:'flex-end'
+    },
+    faceButton:{
+        alignSelf:'center',
+    }  
 });
 
 export default styles;

@@ -41,6 +41,7 @@ componentWillReceiveProps(nextProps) {
       }
 }
 handleBackAction() {
+    // this.props.navigation.state.params.refrshView;
     this.props.navigation.goBack();
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator,Image,Alert } from 'react-native';
 import * as axios from 'axios';
 import { API_BASE_URL } from './../config';
 import { TASK_GROUP_TYPES } from './../constants';
@@ -18,7 +18,6 @@ const instance = axios.create({
   timeout: 25000,
   headers: { 'Content-type': 'application/json' }
 });
-
 export default class UserTaskGroupView extends Component {
 
   constructor(props) {
@@ -29,12 +28,12 @@ export default class UserTaskGroupView extends Component {
       processing: false,
       messages: [],
       userId: null,
+      isReport:false,
     };
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
   }
-
 
   componentWillMount() {
     this.setTaskAndTaskGroup();
@@ -58,6 +57,9 @@ export default class UserTaskGroupView extends Component {
         let arrayMessages = getMessages(this.state.taskGroup, nextProps.messages, this.props.user.blockUserIds);
         this.setState({ messages: arrayMessages });
       }
+    }
+    if(nextProps.reportUserSuccess && nextProps.reportUserSuccess!= this.props.reportUserSuccess){
+     alert('Your report has been successfully submitted. We will take action against him.')
     }
   }
 
@@ -219,6 +221,34 @@ export default class UserTaskGroupView extends Component {
     })
     this._storeMessages(messages);
   }
+  showReportAlertInformation(){
+    alert('You need to long press on the chat for reporting it to the admin.')
+  }
+  reportConfirmation(message){
+    var alertTitle = 'Report?', alertMessage='Are you sure to report this chat?'
+    Alert.alert(
+      alertTitle,
+      alertMessage,
+      [
+          {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+          },
+          {text: 'Ok', onPress: () => this.callApiToReportUser(message)},  
+      ]
+      )
+  }
+  callApiToReportUser(message){
+        let username = '';
+        if(message.username){
+        username = message.username;
+      }
+      let arrayParam = {'title':"Reported User from Chat",'description': `The user ${message.user._id} ${message.user.name} has been reported by ${this.props.user.profile.lastName} ${this.props.user.profile.lastName} in the usergroup chat ${this.state.taskGroup._id}`,'reporter': `${this.props.user._id}`,'status':'Open','priority':3,'history':[],'comments':[message.text]};
+      const { userActions } = this.props;
+      userActions.reportUserRequested(arrayParam);
+      this.setState({isReport:true})
+  }
   _storeMessages(messages) {
     this.setState((previousState) => {
       return {
@@ -226,7 +256,31 @@ export default class UserTaskGroupView extends Component {
       };
     });
   }
+  renderCustomView(message){
+return(
+    <TouchableOpacity style={styles.viewBubble} onPress={()=>this.reportUser(message)}>
+        <Image styles={styles.flag} source={require('../../assets/images/flag.png')}/>
+        <Text>{message}</Text>
+    </TouchableOpacity>
+)
+    //   if (this.state.isReport) {
+    //   this.setState({isReport:false});
+    //   return(
+    //     <View style={styles.viewBubble}>
+    //       <Text>{message}</Text>
+    //       <Image styles={styles.flag} source={require('../../assets/images/flag.png')}/>
+    //     </View>)
+    // } else {
+    //   return(
+    //     <View style={styles.viewBubble}>
+    //       <Text>{message}</Text>
+    //     </View>
+    //   )
+    // }
+  }
   render() {
+    console.log('Render method ======',this.state.isReport);
+
     const { taskGroup } = this.state;
     const isCompleted = this.isTaskCompleted();
     var user = {
@@ -306,7 +360,10 @@ export default class UserTaskGroupView extends Component {
             </View>
           </View>
         </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup })}>
+        <TouchableOpacity style={styles.flagButton} onPress={()=> this.showReportAlertInformation()}>
+               <Image style={styles.flag} source={require('../../assets/images/flag.png')}/>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.faceButton} onPress={() => this.props.navigation.navigate('UsersList', { taskGroupData: this.state.taskGroup})}>
           <View style={styles.viewShowMember}>
             {image1}
             {image2}
@@ -319,12 +376,14 @@ export default class UserTaskGroupView extends Component {
             }
           </View>
         </TouchableOpacity>
+        
         <GiftedChat
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={user}
           showUserAvatar={true}
           showAvatarForEveryMessage={true}
+           onLongPress={(context,message)=>this.reportConfirmation(message)}
         />
       </SafeAreaView>
     );
