@@ -12,6 +12,7 @@ export default connect(
         taskGroups: isImmutable(state.getIn(['user', 'task_groups'])) ?
             state.getIn(['user', 'task_groups']).toJS() : state.getIn(['user', 'task_groups']),
         messages: state.getIn(['user', 'messages']),
+        reportUserSuccess: state.getIn(['user','reportUserSuccess'])
     }),
     dispatch => {
         return {

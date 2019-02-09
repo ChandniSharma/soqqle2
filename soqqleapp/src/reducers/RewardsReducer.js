@@ -10,6 +10,8 @@ const GET_REWARDS_REQUESTED = 'RewardsState/GET_REWARDS_REQUESTED';
 const GET_REWARDS_COMPLETED = 'RewardsState/GET_REWARDS_COMPLETED';
 const GET_REWARDS_FAILED = 'RewardsState/GET_REWARDS_FAILED';
 
+const _ = require('lodash')
+
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 25000,
@@ -52,9 +54,9 @@ export async function getRewards(data) {
 
     store.dispatch(AppStateActions.stopLoading());
     return getRewardsCompleted({
-      rewards: response.data.list,
-      achievements: achievements.data ? achievements.data.achievements : [],
-      stories: stories.data ? stories.data : []
+      rewards: _.get(response, 'data.list', []),
+      achievements: _.get(achievements, 'data.achievements', []),
+      stories: _.get(stories, 'data', [])
     });
   } catch (error) {
     console.log("error=>", error);
