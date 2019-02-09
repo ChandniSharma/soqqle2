@@ -22,8 +22,9 @@ const instance = axios.create({
 export default class UserTaskGroupView extends Component {
     constructor(props) {
         super(props);
+        const {navigation: { state : { params: {taskGroup = {}} = {} } = {} } = {} } = props;
         this.state = {
-            taskGroup: {},
+            taskGroup,
             userTask: {},
             processing: false,
             messages: [],
@@ -63,8 +64,9 @@ export default class UserTaskGroupView extends Component {
 
     setTaskAndTaskGroup() {
         let id = this.props.navigation.state.params.task_group_id;
+        const {navigation: { state : { params: {taskGroup: propsTaskGroup = {}} = {} } = {} } = {} } = this.props;
         let userTask = {};
-        let taskGroup = id && this.props.taskGroups.taskGroups.filter(t => t._id === id)[0] || {};
+        let taskGroup = id && [propsTaskGroup, ...this.props.taskGroups.taskGroups].filter(t => t._id === id)[0] || {};
         if (Object.keys(taskGroup).length && taskGroup._tasks.length) {
             userTask = taskGroup._tasks.filter(task => {
                 return task.userID == this.props.user._id &&

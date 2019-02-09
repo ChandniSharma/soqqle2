@@ -132,14 +132,14 @@ export default class StoryView extends Component {
                 {item.description}
               </Text>
               {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
-                {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
-                {/*<View>*/}
-                  {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
-                    {/*<Text style={styles.dateTimeText}>Start: </Text>*/}
-                    {/*<Text style={styles.startTimeText}>{`${item.startdate || ''}`}</Text>*/}
-                  {/*</View>*/}
-                  {/*<Text style={styles.dateTimeText}>End</Text>*/}
-                {/*</View>*/}
+              {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
+              {/*<View>*/}
+              {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+              {/*<Text style={styles.dateTimeText}>Start: </Text>*/}
+              {/*<Text style={styles.startTimeText}>{`${item.startdate || ''}`}</Text>*/}
+              {/*</View>*/}
+              {/*<Text style={styles.dateTimeText}>End</Text>*/}
+              {/*</View>*/}
               {/*</View>}*/}
               <View style={styles.storyTagContainer}>
                 {item._objective && (
@@ -158,44 +158,47 @@ export default class StoryView extends Component {
               </View>
             </View>
           ) : (
-              <View style={styles.storyContent}>
-                <Text
-                  style={styles.challengeItemTitle}
-                  numberOfLines={1}
-                >
-                  {item.name}
-                </Text>
-                <Text
-                  style={styles.challengeItemText}
-                  numberOfLines={4}
-                >
-                  {item.description}
-                </Text>
-                {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
-                  {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
-                  {/*<View>*/}
-                      {/*<Text style={styles.dateTimeText}>Start: {`${item.startdate || ''}`}</Text>*/}
-                      {/*<Text style={styles.dateTimeText}>End:</Text>*/}
-                  {/*</View>*/}
-                {/*</View>}*/}
-                <View style={styles.storyTagContainer}>
-                  {item.type && (
-                    <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
-                      {item.type.toUpperCase()}
-                    </Text>
-                  )}
-                  <Text style={{...styles.storyTag, ...styles.quotaTag}}>
-                    {`0/${item.quota || 0} ${(item.refresh || '').toUpperCase()}`}
+            <View style={styles.storyContent}>
+              <Text
+                style={styles.challengeItemTitle}
+                numberOfLines={1}
+              >
+                {item.name}
+              </Text>
+              <Text
+                style={styles.challengeItemText}
+                numberOfLines={4}
+              >
+                {item.description}
+              </Text>
+              {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
+              {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
+              {/*<View>*/}
+              {/*<Text style={styles.dateTimeText}>Start: {`${item.startdate || ''}`}</Text>*/}
+              {/*<Text style={styles.dateTimeText}>End:</Text>*/}
+              {/*</View>*/}
+              {/*</View>}*/}
+              <View style={styles.storyTagContainer}>
+                {item.type && (
+                  <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
+                    {item.type.toUpperCase()}
                   </Text>
-                  {item.reward && (
-                    <Text style={{...styles.storyTag, ...styles.rewardTag}}>
-                      {`${item.rewardValue || 0} ${item.reward.toUpperCase()}`}
-                    </Text>
-                  )}
-                </View>
+                )}
+                <Text style={{...styles.storyTag, ...styles.quotaTag}}>
+                  {`0/${item.quota || 0} ${(item.refresh || '').toUpperCase()}`}
+                </Text>
+                {item.reward && (
+                  <Text style={{...styles.storyTag, ...styles.rewardTag}}>
+                    {`${item.rewardValue || 0} ${item.reward.toUpperCase()}`}
+                  </Text>
+                )}
               </View>
+            </View>
           )}
-          {item.sequence && <View style={{...styles.storySequence, backgroundColor: item.item_type === TASK_GROUP_TYPES.STORY ? '#7362B0':'#BA57BC'}}>
+          {item.sequence && <View style={{
+            ...styles.storySequence,
+            backgroundColor: item.item_type === TASK_GROUP_TYPES.STORY ? '#7362B0' : '#BA57BC'
+          }}>
             <Text style={styles.sequenceText}>#{item.sequence} Of {(item.groupName || '').toUpperCase()}</Text>
           </View>}
         </View>
@@ -233,7 +236,7 @@ export default class StoryView extends Component {
     return (
       <View style={{paddingHorizontal: 8}} key={item._id}>
         <TouchableOpacity
-          onPress={() => this.addUserToTeam(item._team._id)}
+          onPress={() => this.addUserToTeam(item._team._id, item._id)}
         >
           <View style={styles.taskItem}>
             <View style={styles.taskItemHeader}>
@@ -305,10 +308,10 @@ export default class StoryView extends Component {
     }).catch(() => this.setState({tasksFetching: false}));
   }
 
-  addUserToTeam(teamId) {
+  addUserToTeam(teamId, taskGroupId) {
     if (!this.state.processing) {
       this.setState({processing: true});
-      let data = {email: this.props.user.profile.email};
+      let data = {email: this.props.user.profile.email, taskGroupId};
       fetch(TEAM_UPDATE_API.replace('{}', teamId), {
         method: 'PUT',
         headers: {
@@ -316,10 +319,17 @@ export default class StoryView extends Component {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-      }).then(response => JSON.stringify(response.json()))
-        .then(() => {
+      }).then(response => response.json())
+        .then((response) => {
           this.setState({processing: false, modalVisible: false});
-          this.props.navigation.navigate('UserTaskGroup', {reset: true});
+          // this.props.navigation.navigate('UserTaskGroup', {reset: true});
+          this.props.navigation.navigate('Chat',
+            {
+              task_group_id: response._id,
+              taskUpdated: false,
+              taskGroup: response
+            }
+          )
         })
         .catch(() => this.setState({processing: false}));
     }
@@ -360,12 +370,19 @@ export default class StoryView extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
-    }).then(response => JSON.stringify(response.json()))
-      .then(() => {
+    }).then(response => response.json())
+      .then((response = {}) => {
         this.setState({processing: false, modalVisible: false});
         selectedItemId = null;
         selectedItemType = null;
-        this.props.navigation.navigate('UserTaskGroup', {reset: true});
+        // this.props.navigation.navigate('UserTaskGroup', {reset: true});
+        this.props.navigation.navigate('Chat',
+          {
+            task_group_id: response._id,
+            taskUpdated: false,
+            taskGroup: response
+          }
+        )
       })
       .catch(() => this.setState({processing: false}));
   }
