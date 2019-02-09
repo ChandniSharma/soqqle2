@@ -29,6 +29,8 @@ const rewardsImg = require('../../assets/images/rewardsImg.png');
 
 const screenWidth = Dimensions.get('window').width;
 
+const _ = require('lodash')
+
 let userId = null;
 
 function generateAchievementGroups(data) {
@@ -125,7 +127,7 @@ export default class RewardsView extends React.Component {
               <View style={styles.rewardsInfo}>
                   <View style={styles.rewardsHeader}>
                       <Text style={styles.rewardsName}>{item.name}</Text>
-                      <Text style={styles.rewardsSparks}>{item.sparks + ' Sparks'}</Text>
+                      <Text style={styles.rewardsSparks}>{_.get(item, 'sparks', 'No') + ' Sparks'}</Text>
                   </View>
                   <Text style={styles.rewardsDescription}>{item.description}</Text>
                   {item.state === 'Completed' ?
@@ -145,51 +147,52 @@ export default class RewardsView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      if (nextProps.rewards.rewards.length && (!this.props.rewards.details ||
-              nextProps.sparks.details.length !== this.props.sparks.details.length)) {
+      const nextRewards = _.get(nextProps, 'rewards.rewards', []);
+      const prevRewards = _.get(this, 'state.rewardsListData', []);
 
-          let rewards = nextProps.rewards.rewards.map(item => {
-              let state = 'Not Started';
-              if(item.requirement === 'Achievement') {
-                  const achievement = nextProps.rewards.achievements
-                      .find(ac => ac.achievementId === item.requirementValue);
-                  if (achievement) {
-                      if (achievement.conditions[0].counter < achievement.conditions[0].count) {
-                          state = 'In Progress';
-                      } else if (achievement.conditions[0].counter >= achievement.conditions[0].count) {
-                          state = 'Completed';
-                      }
-                  }
-              } else if (item.requirement === 'Story') {
-                  const story = nextProps.rewards.stories.find(ac => ac._id === item.requirementValue);
-                  if (story) {
-                      if (story._achievements.length === 0) {
-                          state = 'No Achievement';
-                      } else {
-                          const achievement = nextProps.rewards.achievements
-                              .find(ac => ac.achievementId === story._achievements[0]._id);
-                          if (achievement.conditions[0].counter < achievement.conditions[0].count) {
-                              state = 'Not Started';
-                          } else if (achievement.conditions[0].counter >= achievement.conditions[0].count) {
-                              state = 'Completed';
-                          }
-                      }
-                  }
-              }
-              const reward = {
-                  name: item.name,
-                  description: item.description,
-                  sparks: item.sparks,
-                  state: state
-              };
-
-              return reward;
-          });
-
-          this.setState({
-              rewardsListData: rewards
-          });
+      if(nextRewards.length == prevRewards.length) {
+          return;
       }
+          
+      let rewards = nextRewards.map(item => {
+
+        let state = 'Pending';
+
+        if(item.requirement === 'Achievement') {
+
+            const achievement = nextProps.rewards.achievements
+                .find(ac => ac.achievementId === item.requirementValue);
+            
+            state = _.get(achievement, "status", "Pending");
+
+        } else if (item.requirement === 'Story') {
+
+            const story = nextProps.rewards.stories.find(ac => ac._id === item.requirementValue);
+
+            if (story) {
+                if (story._achievements.length === 0) {
+                    state = 'No Achievement';
+                } else {
+                    const achievement = nextProps.rewards.achievements
+                        .find(ac => ac.achievementId === story._achievements[0]._id);
+                    
+                    state = _.get(achievement, "status", "Pending");
+                }
+            }
+        }
+        const reward = {
+            name: item.name,
+            description: item.description,
+            sparks: item.sparks,
+            state: state
+        };
+
+        return reward;
+    });
+
+    this.setState({
+        rewardsListData: rewards
+    });
   }
 
   render = () => {
