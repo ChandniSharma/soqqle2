@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-StyleSheet.create({
+export default StyleSheet.create({
     contentView: {
         flex: 1,
         backgroundColor: '#2C2649'
