@@ -60,7 +60,7 @@ export default class TaskView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      if (nextProps.questions && !_.isEqual(nextProps.questions, this.state.questions)) {
+      if (nextProps.questions && !_.isEqual(nextProps.questions, this.state.questions) &&  _.size(nextProps.questions)) {
           this.setState({ questions: nextProps.questions, helps: nextProps.questions[0].preLoad || [] });
       }
   }
