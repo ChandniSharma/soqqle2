@@ -75,7 +75,8 @@ export default class UserTaskGroupView extends Component {
         let id = this.props.navigation.state.params.task_group_id;
         const {navigation: { state : { params: {taskGroup: propsTaskGroup = {}} = {} } = {} } = {} } = this.props;
         let userTask = {};
-        let taskGroup = id && [propsTaskGroup, ...this.props.taskGroups.taskGroups].filter(t => t._id === id)[0] || {};
+        const {taskGroups: {taskGroups = []}= {}} = this.props;
+        let taskGroup = id && [propsTaskGroup, ...taskGroups].filter(t => t._id === id)[0] || {};
         if (Object.keys(taskGroup).length && taskGroup._tasks.length) {
             userTask = taskGroup._tasks.filter(task => {
                 return task.userID == this.props.user._id &&
@@ -153,7 +154,7 @@ export default class UserTaskGroupView extends Component {
       this.setState({ userTask: response.data });
       this.updateUserTasks(response.data);
       this.updateUserTaskGroup(response.data, taskGroupId);
-    }).catch(err => { });
+    }).catch(err => { alert(err)});
   }
 
   updateUserTaskGroup(task, taskGroupId) {
@@ -171,11 +172,11 @@ export default class UserTaskGroupView extends Component {
         skill, reward,
         task: this.state.userTask, task_group_id: taskGroupId
       });
-    }).catch(err => { });
+    }).catch(err => { alert(JSON.stringify(err))});
   }
 
   updateUserTasks(task) {
-    const taskGroups = this.props.taskGroups.taskGroups;
+    const {taskGroups: {taskGroups = []}= {}} = this.props;
     const id = this.props.navigation.state.params.task_group_id;
     let index = id && taskGroups.findIndex(t => t._id === id);
     if (index > -1) {
