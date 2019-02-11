@@ -321,7 +321,12 @@ export default class UserTaskGroupView extends Component {
               <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.storyDetailTag}>50 xp</Text>
                 {taskGroup.leftBonusSparks ? (
-                  <Text style={styles.storyDetailTag}>Bonus: {taskGroup.leftBonusSparks} sparks</Text>
+                  <View style={styles.storyBonusSparkTag}>
+                    <Text style={styles.storyBonusSparkTagText}>Bonus: {taskGroup.leftBonusSparks} sparks</Text>
+                    {story.reducePerRefresh && (
+                      <Text style={styles.storyBonusSparkTagTextHighlight}>-{story.reducePerRefresh}</Text>
+                    )}
+                  </View>
                 ) : null}
                 {story.reward && (
                   taskGroupType === TASK_GROUP_TYPES.CHALLENGE ? (

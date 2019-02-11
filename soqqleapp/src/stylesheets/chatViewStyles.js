@@ -67,6 +67,29 @@ const styles = StyleSheet.create({
         borderColor: '#9600A1',
         marginRight: 8,
     },
+    storyBonusSparkTag: {
+        borderRadius: 14,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#9600A1',
+        marginRight: 8,
+        flexDirection: 'row',
+        flexWrap: 'wrap'
+    },
+    storyBonusSparkTagText: {
+        color: '#9600A1',
+        paddingTop: 4,
+        paddingBottom: 5,
+        paddingLeft: 10,
+        paddingRight: 6,
+    },
+    storyBonusSparkTagTextHighlight: {
+        backgroundColor: '#9600A1',
+        color: '#FFFFFF',
+        paddingVertical: 5,
+        paddingHorizontal: 8,
+    },
     storyDetailActionTag: {
         color: '#FFFFFF',
         paddingVertical: 5,
@@ -165,24 +188,24 @@ const styles = StyleSheet.create({
     textInput: {
         alignSelf: 'flex-start',
     },
-    viewBubble:{
-     flexDirection:'row',
-     justifyContent:'center',
-     alignItems:'center',
+    viewBubble: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    flag:{
-        width:15,
-        height:15,
-        },
-    flagButton:{
-        right:10,
-        width:30,
-        height:30,
-        alignSelf:'flex-end'
+    flag: {
+        width: 15,
+        height: 15,
     },
-    faceButton:{
-        alignSelf:'center',
-    }  
+    flagButton: {
+        right: 10,
+        width: 30,
+        height: 30,
+        alignSelf: 'flex-end'
+    },
+    faceButton: {
+        alignSelf: 'center',
+    }
 });
 
 export default styles;
