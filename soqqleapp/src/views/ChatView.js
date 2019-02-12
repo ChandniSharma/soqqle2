@@ -331,11 +331,11 @@ export default class UserTaskGroupView extends Component {
                 {story.reward && (
                   taskGroupType === TASK_GROUP_TYPES.CHALLENGE ? (
                     <Text style={styles.storyDetailTag}>
-                      {`${story.reward} ${story.rewardValue || ''}`}
+                      {`${story.rewardValue || ''} ${story.reward} `}
                     </Text>
                   ) : (
                       <Text style={styles.storyDetailTag}>
-                        {`${story.reward.type} ${story.reward.value || ''}`}
+                        {`${story.reward.value || ''} ${story.reward.type} `}
                       </Text>
                     )
                 )}
@@ -346,7 +346,7 @@ export default class UserTaskGroupView extends Component {
                       <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18}
                         style={{ paddingHorizontal: 14 }} color="#ffffff" />
                     ) : (
-                        <Text style={{ color: '#ffffff' }}>
+                        <Text style={{ color: '#ffffff', fontSize: 13 }}>
                           {Object.keys(this.state.userTask).length ? (
                             isCompleted ? 'Task Completed' : 'Task Started'
                           ) : 'Start Task'}
