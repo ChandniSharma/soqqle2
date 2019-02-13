@@ -53,6 +53,10 @@ export default StyleSheet.create({
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 14,
     },
+    taskItemTime: {
+        color: 'rgba(0, 0, 0, 0.6)',
+        fontSize: 14,
+    },
     taskItemFooter: {
         marginTop: 3,
         flexDirection: 'row',

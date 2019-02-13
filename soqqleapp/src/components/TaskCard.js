@@ -5,6 +5,7 @@ import SwiperFlatList from 'react-native-swiper-flatlist';
 import {Body, CardItem, Icon, Left, Thumbnail} from 'native-base';
 
 import styles from './../stylesheets/TaskCardStyles';
+import moment from "moment";
 
 export default class TaskCard extends Component {
     constructor(props) {
@@ -26,10 +27,11 @@ export default class TaskCard extends Component {
     getFacePile = users => users.map(user => ({id: user._id, imageUrl: user.profilePicture}));
 
     render() {
-        const {task, taskGroupId, teamLength, team} = this.props;
+        const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime} = this.props;
         const users = this.getListUser(team);
         const facePile = this.getFacePile(users);
         const {isShowDetails} = this.state;
+        const createdDateAt = moment(createdDateTime, "YYYYMMDD").fromNow();
         return <View style={{paddingHorizontal: 10}}>
             <SwiperFlatList renderAll>
                 <TouchableOpacity
@@ -42,7 +44,10 @@ export default class TaskCard extends Component {
                 >
                     <View style={[styles.swipeItem, styles.taskItem]}>
                         <View style={styles.taskItemHeader}>
-                            <Text style={styles.taskItemName} numberOfLines={2}>{task.name}</Text>
+                            <Text style={styles.taskItemName} numberOfLines={2}>
+                                {task.name} 
+                                <Text style={styles.taskItemTime}> {createdDateAt}</Text>
+                            </Text>
                             <Text style={styles.taskItemSize}>{task.quota ? `${teamLength}/${task.quota}` : ''}</Text>
                         </View>
                         <Text style={styles.taskItemDescription}>{task.description}</Text>

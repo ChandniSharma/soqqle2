@@ -20,9 +20,11 @@ export default class UserTaskGroupView extends Component {
         const data = item._typeObject;
         const teamLength = item._team.emails.length;
         const taskGroupId = item._id;
+        const updatedAt = item.updatedAt;
+        const createdAt = item.createdAt;
         if (!data) return null;
         return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId}
-            team={item._team.emails || []}/>;
+            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt}/>;
     };
 
     constructor(props) {
