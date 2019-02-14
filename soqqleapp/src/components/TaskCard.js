@@ -27,7 +27,9 @@ export default class TaskCard extends Component {
     getFacePile = users => users.map(user => ({id: user._id, imageUrl: user.profilePicture}));
 
     render() {
-        const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime} = this.props;
+        const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime, onChangeGroupType,
+            isPrivate = true, joiningKey = '1AF23', onChangeGroupKey
+        } = this.props;
         const users = this.getListUser(team);
         const facePile = this.getFacePile(users);
         const {isShowDetails} = this.state;
@@ -45,7 +47,7 @@ export default class TaskCard extends Component {
                     <View style={[styles.swipeItem, styles.taskItem]}>
                         <View style={styles.taskItemHeader}>
                             <Text style={styles.taskItemName} numberOfLines={2}>
-                                {task.name} 
+                                {task.name}
                                 <Text style={styles.taskItemTime}> {createdDateAt}</Text>
                             </Text>
                             <Text style={styles.taskItemSize}>{task.quota ? `${teamLength}/${task.quota}` : ''}</Text>
@@ -62,13 +64,23 @@ export default class TaskCard extends Component {
                 <View style={[styles.swipeItem, styles.memberWrapper]}>
                     <TouchableOpacity onPress={() => this.setState({isShowDetails: !isShowDetails})}>
                         <View style={styles.topWrapper}>
-                            <Text style={styles.textWhite}>{team.length} Members</Text>
-                            <Icon onPress={() => this.props.navigation.navigate('Chat',
+                            <View style={styles.subItems}>
+                                <Text style={styles.textWhite}>{team.length} Members</Text>
+                                <Icon name={'eye'} type={'FontAwesome'} style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />
+                            </View>
+                            <View style={styles.subItems}>
                                 {
-                                    task_group_id: taskGroupId,
-                                    taskUpdated: false
+                                    isPrivate && joiningKey
+                                        ? <TouchableOpacity onPress={onChangeGroupKey}><Text style={styles.keyText}>{joiningKey}</Text></TouchableOpacity>
+                                        : null
                                 }
-                            )} style={styles.textWhite} name="sign-in" type="FontAwesome"/>
+                                <Icon onPress={() => this.props.navigation.navigate('Chat',
+                                    {
+                                        task_group_id: taskGroupId,
+                                        taskUpdated: false
+                                    }
+                                )} style={styles.textWhite} name="sign-in" type="FontAwesome"/>
+                            </View>
                         </View>
                         <FacePile
                             imageStyle={{borderWidth: 0}}

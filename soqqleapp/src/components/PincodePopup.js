@@ -2,14 +2,15 @@ import React, {Component} from 'react'
 import {View, Modal, Text, TouchableOpacity} from 'react-native'
 import styles from '../stylesheets/PincodePopStyle'
 import PropTypes from "prop-types";
-import CodeInput from 'react-native-confirmation-code-input';
+import CodeInput from '../components/ConfirmationCodeInput';
 
 export default class PincodePopup extends Component {
     state = {
-        phoneNumber: '',
+        code: '',
         response: false
     };
-    validateValues = (code) => {
+    validateValues = () => {
+        const {code} = this.state
         if((!code || code.length < 5) && this.props.emptyErr) {
             alert(this.props.emptyErr)
             return false
@@ -32,8 +33,9 @@ export default class PincodePopup extends Component {
 
     }
 
-    onSubmit = (code) => {
-        if (this.validateValues(code)) {
+    onSubmit = () => {
+        const {code} = this.state
+        if (this.validateValues()) {
             this.props.onSubmit({code})
             this.props.onRequestClose()
         }
@@ -62,7 +64,8 @@ export default class PincodePopup extends Component {
                             activeColor={'yellow'}
                             inactiveColor={'#fff'}
                             compareWithCode={null}
-                            onFulfill={this.onSubmit}
+                            onFulfill={(code) => {}}
+                            onCodeChange={(code) => this.setState({code})}
                         />
                         <TouchableOpacity style={styles.submitButton} onPress={this.onSubmit}>
                             <Text style={styles.submitText}>OK</Text>

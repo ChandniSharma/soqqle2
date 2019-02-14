@@ -25,7 +25,9 @@ export default class UserTaskGroupView extends Component {
         const createdAt = item.createdAt;
         if (!data) return null;
         return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId}
-            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt}/>;
+            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt}
+            isPrivate={item.isPrivate} onChangeGroupType={() => this.onChangeGroupType(item._id, item.isPrivate)}
+            joiningKey={item.joiningKey} onChangeGroupKey={(() => this.onChangeGroupKey(item._id))} />;
     };
 
     constructor(props) {
@@ -36,7 +38,10 @@ export default class UserTaskGroupView extends Component {
             loading: false,
             totalCount: null,
             refreshing: false,
-            showKeyInput: false
+            showKeyInput: false,
+            showCreateKey: false,
+            showChangeKey: false,
+            groupId: false
         };
         userEmail = this.props.user.profile && this.props.user.profile.email || null;
     }
@@ -105,11 +110,40 @@ export default class UserTaskGroupView extends Component {
 
     onJoin = ({code}) => {
         if(!!code) {
-            alert('Join Feature Coming Soon')
+            alert('Join Feature Coming Soon...')
         } else {
             this.setState({showKeyInput: true})
         }
     }
+
+    onChangeGroupType = (groupId, isPrivate) => {
+        if(isPrivate) {
+            //todo: api call to make group public
+        } else {
+            this.setState({ showCreateKey: true, groupId})
+        }
+    }
+
+    onChangeGroupKey = (groupId) => {
+        this.setState({ showChangeKey: true, groupId})
+    }
+
+    onGroupKeyManipulate = ({code}) => {
+        const {showChangeKey, showCreateKey, groupId} = this.state
+        if(!code || code.length < 5) {
+            console.error('invalid key provided')
+            return
+        }
+        if (showCreateKey && groupId) {
+            //todo: api call to make group private
+            this.setState({showCreateKey: false, groupId: null})
+
+        } else if (showChangeKey && groupId) {
+            //todo: api call to change the group key
+            this.setState({showChangeKey: false, groupId: null})
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -128,6 +162,18 @@ export default class UserTaskGroupView extends Component {
                     modalVisible={this.state.showKeyInput}
                     onRequestClose={() => this.setState({showKeyInput: false})}
                     onSubmit={this.onJoin}
+                    emptyErr={'Please enter key to join group'}
+                />
+                <PincodePopup
+                    modalVisible={this.state.showCreateKey}
+                    onRequestClose={() => this.setState({showKeyInput: false})}
+                    onSubmit={this.onGroupKeyManipulate}
+                    emptyErr={'Please enter key to join group'}
+                />
+                <PincodePopup
+                    modalVisible={this.state.showChangeKey}
+                    onRequestClose={() => this.setState({showChangeKey: false})}
+                    onSubmit={this.onGroupKeyManipulate}
                     emptyErr={'Please enter key to join group'}
                 />
             </SafeAreaView>
