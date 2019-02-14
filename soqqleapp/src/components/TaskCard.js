@@ -66,7 +66,8 @@ export default class TaskCard extends Component {
                         <View style={styles.topWrapper}>
                             <View style={styles.subItems}>
                                 <Text style={styles.textWhite}>{team.length} Members</Text>
-                                <Icon name={'eye'} type={'FontAwesome'} style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />
+                                <Icon name={isPrivate ? 'eye-slash' : 'eye'} type={'FontAwesome'}
+                                      style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />
                             </View>
                             <View style={styles.subItems}>
                                 {
