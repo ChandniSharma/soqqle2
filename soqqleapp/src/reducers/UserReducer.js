@@ -59,6 +59,7 @@ const BLOCK_UNBLOCK_USER_COMPLETED = 'UserState/BLOCK_UNBLOCK_USER_COMPLETED';
 const REPORT_USER_REQUESTED = 'UserState/REPORT_USER_REQUESTED';
 const REPORT_USER_COMPLETED = 'UserState/REPORT_USER_COMPLETED';
 const REPORT_USER_FAILED = 'UserState/REPORT_USER_FAILED';
+const UPDATE_TASK_GROUP = 'UserState/UPDATE_TASK_GROUP';
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -422,9 +423,15 @@ export async function getCompanies(email) {
  */
 
 export const getUserTaskGroupsRequest = (data) => {
-
   return {
     type: GET_USER_TASK_GROUPS_REQUESTED,
+    payload: data
+  };
+};
+
+export const updateUserTaskGroup = (data) => {
+  return {
+    type: UPDATE_TASK_GROUP,
     payload: data
   };
 };
@@ -502,7 +509,7 @@ export async function logout() {
   return { type: LOG_OUT };
 }
 
-// MessageList 
+// MessageList
 export function getMessageListRequest(teamId) {
   return {
     type: GET_MESSAGELIST_REQUESTED,
@@ -691,7 +698,8 @@ export default function UserStateReducer(state = initialState, action = {}) {
       return state.set('reportUserResponse', action.payload).set('reportUserSuccess', true);
     case REPORT_USER_FAILED:
       return state.set('error', action.payload).set('reportUserSuccess', false);
-
+    case UPDATE_TASK_GROUP:
+      return state.set('task_groups', action.payload).set('getUserTaskGroups', true);
     default:
       return state;
   }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Platform, Text, TouchableOpacity, View} from 'react-native';
 import FacePile from 'react-native-face-pile';
 import SwiperFlatList from 'react-native-swiper-flatlist';
 import {Body, CardItem, Icon, Left, Thumbnail} from 'native-base';
@@ -28,7 +28,7 @@ export default class TaskCard extends Component {
 
     render() {
         const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime, onChangeGroupType,
-            isPrivate = true, joiningKey = '1AF23', onChangeGroupKey
+            isPrivate = false, secretCode = '', onChangeGroupKey, currentGroupId
         } = this.props;
         const users = this.getListUser(team);
         const facePile = this.getFacePile(users);
@@ -65,14 +65,14 @@ export default class TaskCard extends Component {
                     <TouchableOpacity onPress={() => this.setState({isShowDetails: !isShowDetails})}>
                         <View style={styles.topWrapper}>
                             <View style={styles.subItems}>
-                                <Text style={styles.textWhite}>{team.length} Members</Text>
-                                <Icon name={isPrivate ? 'eye-slash' : 'eye'} type={'FontAwesome'}
-                                      style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />
+                                <Text style={styles.textWhite}>{team.length} Members  </Text>
+                                {!(this.props.processing && currentGroupId === taskGroupId)  && <Icon name={isPrivate ? 'eye-slash' : 'eye'} type={'FontAwesome'} style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />}
+                                {this.props.processing && currentGroupId === taskGroupId && <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{ paddingHorizontal: 10 }} color="#ffffff" />}
                             </View>
                             <View style={styles.subItems}>
                                 {
-                                    isPrivate && joiningKey
-                                        ? <TouchableOpacity onPress={onChangeGroupKey}><Text style={styles.keyText}>{joiningKey}</Text></TouchableOpacity>
+                                    isPrivate && secretCode
+                                        ? <TouchableOpacity onPress={onChangeGroupKey}><Text style={styles.keyText}>{secretCode}</Text></TouchableOpacity>
                                         : null
                                 }
                                 <Icon onPress={() => this.props.navigation.navigate('Chat',

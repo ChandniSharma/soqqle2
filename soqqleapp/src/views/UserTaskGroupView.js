@@ -8,11 +8,20 @@ import {PAGE_SIZE} from '../constants';
 import TaskCard from '../components/TaskCard';
 import styles from '../stylesheets/userTaskGroupStyles';
 import PincodePopup from "../components/PincodePopup";
+import {MAKE_GROUP_PUBLIC_API, MAKE_GROUP_PRIVATE_API} from "../endpoints";
+import * as axios from "axios";
+import {API_BASE_URL} from "../config";
 
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
 let userEmail = null;
+
+const instance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 25000,
+  headers: { 'Content-type': 'application/json' }
+});
 
 // TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
@@ -24,10 +33,10 @@ export default class UserTaskGroupView extends Component {
         const updatedAt = item.updatedAt;
         const createdAt = item.createdAt;
         if (!data) return null;
-        return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId}
-            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt}
+        return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId} currentGroupId={this.state.currentGroupId}
+            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt} processing={this.state.processing}
             isPrivate={item.isPrivate} onChangeGroupType={() => this.onChangeGroupType(item._id, item.isPrivate)}
-            joiningKey={item.joiningKey} onChangeGroupKey={(() => this.onChangeGroupKey(item._id))} />;
+            secretCode={item.secretCode} onChangeGroupKey={(() => this.onChangeGroupKey(item._id))} />;
     };
 
     constructor(props) {
@@ -41,7 +50,9 @@ export default class UserTaskGroupView extends Component {
             showKeyInput: false,
             showCreateKey: false,
             showChangeKey: false,
-            groupId: false
+            groupId: false,
+            processing: false,
+            currentGroupId: null
         };
         userEmail = this.props.user.profile && this.props.user.profile.email || null;
     }
@@ -116,9 +127,59 @@ export default class UserTaskGroupView extends Component {
         }
     }
 
+    makeGroupPublicAPICall = (groupId)=>{
+      let {userTasks = []} = this.state
+        instance.put(MAKE_GROUP_PUBLIC_API.replace('{}', groupId)).then(response => {
+          userTasks = userTasks.map(task =>{
+            if (task._id === groupId){
+              delete task.secret_code
+              task.isPrivate = false
+            }
+            return task
+          });
+          this.props.userActions.updateUserTaskGroup(userTasks);
+          this.setState({
+            processing: false,
+            userTasks,
+            currentGroupId: null
+          });
+        }).catch(() => {
+          this.setState({
+            processing: false,
+            currentGroupId: null
+          });
+        });
+    }
+
+    makeGroupPrivateAPICall = (groupId, secretCode)=>{
+      let {userTasks = []} = this.state
+      instance.put(MAKE_GROUP_PRIVATE_API.replace('{}', groupId), {secretCode}).then(response => {
+        userTasks = userTasks.map(task =>{
+          if (task._id === groupId){
+            task.secretCode = secretCode
+            task.isPrivate = true
+          }
+          return task
+        });
+        this.props.userActions.updateUserTaskGroup(userTasks);
+          this.setState({
+              processing: false, userTasks,
+            currentGroupId: null
+          });
+      }).catch(() => {
+          this.setState({
+              processing: false,
+            currentGroupId: null
+          });
+      });
+    }
+
     onChangeGroupType = (groupId, isPrivate) => {
         if(isPrivate) {
-            //todo: api call to make group public
+          this.setState({
+            processing: true, currentGroupId: groupId
+          });
+          this.makeGroupPublicAPICall(groupId)
         } else {
             this.setState({ showCreateKey: true, groupId})
         }
@@ -134,13 +195,9 @@ export default class UserTaskGroupView extends Component {
             console.error('invalid key provided')
             return
         }
-        if (showCreateKey && groupId) {
-            //todo: api call to make group private
-            this.setState({showCreateKey: false, groupId: null})
-
-        } else if (showChangeKey && groupId) {
-            //todo: api call to change the group key
-            this.setState({showChangeKey: false, groupId: null})
+        if ((showChangeKey || showCreateKey) && groupId) {
+            this.setState({showCreateKey: false, showChangeKey: false, groupId: null, processing: true, currentGroupId: groupId});
+            this.makeGroupPrivateAPICall(groupId, code);
         }
     }
 
