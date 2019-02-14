@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import {PAGE_SIZE} from '../constants';
 import TaskCard from '../components/TaskCard';
 import styles from '../stylesheets/userTaskGroupStyles';
+import PincodePopup from "../components/PincodePopup";
 
 let pageNum = 0;
 let totalCount = 0;
@@ -34,7 +35,8 @@ export default class UserTaskGroupView extends Component {
             initialLoading: true,
             loading: false,
             totalCount: null,
-            refreshing: false
+            refreshing: false,
+            showKeyInput: false
         };
         userEmail = this.props.user.profile && this.props.user.profile.email || null;
     }
@@ -101,10 +103,17 @@ export default class UserTaskGroupView extends Component {
         }
     }
 
+    onJoin = ({code}) => {
+        if(!!code) {
+            alert('Join Feature Coming Soon')
+        } else {
+            this.setState({showKeyInput: true})
+        }
+    }
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <Header title='Groups' navigation={this.props.navigation}/>
+                <Header title='Groups' navigation={this.props.navigation} rightText={'Join'} onRight={this.onJoin}/>
                 <View style={{flex: 1, marginTop: 5}}>
                     <FlatList
                         data={this.state.userTasks}
@@ -115,6 +124,12 @@ export default class UserTaskGroupView extends Component {
                         onScrollEndDrag={() => this.handleScroll()}
                     />
                 </View>
+                <PincodePopup
+                    modalVisible={this.state.showKeyInput}
+                    onRequestClose={() => this.setState({showKeyInput: false})}
+                    onSubmit={this.onJoin}
+                    emptyErr={'Please enter key to join group'}
+                />
             </SafeAreaView>
         );
     }

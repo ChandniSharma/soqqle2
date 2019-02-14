@@ -6,7 +6,7 @@ import {AppRegistry} from 'react-native';
 import AppContainer from './src/containers/AppContainer';
 import store from './src/redux/store';
 import {name} from './app.json';
-
+console.disableYellowBox = true;
 class SoqqleApp extends Component {
     render() {
         return (
