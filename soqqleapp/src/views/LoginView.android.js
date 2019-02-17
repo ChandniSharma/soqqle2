@@ -22,6 +22,7 @@ import Step2 from './login/Step2';
 import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from '../config';
 
 import styles from '../stylesheets/loginView.androidStyles';
+import MixPanel from "react-native-mixpanel";
 
 const baseApi = 'https://api.linkedin.com/v1/people/';
 const RCTNetworking = require('RCTNetworking');
@@ -103,6 +104,7 @@ export default class LoginView extends Component {
         if (!password) {
             return LoginView.flashMessage('Please enter your password');
         }
+        MixPanel.track('Sign in')
         userActions.loginRequest({email, password, name: 'hardcoded'});//API required name in login case??
     };
 
@@ -119,6 +121,7 @@ export default class LoginView extends Component {
         if (!isAgree) {
             return LoginView.flashMessage('Please agree to the Privacy Policy and Terms and Conditions.');
         }
+        MixPanel.track('Sign up - android');
         userActions.loginRequest({email, password, name});
     };
 

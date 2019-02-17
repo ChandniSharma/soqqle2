@@ -22,6 +22,7 @@ import {
 import { MAIN_COLOR } from '../constants';
 import { USER_SPARK_LIST_PATH_API } from '../endpoints';
 import styles from '../stylesheets/profileView';
+import MixPanel from 'react-native-mixpanel';
 
 // TODO: Update this class to new Lifecycle methods
 export default class ProfileView extends Component {
@@ -68,6 +69,7 @@ export default class ProfileView extends Component {
 
   logout = () => {
       this.menu.close();
+      MixPanel.track('Logout');
       this.props.userActions.logout();
       const resetAction = StackActions.reset({
           index: 0,
@@ -135,7 +137,7 @@ export default class ProfileView extends Component {
       const { userActions } = this.props;
       const { profile } = this.state;
       if (profile && profile.email) {
-          userActions.getCompaniesRequest(profile.email.toLowerCase()); 
+          userActions.getCompaniesRequest(profile.email.toLowerCase());
       }
   }
 

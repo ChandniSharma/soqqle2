@@ -10,6 +10,7 @@ import store from '../redux/store';
 import * as snapshot from '../utils/snapshot';
 import * as constants from '../constants';
 import { getGroupUserDetails } from '../utils/common';
+import MixPanel from 'react-native-mixpanel';
 
 const REGISTER_REQUESTED = 'UserState/REGISTER_REQUESTED';
 const REGISTER_COMPLETED = 'UserState/REGISTER_COMPLETED';
@@ -645,6 +646,21 @@ export default function UserStateReducer(state = initialState, action = {}) {
         Effects.promise(linkedinLogin, action.payload)
       );
     case LOGIN_COMPLETED:
+	      const {profile = {}} = action.payload
+        const {email = '', character ={}, firstName  ='', lastName =''} = profile
+	      const {characterName = ''} = character || {}
+        MixPanel.identify(email);
+		    MixPanel.set({
+			    "$email": email,
+			    "house": characterName,
+			    "name": `${firstName} ${lastName}`
+		    })
+        MixPanel.track('Sign in', {
+            "$email": email,
+            "$last_login": new Date(),
+            "house": characterName,
+            "name": `${firstName} ${lastName}`
+        })
       return state.set('user', action.payload).set('loginSuccess', true).set('task_groups', {}).set('getUserTaskGroups', false);
     case LOGIN_FAILED:
       return state.set('error', action.payload).set('loginSuccess', false);

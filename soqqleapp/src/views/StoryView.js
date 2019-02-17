@@ -23,6 +23,7 @@ import CustomText from '../components/CustomText';
 import {getGroupUserDetails} from '../utils/common';
 import styles from '../stylesheets/storyViewStyles';
 import _ from 'lodash';
+import MixPanel from "react-native-mixpanel";
 
 const width = Dimensions.get('window').width; //full width
 
@@ -312,6 +313,7 @@ export default class StoryView extends Component {
     if (!this.state.processing) {
       this.setState({processing: true});
       let data = {email: this.props.user.profile.email, taskGroupId};
+      MixPanel.track('Join a team');
       fetch(TEAM_UPDATE_API.replace('{}', teamId), {
         method: 'PUT',
         headers: {
@@ -346,6 +348,7 @@ export default class StoryView extends Component {
           'email': profile.email
         }
       };
+      MixPanel.track('Create a Group')
       instance.post(TEAM_UPDATE_API.replace('{}/', ''), data).then(response => {
         this.createNewUserTaskGroup(response.data._id);
       }).catch(() => this.setState({processing: false}));

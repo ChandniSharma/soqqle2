@@ -140,6 +140,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-mixpanel')
     compile project(':react-native-vector-icons')
     compile project(':react-native-testfairy')
     compile project(':react-native-fbsdk')
