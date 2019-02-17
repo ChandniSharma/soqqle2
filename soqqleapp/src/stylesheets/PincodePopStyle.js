@@ -46,5 +46,15 @@ export default StyleSheet.create({
     submitText: {
         color: '#2dbeb7',
         fontSize: 20
+    },
+    iconContainer: {
+        width: 40,
+        height: 40,
+        position: 'absolute',
+        top: 7,
+        right: -10
+    },
+    closeIcon: {
+        fontSize: 20,
     }
 })

@@ -223,7 +223,7 @@ export default class UserTaskGroupView extends Component {
                 />
                 <PincodePopup
                     modalVisible={this.state.showCreateKey}
-                    onRequestClose={() => this.setState({showKeyInput: false})}
+                    onRequestClose={() => this.setState({showCreateKey: false})}
                     onSubmit={this.onGroupKeyManipulate}
                     emptyErr={'Please enter key to join group'}
                 />

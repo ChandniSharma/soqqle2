@@ -3,6 +3,7 @@ import {View, Modal, Text, TouchableOpacity} from 'react-native'
 import styles from '../stylesheets/PincodePopStyle'
 import PropTypes from "prop-types";
 import CodeInput from '../components/ConfirmationCodeInput';
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default class PincodePopup extends Component {
     state = {
@@ -45,12 +46,19 @@ export default class PincodePopup extends Component {
         const {animationType, transparent, modalVisible, onRequestClose} = this.props
         return (
             <Modal
+                hardwareAccelerated
                 animationType={animationType}
                 transparent={transparent}
                 visible={modalVisible}
                 onRequestClose={onRequestClose}>
                 <View style={styles.contentContainer}>
                     <View style={styles.container}>
+                        <TouchableOpacity
+                            style={styles.iconContainer}
+                            onPress={onRequestClose}>
+                            <Icon name='close' color={'white'} style={styles.closeIcon}/>
+                        </TouchableOpacity>
+
                         <Text style={styles.headingText}>ENTER CODE:</Text>
                         <CodeInput
                             containerStyle={styles.codeInputContainer}
