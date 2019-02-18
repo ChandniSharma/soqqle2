@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity, DeviceEventEmitter} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from './../stylesheets/HeaderStyles';
@@ -7,7 +7,7 @@ import styles from './../stylesheets/HeaderStyles';
 export default Header = props => {
     return (
         <View style={{...styles.header, ...props.headerStyle}}>
-            <TouchableOpacity onPress={() => props.navigation.pop()} style={styles.headerLeft}>
+            <TouchableOpacity onPress={() => {DeviceEventEmitter.emit('REFRESH_STORIES',  {}) ; props.navigation.pop()}} style={styles.headerLeft}>
                 <Icon
                     name='chevron-left'
                     style={{...styles.headerBackIcon, ...props.headerIconStyle}}
