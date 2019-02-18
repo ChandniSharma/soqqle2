@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-    FlatList, SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableWithoutFeedback, View
+    FlatList, SafeAreaView, View
 } from 'react-native';
 
 import Header from '../components/Header';

@@ -15,5 +15,4 @@ export const UPDATE_USER_TASK_GROUP_API_PATH = `/taskGroup/{}`;
 export const GET_OBJECTIVE_API_PATH = `/taskRefs/{}`;
 export const GET_MESSAGE_LIST_API = `/fetchConversationByParticipants?chatType=GROUP&ids={team_id}`;
 export const CHAT_SOCKET_URL = API_BASE_URL;
-export const STORY_CHALLENGES_LIST_API_PATH = `/challengeStory`;
-export const GET_TASK_GROUPS_API = `/taskgroupGetAll`;
+export const STORY_CHALLENGES_LIST_API_PATH = `/mobile/get-stories-and-challenges`;
