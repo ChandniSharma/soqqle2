@@ -221,19 +221,31 @@ export default class UserTaskGroupView extends Component {
       isUnBlocked = false;
     }
     if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
-      let messageReceived = [
-        {
-          _id: Math.random(),
-          text: message.message,
-          createdAt: new Date(),
-          user: {
-            _id: userData.userDetails._id,
-            name: userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : '' + ' ' + userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : '',
-            avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : ''}+${userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : ''}`
+      if(message.message == 'Task is completed'){
+        let messageReceived = [
+          {
+            _id: Math.random(),
+            text: message.message,
+            createdAt: new Date(),
+            system: true,
           },
-        },
-      ];
-      this._storeMessages(messageReceived);
+        ];
+        this._storeMessages(messageReceived);
+      }else{  
+        let messageReceived = [
+          {
+            _id: Math.random(),
+            text: message.message,
+            createdAt: new Date(),
+            user: {
+              _id: userData.userDetails._id,
+              name: userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : '' + ' ' + userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : '',
+              avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : ''}+${userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : ''}`
+            },
+          },
+        ];
+        this._storeMessages(messageReceived);
+      }
     }
   }
   onSend(messages = []) {
