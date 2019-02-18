@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Platform, Text, TouchableOpacity, View} from 'react-native';
 import FacePile from 'react-native-face-pile';
 import SwiperFlatList from 'react-native-swiper-flatlist';
 import {Body, CardItem, Icon, Left, Thumbnail} from 'native-base';
@@ -27,7 +27,9 @@ export default class TaskCard extends Component {
     getFacePile = users => users.map(user => ({id: user._id, imageUrl: user.profilePicture}));
 
     render() {
-        const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime} = this.props;
+        const {task, taskGroupId, teamLength, team, updatedDateTime, createdDateTime, onChangeGroupType,
+            isPrivate = false, secretCode = '', onChangeGroupKey, currentGroupId
+        } = this.props;
         const users = this.getListUser(team);
         const facePile = this.getFacePile(users);
         const {isShowDetails} = this.state;
@@ -45,7 +47,7 @@ export default class TaskCard extends Component {
                     <View style={[styles.swipeItem, styles.taskItem]}>
                         <View style={styles.taskItemHeader}>
                             <Text style={styles.taskItemName} numberOfLines={2}>
-                                {task.name} 
+                                {task.name}
                                 <Text style={styles.taskItemTime}> {createdDateAt}</Text>
                             </Text>
                             <Text style={styles.taskItemSize}>{task.quota ? `${teamLength}/${task.quota}` : ''}</Text>
@@ -62,13 +64,24 @@ export default class TaskCard extends Component {
                 <View style={[styles.swipeItem, styles.memberWrapper]}>
                     <TouchableOpacity onPress={() => this.setState({isShowDetails: !isShowDetails})}>
                         <View style={styles.topWrapper}>
-                            <Text style={styles.textWhite}>{team.length} Members</Text>
-                            <Icon onPress={() => this.props.navigation.navigate('Chat',
+                            <View style={styles.subItems}>
+                                <Text style={styles.textWhite}>{team.length} Members  </Text>
+                                {!(this.props.processing && currentGroupId === taskGroupId)  && <Icon name={isPrivate ? 'eye-slash' : 'eye'} type={'FontAwesome'} style={[styles.textWhite, styles.eyeIcon]} onPress={onChangeGroupType} />}
+                                {this.props.processing && currentGroupId === taskGroupId && <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{ paddingHorizontal: 10 }} color="#ffffff" />}
+                            </View>
+                            <View style={styles.subItems}>
                                 {
-                                    task_group_id: taskGroupId,
-                                    taskUpdated: false
+                                    isPrivate && secretCode
+                                        ? <TouchableOpacity onPress={onChangeGroupKey}><Text style={styles.keyText}>{secretCode}</Text></TouchableOpacity>
+                                        : null
                                 }
-                            )} style={styles.textWhite} name="sign-in" type="FontAwesome"/>
+                                <Icon onPress={() => this.props.navigation.navigate('Chat',
+                                    {
+                                        task_group_id: taskGroupId,
+                                        taskUpdated: false
+                                    }
+                                )} style={styles.textWhite} name="sign-in" type="FontAwesome"/>
+                            </View>
                         </View>
                         <FacePile
                             imageStyle={{borderWidth: 0}}

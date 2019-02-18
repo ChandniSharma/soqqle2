@@ -14,9 +14,14 @@ export default Header = props => {
                 />
             </TouchableOpacity>
             <Text style={{...styles.headerTitle, ...props.headerTitleStyle}}>{props.title}</Text>
-            <View style={styles.headerRight}>
+            <TouchableOpacity
+                disabled={!props.rightText}
+                style={styles.headerRight}
+                activeOpacity={0.8}
+                onPress={props.onRight}
+            >
                 <Text style={{...styles.headerRightText, ...props.headerRightTextStyle}}>{props.rightText}</Text>
-            </View>
+            </TouchableOpacity>
         </View>
     );
 };

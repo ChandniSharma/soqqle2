@@ -23,6 +23,7 @@ import { API_BASE_URL } from '../config';
 import { SAVE_ANSWERS_PATH_API, USER_SPARK_LIST_PATH_API } from '../endpoints';
 import Header from '../components/Header';
 import styles from '../stylesheets/taskViewStyles';
+import MixPanel from "react-native-mixpanel";
 
 const { width } = Dimensions.get('window'); //full width
 
@@ -85,6 +86,7 @@ export default class TaskView extends Component {
           }
       }
       if (isCompleted && !this.state.processing) {
+          MixPanel.track('Submit Task');
           this.saveUserQuestions(questions);
       }
   };

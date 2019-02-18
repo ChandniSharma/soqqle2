@@ -7,11 +7,21 @@ import Header from '../components/Header';
 import {PAGE_SIZE} from '../constants';
 import TaskCard from '../components/TaskCard';
 import styles from '../stylesheets/userTaskGroupStyles';
+import PincodePopup from "../components/PincodePopup";
+import {MAKE_GROUP_PUBLIC_API, MAKE_GROUP_PRIVATE_API} from "../endpoints";
+import * as axios from "axios";
+import {API_BASE_URL} from "../config";
 
 let pageNum = 0;
 let totalCount = 0;
 let pageSize = PAGE_SIZE;
 let userEmail = null;
+
+const instance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 25000,
+  headers: { 'Content-type': 'application/json' }
+});
 
 // TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
@@ -23,8 +33,10 @@ export default class UserTaskGroupView extends Component {
         const updatedAt = item.updatedAt;
         const createdAt = item.createdAt;
         if (!data) return null;
-        return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId}
-            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt}/>;
+        return <TaskCard {...this.props} task={data} teamLength={teamLength} taskGroupId={taskGroupId} currentGroupId={this.state.currentGroupId}
+            team={item._team.emails || []} updatedDateTime={updatedAt} createdDateTime={createdAt} processing={this.state.processing}
+            isPrivate={item.isPrivate} onChangeGroupType={() => this.onChangeGroupType(item._id, item.isPrivate)}
+            secretCode={item.secretCode} onChangeGroupKey={(() => this.onChangeGroupKey(item._id))} />;
     };
 
     constructor(props) {
@@ -34,7 +46,13 @@ export default class UserTaskGroupView extends Component {
             initialLoading: true,
             loading: false,
             totalCount: null,
-            refreshing: false
+            refreshing: false,
+            showKeyInput: false,
+            showCreateKey: false,
+            showChangeKey: false,
+            groupId: false,
+            processing: false,
+            currentGroupId: null
         };
         userEmail = this.props.user.profile && this.props.user.profile.email || null;
     }
@@ -101,10 +119,92 @@ export default class UserTaskGroupView extends Component {
         }
     }
 
+    onJoin = ({code}) => {
+        if(!!code) {
+            alert('Join Feature Coming Soon...')
+        } else {
+            this.setState({showKeyInput: true})
+        }
+    }
+
+    makeGroupPublicAPICall = (groupId)=>{
+      let {userTasks = []} = this.state
+        instance.put(MAKE_GROUP_PUBLIC_API.replace('{}', groupId)).then(response => {
+          userTasks = userTasks.map(task =>{
+            if (task._id === groupId){
+              delete task.secret_code
+              task.isPrivate = false
+            }
+            return task
+          });
+          this.props.userActions.updateUserTaskGroup(userTasks);
+          this.setState({
+            processing: false,
+            userTasks,
+            currentGroupId: null
+          });
+        }).catch(() => {
+          this.setState({
+            processing: false,
+            currentGroupId: null
+          });
+        });
+    }
+
+    makeGroupPrivateAPICall = (groupId, secretCode)=>{
+      let {userTasks = []} = this.state
+      instance.put(MAKE_GROUP_PRIVATE_API.replace('{}', groupId), {secretCode}).then(response => {
+        userTasks = userTasks.map(task =>{
+          if (task._id === groupId){
+            task.secretCode = secretCode
+            task.isPrivate = true
+          }
+          return task
+        });
+        this.props.userActions.updateUserTaskGroup(userTasks);
+          this.setState({
+              processing: false, userTasks,
+            currentGroupId: null
+          });
+      }).catch(() => {
+          this.setState({
+              processing: false,
+            currentGroupId: null
+          });
+      });
+    }
+
+    onChangeGroupType = (groupId, isPrivate) => {
+        if(isPrivate) {
+          this.setState({
+            processing: true, currentGroupId: groupId
+          });
+          this.makeGroupPublicAPICall(groupId)
+        } else {
+            this.setState({ showCreateKey: true, groupId})
+        }
+    }
+
+    onChangeGroupKey = (groupId) => {
+        this.setState({ showChangeKey: true, groupId})
+    }
+
+    onGroupKeyManipulate = ({code}) => {
+        const {showChangeKey, showCreateKey, groupId} = this.state
+        if(!code || code.length < 5) {
+            console.error('invalid key provided')
+            return
+        }
+        if ((showChangeKey || showCreateKey) && groupId) {
+            this.setState({showCreateKey: false, showChangeKey: false, groupId: null, processing: true, currentGroupId: groupId});
+            this.makeGroupPrivateAPICall(groupId, code);
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <Header title='Groups' navigation={this.props.navigation}/>
+                <Header title='Groups' navigation={this.props.navigation} rightText={'Join'} onRight={this.onJoin}/>
                 <View style={{flex: 1, marginTop: 5}}>
                     <FlatList
                         data={this.state.userTasks}
@@ -115,6 +215,24 @@ export default class UserTaskGroupView extends Component {
                         onScrollEndDrag={() => this.handleScroll()}
                     />
                 </View>
+                <PincodePopup
+                    modalVisible={this.state.showKeyInput}
+                    onRequestClose={() => this.setState({showKeyInput: false})}
+                    onSubmit={this.onJoin}
+                    emptyErr={'Please enter key to join group'}
+                />
+                <PincodePopup
+                    modalVisible={this.state.showCreateKey}
+                    onRequestClose={() => this.setState({showCreateKey: false})}
+                    onSubmit={this.onGroupKeyManipulate}
+                    emptyErr={'Please enter key to join group'}
+                />
+                <PincodePopup
+                    modalVisible={this.state.showChangeKey}
+                    onRequestClose={() => this.setState({showChangeKey: false})}
+                    onSubmit={this.onGroupKeyManipulate}
+                    emptyErr={'Please enter key to join group'}
+                />
             </SafeAreaView>
         );
     }

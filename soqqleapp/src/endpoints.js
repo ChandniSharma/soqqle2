@@ -13,6 +13,8 @@ export const SAVE_ANSWERS_PATH_API = `/hangoutAnswersSave`;
 export const SAVE_TASK_PATH_API = `/taskSavePost`;
 export const UPDATE_USER_TASK_GROUP_API_PATH = `/taskGroup/{}`;
 export const GET_OBJECTIVE_API_PATH = `/taskRefs/{}`;
+export const MAKE_GROUP_PUBLIC_API = `/updateGroupStatusPublic/{}`;
+export const MAKE_GROUP_PRIVATE_API = `/updateGroupStatusPrivate/{}`;
 export const GET_MESSAGE_LIST_API = `/fetchConversationByParticipants?chatType=GROUP&ids={team_id}`;
 export const CHAT_SOCKET_URL = API_BASE_URL;
 export const STORY_CHALLENGES_LIST_API_PATH = `/mobile/get-stories-and-challenges`;

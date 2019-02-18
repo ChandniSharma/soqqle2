@@ -3,6 +3,12 @@ import {Dimensions, StyleSheet} from 'react-native';
 export const {width, height} = Dimensions.get('window');
 
 export default StyleSheet.create({
+    keyText: {
+      color: '#fff',
+      fontWeight: 'bold',
+        paddingHorizontal: 15,
+        paddingTop: 5,
+    },
     swipeItem: {
         width: width - 20,
         alignSelf: 'center',
@@ -16,8 +22,16 @@ export default StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center'
     },
+    subItems:{
+        flexDirection: 'row'
+    },
     textWhite: {
         color: '#FFFFFF'
+    },
+    eyeIcon: {
+        fontSize: 20,
+        paddingHorizontal: 10,
+        marginLeft: 5
     },
     facePile: {
         width: '100%',
