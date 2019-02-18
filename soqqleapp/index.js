@@ -12,7 +12,8 @@ console.disableYellowBox = true;
 
 class SoqqleApp extends Component {
   componentDidMount(): void {
-    MixPanel.sharedInstanceWithToken('e7c650f3109a0c654a4409c5f6afb9c3');
+      //todo: uncomment this after successful integeration of mixpanel sdk
+    // MixPanel.sharedInstanceWithToken('e7c650f3109a0c654a4409c5f6afb9c3');
   }
 
   render() {

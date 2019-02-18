@@ -645,22 +645,24 @@ export default function UserStateReducer(state = initialState, action = {}) {
         state.set('error', null).set('loginSuccess', false).set('registerSuccess', false),
         Effects.promise(linkedinLogin, action.payload)
       );
-    case LOGIN_COMPLETED:
+      case LOGIN_COMPLETED:
 	      const {profile = {}} = action.payload
         const {email = '', character ={}, firstName  ='', lastName =''} = profile
 	      const {characterName = ''} = character || {}
-        MixPanel.identify(email);
-		    MixPanel.set({
-			    "$email": email,
-			    "house": characterName,
-			    "name": `${firstName} ${lastName}`
-		    })
-        MixPanel.track('Sign in', {
-            "$email": email,
-            "$last_login": new Date(),
-            "house": characterName,
-            "name": `${firstName} ${lastName}`
-        })
+
+	      //todo: uncomment this after successful integeration of mixpanel sdk
+        // MixPanel.identify(email);
+		//     MixPanel.set({
+		// 	    "$email": email,
+		// 	    "house": characterName,
+		// 	    "name": `${firstName} ${lastName}`
+		//     })
+        // MixPanel.track('Sign in', {
+        //     "$email": email,
+        //     "$last_login": new Date(),
+        //     "house": characterName,
+        //     "name": `${firstName} ${lastName}`
+        // })
       return state.set('user', action.payload).set('loginSuccess', true).set('task_groups', {}).set('getUserTaskGroups', false);
     case LOGIN_FAILED:
       return state.set('error', action.payload).set('loginSuccess', false);

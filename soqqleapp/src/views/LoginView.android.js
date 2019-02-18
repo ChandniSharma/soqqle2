@@ -104,7 +104,8 @@ export default class LoginView extends Component {
         if (!password) {
             return LoginView.flashMessage('Please enter your password');
         }
-        MixPanel.track('Sign in')
+        //todo: uncomment this after successful integeration of mixpanel sdk
+        // MixPanel.track('Sign in')
         userActions.loginRequest({email, password, name: 'hardcoded'});//API required name in login case??
     };
 
@@ -121,7 +122,8 @@ export default class LoginView extends Component {
         if (!isAgree) {
             return LoginView.flashMessage('Please agree to the Privacy Policy and Terms and Conditions.');
         }
-        MixPanel.track('Sign up - android');
+        //todo: uncomment this after successful integeration of mixpanel sdk
+        // MixPanel.track('Sign up - android');
         userActions.loginRequest({email, password, name});
     };
 

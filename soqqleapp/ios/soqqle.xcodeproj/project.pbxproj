@@ -51,7 +51,6 @@
 		DCFFC549773342A9A12A23A8 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2BDAB6F2BE58477A9D9ED844 /* Roboto.ttf */; };
 		F1FD21ED39AD4AD6A657E427 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F360A12123B54537908776D7 /* FontAwesome.ttf */; };
 		F343F6C48F2249759A8E79BD /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5F09767EB144B2BA840A376 /* Feather.ttf */; };
-		211ECA83227945A0804CDC39 /* libRNMixpanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 004B90ED48D846BEAE2C1081 /* libRNMixpanel.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -450,8 +449,6 @@
 		F9F2190442FB4744B8B1976C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		FF356F39071C4DCBA138262E /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
 		FF3A0102C1844E4081963A84 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		33469624DBF340A98DA403B3 /* RNMixpanel.xcodeproj */ = {isa = PBXFileReference; name = "RNMixpanel.xcodeproj"; path = "../node_modules/react-native-mixpanel/RNMixpanel.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		004B90ED48D846BEAE2C1081 /* libRNMixpanel.a */ = {isa = PBXFileReference; name = "libRNMixpanel.a"; path = "libRNMixpanel.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,7 +479,6 @@
 				04575D132215357B001AC241 /* Bolts.framework in Frameworks */,
 				D386335038A04E98A74CE1FE /* libRNVectorIcons.a in Frameworks */,
 				4184403CADC8403DAE3F65E1 /* libRCTVideo.a in Frameworks */,
-				211ECA83227945A0804CDC39 /* libRNMixpanel.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,7 +703,6 @@
 				06968598D6344CC1BDFD23F2 /* ReactNativeTestFairy.xcodeproj */,
 				47249A38DFFC45F6AA5A2C84 /* RNVectorIcons.xcodeproj */,
 				F2ABEA948A2B42589297EA71 /* RCTVideo.xcodeproj */,
-				33469624DBF340A98DA403B3 /* RNMixpanel.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1345,8 +1340,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/soqqle\"",
-					"\"$(SRCROOT)/soqqle\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1386,8 +1379,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/soqqle\"",
-					"\"$(SRCROOT)/soqqle\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
