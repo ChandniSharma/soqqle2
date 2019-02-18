@@ -85,6 +85,7 @@ export default class UserTaskGroupView extends Component {
     }
     this.setState({ taskGroup, userTask: userTask || {} });
   }
+  
 
   goToTask = story => {
     if (this.state.processing || this.isTaskCompleted()) {
@@ -95,10 +96,12 @@ export default class UserTaskGroupView extends Component {
     if (!skill) {
       return;
     }
+   // this.socket.disconnect();
     if (Object.keys(this.state.userTask).length) {
       this.props.navigation.navigate('Task', {
         skill, reward,
-        task: this.state.userTask, task_group_id: taskGroupId
+        task: this.state.userTask, task_group_id: taskGroupId,
+        team_id: this.state.taskGroup._team._id,
       });
     }
     else {
@@ -170,7 +173,8 @@ export default class UserTaskGroupView extends Component {
       });
       this.props.navigation.navigate('Task', {
         skill, reward,
-        task: this.state.userTask, task_group_id: taskGroupId
+        task: this.state.userTask, task_group_id: taskGroupId,
+        team_id: this.state.taskGroup._team._id,
       });
     }).catch(err => { alert(JSON.stringify(err))});
   }
@@ -194,10 +198,10 @@ export default class UserTaskGroupView extends Component {
     let groupDetails = this.state.taskGroup;
     console.log(' Emails length =====', groupDetails._team.emails);
     let userData = groupDetails._team.emails.find((user) => {
-      return user.userDetails && user.userDetails._id === message.sender;
+      return user && user.userDetails && user.userDetails._id === message.sender;
     });
     let isUnBlocked = true, blockUserIds = this.props.user.blockUserIds;
-    if (userData.userDetails && blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
+    if (userData && userData.userDetails && blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
       isUnBlocked = false;
     }
     if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
