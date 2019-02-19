@@ -56,7 +56,6 @@ export default class LoginView extends Component {
         const {userActions} = this.props;
         const getFacebookInfoCallback = (error, result) => {
             if (error) {
-                console.log('=======', error);
                 LoginView.flashMessage('Can not fetch your Facebook profile');
             } else {
                 userActions.facebookLoginRequest(result);
@@ -73,11 +72,9 @@ export default class LoginView extends Component {
                         null,
                         getFacebookInfoCallback,
                     );
-                    console.log('=======');
                     return new GraphRequestManager().addRequest(infoRequest).start();
                 }
             } catch (error) {
-                console.log('====error====', error);
                 LoginView.flashMessage('Unexpected error, please try again!');
             }
         };
