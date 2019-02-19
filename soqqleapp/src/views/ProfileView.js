@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationActions, StackActions } from 'react-navigation';
-import { TextInput, View,Image } from 'react-native';
+import { TextInput, View, Image, DeviceEventEmitter } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import _ from 'lodash';
@@ -22,6 +22,7 @@ import {
 import { MAIN_COLOR } from '../constants';
 import { USER_SPARK_LIST_PATH_API } from '../endpoints';
 import styles from '../stylesheets/profileView';
+import MixPanel from 'react-native-mixpanel';
 
 // TODO: Update this class to new Lifecycle methods
 export default class ProfileView extends Component {
@@ -52,7 +53,8 @@ export default class ProfileView extends Component {
   };
 
   goBack = () => {
-      if (this.props.backToUserList) {
+    DeviceEventEmitter.emit('REFRESH_STORIES',  {})
+    if (this.props.backToUserList) {
           this.props.navigation.navigate('UsersList', { taskGroupData: this.props.navigation.state.params.taskGroupData });
       } else {
           this.props.navigation.pop();
@@ -68,6 +70,8 @@ export default class ProfileView extends Component {
 
   logout = () => {
       this.menu.close();
+      //todo: uncomment this after successful integeration of mixpanel sdk
+      // MixPanel.track('Logout');
       this.props.userActions.logout();
       const resetAction = StackActions.reset({
           index: 0,
@@ -135,7 +139,7 @@ export default class ProfileView extends Component {
       const { userActions } = this.props;
       const { profile } = this.state;
       if (profile && profile.email) {
-          userActions.getCompaniesRequest(profile.email.toLowerCase()); 
+          userActions.getCompaniesRequest(profile.email.toLowerCase());
       }
   }
 

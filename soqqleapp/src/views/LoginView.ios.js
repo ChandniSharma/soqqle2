@@ -21,6 +21,7 @@ import Step3 from './login/Step3';
 import Step2 from './login/Step2';
 import {LINKEDIN_LOGIN_APP_ID, LINKEDIN_LOGIN_APP_SECRET, LINKEDIN_LOGIN_CALLBACK} from '../config';
 import styles from '../stylesheets/loginView.iosStyles';
+import MixPanel from "react-native-mixpanel";
 
 const baseApi = 'https://api.linkedin.com/v1/people/';
 const RCTNetworking = require('RCTNetworking');
@@ -56,7 +57,6 @@ export default class LoginView extends Component {
         const {userActions} = this.props;
         const getFacebookInfoCallback = (error, result) => {
             if (error) {
-                console.log('=======', error);
                 LoginView.flashMessage('Can not fetch your Facebook profile');
             } else {
                 userActions.facebookLoginRequest(result);
@@ -74,11 +74,9 @@ export default class LoginView extends Component {
                         null,
                         getFacebookInfoCallback,
                     );
-                    console.log('=======');
                     return new GraphRequestManager().addRequest(infoRequest).start();
                 }
             } catch (error) {
-                console.log('====error====', error);
                 LoginView.flashMessage('Unexpected error, please try again!');
             }
         };
@@ -106,6 +104,8 @@ export default class LoginView extends Component {
         if (!password) {
             return LoginView.flashMessage('Please enter your password');
         }
+        //todo: uncomment this after successful integeration of mixpanel sdk
+		    // MixPanel.track('Sign in');
         userActions.loginRequest({email, password, name: 'hardcoded'}); //API required name in login case??
     };
 
@@ -122,6 +122,8 @@ export default class LoginView extends Component {
         if (!isAgree) {
             return LoginView.flashMessage('Please agree to the Privacy Policy and Terms and Conditions.');
         }
+        //todo: uncomment this after successful integeration of mixpanel sdk
+        // MixPanel.track('Sign up - ios')
         userActions.loginRequest({email, password, name});
     };
 

@@ -136,6 +136,7 @@ export default class UserTaskGroupView extends Component {
   createTask(data, objectiveType, taskGroupId) {
     const userId = this.props.user._id;
     const profile = this.props.user.profile || {};
+    const {taskGroup} = this.state;
     const { firstName, lastName } = profile;
     const taskData = {
       type: objectiveType,
@@ -150,7 +151,7 @@ export default class UserTaskGroupView extends Component {
       metaData: {
         subject: {
           roadmap: { name: '', },
-          skill: { _id: data._id, name: data.skill, },
+          skill: { _id: data._id, name: data.skill, type: taskGroup.type},
         },
         participants: [
           {

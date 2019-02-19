@@ -1,28 +1,32 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, Dimensions, Image, Modal, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    DeviceEventEmitter,
+    Dimensions,
+    Image,
+    Modal,
+    SafeAreaView,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import Video from 'react-native-video';
 import * as axios from 'axios';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
-import moment from 'moment';
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
 import {
-  GET_TASK_GROUPS_API,
-  SAVE_USER_TASK_GROUP_API,
-  STORIES_LIST_API,
-  STORY_CHALLENGES_LIST_API_PATH,
-  STORY_HAS_VIDEO_API,
-  TEAM_UPDATE_API,
-  USER_ACHIEVEMENT_LIST_PATH_API,
-  USER_TASK_GROUP_LIST_PATH_API
+    SAVE_USER_TASK_GROUP_API,
+    STORY_CHALLENGES_LIST_API_PATH,
+    TEAM_UPDATE_API,
+    USER_ACHIEVEMENT_LIST_PATH_API,
+    USER_TASK_GROUP_LIST_PATH_API
 } from '../endpoints';
-import CustomText from '../components/CustomText';
-import {getGroupUserDetails} from '../utils/common';
 import styles from '../stylesheets/storyViewStyles';
-import _ from 'lodash';
+import CustomText from "../components/CustomText";
 
 const width = Dimensions.get('window').width; //full width
 
@@ -39,72 +43,14 @@ let selectedItemBonusSparks = null;
 // TODO: Update this class to new Lifecycle methods
 // TODO: Split this render component into smaller one
 export default class StoryView extends Component {
-
-  mergeStoriesAndTaskGroups = (stories, taskGroups) => {
-    const mappedStories = stories.map(story => {
-      const group = taskGroups.find(task => task.type === TASK_GROUP_TYPES.STORY && task.skillname === story.name)
-      if (group) {
-        return {
-          ...story,
-          groupName: group.groupname,
-          sequence: group.sequence,
-          startdate: group.unlockdate,
-        }
-      }
-      return story
-    }).filter(story => {
-      if (story.startdate) {
-        return moment(story.startdate).isBefore(moment())
-      }
-      return true
-    });
-    this.setState({stories: mappedStories});
-  };
-
-  mergeChallengesAndTaskGroups = (challenges, taskGroups) => {
-    const mappedChallenges = challenges.map(challenge => {
-      const group = taskGroups.find(task => task.type === TASK_GROUP_TYPES.CHALLENGE && task.skillname === challenge.name)
-      if (group) {
-        return {
-          ...challenge,
-          groupName: group.groupname,
-          sequence: group.sequence,
-          startdate: group.unlockdate,
-        }
-      }
-      return challenge
-    }).filter(challenge => {
-      if (challenge.startdate) {
-        return moment(challenge.startdate).isBefore(moment())
-      }
-      return true
-    });
-    this.setState({challenges: mappedChallenges});
-  };
-
-  getTaskGroups = async () => {
-    let response = await instance(GET_TASK_GROUPS_API);
-    let taskGroups = _.get(response, 'data.listTaskgroup');
-    if (taskGroups) {
-      this.setState({taskGroups}, () => {
-        const {stories, challenges} = this.state;
-        if (!_.isEmpty(stories) && !_.isEmpty(taskGroups)) {
-          this.mergeStoriesAndTaskGroups(stories, taskGroups);
-        }
-        if (!_.isEmpty(challenges) && !_.isEmpty(taskGroups)) {
-          this.mergeChallengesAndTaskGroups(challenges, taskGroups);
-        }
-      });
-    }
-  };
   goToDashboardScreen = () => this.props.navigation.navigate({routeName: 'Dashboard'});
   goToProfileScreen = () => this.props.navigation.navigate({routeName: 'Profile'});
   goToUserTasksScreen = () => this.props.navigation.navigate({routeName: 'UserTaskGroup'});
   _renderItem = ({item, index}) => {
-    const imageBaseUrl = item.item_type === TASK_GROUP_TYPES.CHALLENGE ? CHALLENGE_IMAGE_BASE_URL : STORY_IMAGE_BASE_URL;
+    const imageBaseUrl = item.type === TASK_GROUP_TYPES.CHALLENGE ? CHALLENGE_IMAGE_BASE_URL : STORY_IMAGE_BASE_URL;
     return (
       <View>
-        <View style={item.item_type === TASK_GROUP_TYPES.CHALLENGE ? styles.challengeContainer : styles.storyContainer}>
+        <View style={item.type === TASK_GROUP_TYPES.CHALLENGE ? styles.challengeContainer : styles.storyContainer}>
           {item.has_video && this.state.currentSlideIndex === index ? (
             <Video
               ref={ref =>
@@ -123,7 +69,7 @@ export default class StoryView extends Component {
               resizeMode='cover'
             />
           )}
-          {item.item_type === TASK_GROUP_TYPES.STORY ? (
+          {item.type === TASK_GROUP_TYPES.STORY ? (
             <View style={styles.storyContent}>
               <Text
                 style={styles.storyItemText}
@@ -131,16 +77,6 @@ export default class StoryView extends Component {
               >
                 {item.description}
               </Text>
-              {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
-              {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
-              {/*<View>*/}
-              {/*<View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
-              {/*<Text style={styles.dateTimeText}>Start: </Text>*/}
-              {/*<Text style={styles.startTimeText}>{`${item.startdate || ''}`}</Text>*/}
-              {/*</View>*/}
-              {/*<Text style={styles.dateTimeText}>End</Text>*/}
-              {/*</View>*/}
-              {/*</View>}*/}
               <View style={styles.storyTagContainer}>
                 {item._objective && (
                   <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
@@ -171,13 +107,6 @@ export default class StoryView extends Component {
               >
                 {item.description}
               </Text>
-              {/*{item.sequence && <View style={{flexDirection: 'row'}}>*/}
-              {/*<View style={[styles.dateTimeText, styles.calendarIconWrapper]}><Icon name='calendar' style={[styles.dateTimeText, styles.calendarIcon]} /></View>*/}
-              {/*<View>*/}
-              {/*<Text style={styles.dateTimeText}>Start: {`${item.startdate || ''}`}</Text>*/}
-              {/*<Text style={styles.dateTimeText}>End:</Text>*/}
-              {/*</View>*/}
-              {/*</View>}*/}
               <View style={styles.storyTagContainer}>
                 {item.type && (
                   <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
@@ -197,14 +126,14 @@ export default class StoryView extends Component {
           )}
           {item.sequence && <View style={{
             ...styles.storySequence,
-            backgroundColor: item.item_type === TASK_GROUP_TYPES.STORY ? '#7362B0' : '#BA57BC'
+            backgroundColor: item.type === TASK_GROUP_TYPES.STORY ? '#7362B0' : '#BA57BC'
           }}>
             <Text style={styles.sequenceText}>#{item.sequence} Of {(item.groupName || '').toUpperCase()}</Text>
           </View>}
         </View>
         <View style={styles.storyActionsContainer}>
           <TouchableOpacity onPress={() => {
-            this.setModalVisible(!this.state.modalVisible, item._id, item.item_type, item.bonusSparks);
+            this.setModalVisible(!this.state.modalVisible, item._id, item.type, item.bonusSparks);
           }}>
             <View style={{...styles.storyActionBlock, ...{'backgroundColor': '#ffc500'}}}>
               <Image
@@ -227,7 +156,7 @@ export default class StoryView extends Component {
   getUserAchievements = async () => {
     let {user} = this.props;
     let response = await instance(USER_ACHIEVEMENT_LIST_PATH_API.replace(user._id));
-    this.getChallenges(user, response.data || []);
+    this.getChallengesAndStories(user, response.data || []);
   };
 
   _renderStoryTaskItem = item => {
@@ -258,11 +187,9 @@ export default class StoryView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      storiesFetching: true,
       challengesFetching: true,
-      stories: [],
-      challenges: [],
-      taskGroups: [], currentSlideIndex: 0,
+      challengesAndStories: [],
+      currentSlideIndex: 0,
       modalVisible: false,
       processing: false,
       tasksFetching: false,
@@ -270,9 +197,15 @@ export default class StoryView extends Component {
     };
   }
 
+  componentWillMount() {
+    DeviceEventEmitter.addListener('REFRESH_STORIES', (e) => {
+      if (this.props.user) {
+        this.getUserAchievements();
+      }
+    })
+  }
+
   componentDidMount() {
-    this.getTaskGroups();
-    this.getStories();
     if (this.props.user) {
       this.getUserAchievements();
     }
@@ -312,6 +245,9 @@ export default class StoryView extends Component {
     if (!this.state.processing) {
       this.setState({processing: true});
       let data = {email: this.props.user.profile.email, taskGroupId};
+
+        //todo: uncomment this after successful integeration of mixpanel sdk
+      // MixPanel.track('Join a team');
       fetch(TEAM_UPDATE_API.replace('{}', teamId), {
         method: 'PUT',
         headers: {
@@ -346,6 +282,8 @@ export default class StoryView extends Component {
           'email': profile.email
         }
       };
+        //todo: uncomment this after successful integeration of mixpanel sdk
+      // MixPanel.track('Create a Group')
       instance.post(TEAM_UPDATE_API.replace('{}/', ''), data).then(response => {
         this.createNewUserTaskGroup(response.data._id);
       }).catch(() => this.setState({processing: false}));
@@ -387,34 +325,17 @@ export default class StoryView extends Component {
       .catch(() => this.setState({processing: false}));
   }
 
-  getStories() {
-    return fetch(STORIES_LIST_API)
-      .then(response => response.json())
-      .then(responseJson => this.mapStoriesWithVideo(responseJson))
-      .catch(() => []);
-  }
-
-  getChallenges(user, userAchievements) {
+  getChallengesAndStories(user, userAchievements) {
     let {profile} = user;
     if (profile) {
       let data = {
         emailId: profile.email,
+        userId: user._id,
         achievementIds: this.getUserAchievementIds(userAchievements)
       };
       instance.post(STORY_CHALLENGES_LIST_API_PATH, data)
         .then(response => {
-          const challenges = response.data.map(challenge => {
-            return {
-              ...challenge,
-              item_type: TASK_GROUP_TYPES.CHALLENGE
-            };
-          });
-          const {taskGroups} = this.state;
-          this.setState({challenges: challenges, challengesFetching: false}, () => {
-            if (!_.isEmpty(challenges) && !_.isEmpty(taskGroups)) {
-              this.mergeChallengesAndTaskGroups(challenges, taskGroups);
-            }
-          });
+          this.setState({challengesAndStories: response.data || [], challengesFetching: false})
         })
         .catch(() => this.setState({challengesFetching: false}));
     }
@@ -424,26 +345,12 @@ export default class StoryView extends Component {
     return userAchievements.filter(item => item.status === 'Complete').map(item => item.achievementId);
   }
 
-  mapStoriesWithVideo(stories) {
-    const results = stories.map(async story => {
-      return fetch(STORY_HAS_VIDEO_API.replace('{}', story._id))
-        .then(response => response.json())
-        .then(() => ({...story, ...{has_video: true, item_type: TASK_GROUP_TYPES.STORY}}))
-        .catch(() => ({...story, ...{has_video: false, item_type: TASK_GROUP_TYPES.STORY}}));
-    });
-    Promise.all(results).then((completed) => {
-      this.setState({stories: completed, storiesFetching: false}, () => {
-        const {taskGroups} = this.state;
-        this.mergeStoriesAndTaskGroups(completed, taskGroups);
-      });
-    });
-  }
-
   onRequestCloseModal() {
     this.setModalVisible(!this.state.modalVisible);
   }
 
   render() {
+    const {challengesAndStories} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -462,7 +369,7 @@ export default class StoryView extends Component {
             <View>
               <Carousel
                 ref={c => this._carousel = c}
-                data={[...this.state.stories, ...this.state.challenges]}
+                data={challengesAndStories}
                 renderItem={this._renderItem}
                 sliderWidth={width}
                 itemWidth={wp('90%')}
