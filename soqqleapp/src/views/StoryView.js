@@ -1,23 +1,32 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, Dimensions, Image, Modal, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    DeviceEventEmitter,
+    Dimensions,
+    Image,
+    Modal,
+    SafeAreaView,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import Video from 'react-native-video';
 import * as axios from 'axios';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
-import {DeviceEventEmitter} from 'react-native'
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
 import {
-  SAVE_USER_TASK_GROUP_API,
-  STORY_CHALLENGES_LIST_API_PATH,
-  TEAM_UPDATE_API,
-  USER_ACHIEVEMENT_LIST_PATH_API,
-  USER_TASK_GROUP_LIST_PATH_API
+    SAVE_USER_TASK_GROUP_API,
+    STORY_CHALLENGES_LIST_API_PATH,
+    TEAM_UPDATE_API,
+    USER_ACHIEVEMENT_LIST_PATH_API,
+    USER_TASK_GROUP_LIST_PATH_API
 } from '../endpoints';
 import styles from '../stylesheets/storyViewStyles';
-import MixPanel from "react-native-mixpanel";
+import CustomText from "../components/CustomText";
 
 const width = Dimensions.get('window').width; //full width
 
@@ -236,7 +245,9 @@ export default class StoryView extends Component {
     if (!this.state.processing) {
       this.setState({processing: true});
       let data = {email: this.props.user.profile.email, taskGroupId};
-      MixPanel.track('Join a team');
+
+        //todo: uncomment this after successful integeration of mixpanel sdk
+      // MixPanel.track('Join a team');
       fetch(TEAM_UPDATE_API.replace('{}', teamId), {
         method: 'PUT',
         headers: {
@@ -271,7 +282,8 @@ export default class StoryView extends Component {
           'email': profile.email
         }
       };
-      MixPanel.track('Create a Group')
+        //todo: uncomment this after successful integeration of mixpanel sdk
+      // MixPanel.track('Create a Group')
       instance.post(TEAM_UPDATE_API.replace('{}/', ''), data).then(response => {
         this.createNewUserTaskGroup(response.data._id);
       }).catch(() => this.setState({processing: false}));

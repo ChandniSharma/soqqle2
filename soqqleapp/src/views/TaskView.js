@@ -86,7 +86,8 @@ export default class TaskView extends Component {
           }
       }
       if (isCompleted && !this.state.processing) {
-          MixPanel.track('Submit Task');
+          //todo: uncomment this after successful integeration of mixpanel sdk
+          // MixPanel.track('Submit Task');
           this.saveUserQuestions(questions);
       }
   };
