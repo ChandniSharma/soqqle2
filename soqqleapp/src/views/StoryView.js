@@ -15,6 +15,7 @@ import * as axios from 'axios';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
+import ReadMore from 'react-native-read-more-text';
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
@@ -65,18 +66,24 @@ export default class StoryView extends Component {
           ) : (
             <Image
               source={{uri: imageBaseUrl.replace('{}', item._id)}}
-              style={styles.storyItemImage}
+              style={this.state.storyItemTextStyle}
               resizeMode='cover'
             />
           )}
           {item.type === TASK_GROUP_TYPES.STORY ? (
             <View style={styles.storyContent}>
-              <Text
+              <ReadMore
+              numberOfLines={2}
+              renderTruncatedFooter={this._renderTruncatedFooter}
+              renderRevealedFooter={this._renderRevealedFooter}
+              onReady={this._handleTextReady}>
+             <Text
                 style={styles.storyItemText}
-                numberOfLines={3}
-              >
-                {item.description}
-              </Text>
+              >         
+                  {item.description}                
+              </Text> 
+            </ReadMore>
+             
               <View style={styles.storyTagContainer}>
                 {item._objective && (
                   <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
@@ -153,6 +160,28 @@ export default class StoryView extends Component {
     );
   };
 
+  _renderTruncatedFooter = (handlePress) => {
+    
+
+    return (
+      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImageMin}); handlePress();}}>
+        more
+      </Text>      
+    );
+  }
+
+  _renderRevealedFooter = (handlePress) => {    
+    return (
+      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImage}); handlePress();}}>
+        less
+      </Text>      
+    );
+  }
+
+  _handleTextReady = () => {
+    // ...
+  }
+
   getUserAchievements = async () => {
     let {user} = this.props;
     let response = await instance(USER_ACHIEVEMENT_LIST_PATH_API.replace(user._id));
@@ -193,7 +222,9 @@ export default class StoryView extends Component {
       modalVisible: false,
       processing: false,
       tasksFetching: false,
-      userTaskGroups: []
+      userTaskGroups: [],
+      numberOfLines:2,
+      storyItemTextStyle: styles.storyItemImage
     };
   }
 

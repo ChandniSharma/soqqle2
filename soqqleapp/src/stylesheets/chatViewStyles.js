@@ -209,6 +209,9 @@ const styles = StyleSheet.create({
     },
     faceButton: {
         alignSelf: 'center',
+    },
+    showOrLess:{
+        color:'#1FBEB8'
     }
 });
 

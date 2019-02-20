@@ -11,6 +11,8 @@ import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_
 import styles from '../stylesheets/chatViewStyles';
 import Header from '../components/Header';
 import { getMessages } from '../utils/common';
+import ReadMore from 'react-native-read-more-text';
+
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -29,7 +31,8 @@ export default class UserTaskGroupView extends Component {
             processing: false,
             messages: [],
             userId: null,
-            isReport: false
+            isReport: false,
+            storyItemTextStyle: styles.storyItemImage
         };
         this.onReceivedMessage = this.onReceivedMessage.bind(this);
         this.onSend = this.onSend.bind(this);
@@ -315,7 +318,20 @@ export default class UserTaskGroupView extends Component {
             <Text style={styles.storyDetailTitle}>{story.name}</Text>
             <Text style={styles.storyDetailXP}>Team 100 XP</Text>
           </View>
-          <Text style={styles.storyDetailText} numberOfLines={2}>{story.description}</Text>
+            <View>
+            <ReadMore
+              numberOfLines={2}
+              renderTruncatedFooter={this._renderTruncatedFooter}
+              renderRevealedFooter={this._renderRevealedFooter}
+              onReady={this._handleTextReady}>
+             <Text
+                style={styles.storyDetailText}
+              > 
+                  {story.description}                
+              </Text> 
+            </ReadMore>
+            </View>
+          
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
             <View style={styles.storyDetailTags}>
@@ -386,5 +402,27 @@ export default class UserTaskGroupView extends Component {
         />
       </SafeAreaView>
     );
+
+    }
+
+    _renderTruncatedFooter = (handlePress) => {    
+    return (
+      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImageMin}); handlePress();}}>
+        more 
+      </Text>      
+    );
   }
+
+  _renderRevealedFooter = (handlePress) => {  
+    return (
+      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImage}); handlePress();}}>
+        less
+      </Text>      
+    );
+  }
+
+  _handleTextReady = () => {
+    // ...
+  }
+
 }
