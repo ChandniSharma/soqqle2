@@ -9,6 +9,7 @@ import SparkReducer from '../reducers/SparkReducer';
 import AppReducer from '../reducers/AppReducer';
 import SessionStateReducer, { RESET_STATE } from '../session/SessionState';
 import TaskReducer from '../reducers/TaskReducer';
+import StoryReducer from '../reducers/StoryReducer';
 import RewardsReducer from '../reducers/RewardsReducer';
 
 const reducers = {
@@ -17,6 +18,7 @@ const reducers = {
     achievement: AchievementReducer,
     spark: SparkReducer,
     app: AppReducer,
+    story: StoryReducer,
     task: TaskReducer,
     navigatorState: NavigatorStateReducer,
     session: SessionStateReducer,

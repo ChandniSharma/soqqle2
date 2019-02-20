@@ -15,13 +15,13 @@ import * as axios from 'axios';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
+import _ from 'lodash';
 import ReadMore from 'react-native-read-more-text';
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
 import {
     SAVE_USER_TASK_GROUP_API,
-    STORY_CHALLENGES_LIST_API_PATH,
     TEAM_UPDATE_API,
     USER_ACHIEVEMENT_LIST_PATH_API,
     USER_TASK_GROUP_LIST_PATH_API
@@ -236,6 +236,12 @@ export default class StoryView extends Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.stories && !_.isEqual(nextProps.stories, this.state.challengesAndStories)) {
+      this.setState({challengesAndStories: nextProps.stories})
+    }
+  }
+
   componentDidMount() {
     if (this.props.user) {
       this.getUserAchievements();
@@ -364,13 +370,10 @@ export default class StoryView extends Component {
         userId: user._id,
         achievementIds: this.getUserAchievementIds(userAchievements)
       };
-      instance.post(STORY_CHALLENGES_LIST_API_PATH, data)
-        .then(response => {
-          this.setState({challengesAndStories: response.data || [], challengesFetching: false})
-        })
-        .catch(() => this.setState({challengesFetching: false}));
+      this.props.storyActions.getStoriesRequest(data);
     }
   }
+
 
   getUserAchievementIds(userAchievements) {
     return userAchievements.filter(item => item.status === 'Complete').map(item => item.achievementId);
@@ -394,9 +397,6 @@ export default class StoryView extends Component {
           </TouchableOpacity>
         </View>
         <View style={styles.storyContainerView}>
-          {this.state.storiesFetching || this.state.challengesFetching ? (
-            <ActivityIndicator size="large" color="#800094"/>
-          ) : (
             <View>
               <Carousel
                 ref={c => this._carousel = c}
@@ -407,7 +407,6 @@ export default class StoryView extends Component {
                 onBeforeSnapToItem={slideIndex => this.setState({currentSlideIndex: slideIndex})}
               />
             </View>
-          )}
         </View>
         <View style={styles.footer}>
           <TouchableOpacity onPress={this.goToProfileScreen}>
