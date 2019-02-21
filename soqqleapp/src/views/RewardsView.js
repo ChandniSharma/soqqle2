@@ -1,10 +1,10 @@
 import React from 'react';
-import {Text, View, ScrollView, Image, FlatList, StyleSheet, Dimensions, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import {Text, View, ScrollView, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Platform} from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
 
 import * as axios from 'axios';
 import { API_BASE_URL } from '../config';
-import { USER_ACHIEVEMENT_LIST_PATH_API } from '../endpoints';
+import { USER_ACHIEVEMENT_LIST_PATH_API, SAVE_USER_REWARD_API_PATH } from '../endpoints';
 import styles from '../stylesheets/rewardsViewStyles';
 
 const SECTIONS = [
@@ -29,7 +29,13 @@ const rewardsImg = require('../../assets/images/rewardsImg.png');
 
 const screenWidth = Dimensions.get('window').width;
 
-const _ = require('lodash')
+const _ = require('lodash');
+
+const instance = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 25000,
+    headers: { 'Content-type': 'application/json' }
+});
 
 let userId = null;
 
@@ -50,7 +56,7 @@ export default class RewardsView extends React.Component {
         super(props);
 
         this.sortByText = React.createRef();
-
+        console.log(_.get(this.props, 'user.userRewards', []));
         this.state = {
             activeSections: [],
             sortByClicked: false,
@@ -58,19 +64,15 @@ export default class RewardsView extends React.Component {
             rewardsListData: [ ],
             sorter: '_id',
             userAchievements: [],
-            achievements: []
+            achievements: [],
+            processing: false,
+            userRewards: _.get(this.props, 'user.userRewards', [])
         };
         userId = this.props.user._id || null;
     }
 
     async fetchUserAchievements() {
         if (userId) {
-
-            const instance = axios.create({
-                baseURL: API_BASE_URL,
-                timeout: 25000,
-                headers: { 'Content-type': 'application/json' }
-            });
 
             let endpoint = USER_ACHIEVEMENT_LIST_PATH_API.replace('{}', userId);
             await instance.get(endpoint).then(response => {
@@ -130,13 +132,47 @@ export default class RewardsView extends React.Component {
                       <Text style={styles.rewardsSparks}>{_.get(item, 'sparks', 'No') + ' Sparks'}</Text>
                   </View>
                   <Text style={styles.rewardsDescription}>{item.description}</Text>
-                  {item.state === 'Completed' ?
-                      <TouchableOpacity style={{width: 70, marginLeft: screenWidth - 125}}><Text style={styles.buyReward}>Buy</Text></TouchableOpacity> :
-                      <Text style={styles.rewardsState}>{item.state}</Text>}
+                  {item.state === 'Complete' ? (
+                        item.processing ? (
+                            <ActivityIndicator size={Platform.OS === 'ios' ? 'small' : 18} style={{ marginLeft: screenWidth - 125 }} color="#1FBEB8" />
+                        )
+                        : <TouchableOpacity style={{width: 70, marginLeft: screenWidth - 125}} onPress={()=> this.buyReward(item._id)}>
+                         <Text style={styles.buyReward}>Buy</Text></TouchableOpacity> 
+                    )
+                    : <Text style={styles.rewardsState}>{item.state}</Text>
+                  }
               </View>
           </View>
       );
   };
+
+  buyReward(upgradeId) {
+      if(upgradeId && userId && !this.state.processing) {
+        const data = {
+            "status": "Not Started",
+            "currentCounter": 0,
+            "_upgrade": upgradeId,
+            "user_id": userId
+        }
+        let { rewardsListData } = this.state;
+        const index = _.findIndex(rewardsListData, { '_id': upgradeId });
+        if(index > -1) {
+            rewardsListData[index]['processing'] = true;
+        }
+        this.setState({ processing: true, rewardsListData: [...rewardsListData] });
+        instance.post(SAVE_USER_REWARD_API_PATH, data).then(response => {
+            this.props.user.userRewards.push(response.data);
+            this.props.userActions.saveProfileCompleted(this.props.user);
+            if(index > -1) {
+                rewardsListData[index]['processing'] = false;
+                rewardsListData[index]['state'] = 'Bought';
+            }
+            this.setState({ processing: false, rewardsListData });
+        }).catch(err => { 
+            this.setState({ processing: false });
+        });
+      }
+  }
 
   onPressSortBy = () => {
       this.setState({sortByClicked: !this.state.sortByClicked});
@@ -149,7 +185,6 @@ export default class RewardsView extends React.Component {
   componentWillReceiveProps(nextProps) {
       const nextRewards = _.get(nextProps, 'rewards.rewards', []);
       const prevRewards = _.get(this, 'state.rewardsListData', []);
-
       if(nextRewards.length == prevRewards.length) {
           return;
       }
@@ -157,8 +192,10 @@ export default class RewardsView extends React.Component {
       let rewards = nextRewards.map(item => {
 
         let state = 'Pending';
-
-        if(item.requirement === 'Achievement') {
+        if(_.findIndex(this.state.userRewards, (o)=> { return o._upgrade === item._id }) > -1 ) {
+            state = 'Bought';
+        }
+        else if(item.requirement === 'Achievement') {
 
             const achievement = nextProps.rewards.achievements
                 .find(ac => ac.achievementId === item.requirementValue);
@@ -184,6 +221,7 @@ export default class RewardsView extends React.Component {
             name: item.name,
             description: item.description,
             sparks: item.sparks,
+            _id: item._id,
             state: state
         };
 

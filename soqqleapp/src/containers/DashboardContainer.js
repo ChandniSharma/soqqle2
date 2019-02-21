@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { NavigationActions } from 'react-navigation';
 import { isImmutable } from 'immutable';
 
+import * as userActions from './../reducers/UserReducer';
 import * as achievementActions from '../reducers/AchievementReducer';
 import * as sparkActions from '../reducers/SparkReducer';
 import * as rewardsActions from '../reducers/RewardsReducer';
@@ -21,6 +22,7 @@ export default connect(
             achievementActions: bindActionCreators(achievementActions, dispatch),
             sparkActions: bindActionCreators(sparkActions, dispatch),
             rewardsActions: bindActionCreators(rewardsActions, dispatch),
+            userActions: bindActionCreators(userActions, dispatch)
         };
     }
 )(DashboardView);
