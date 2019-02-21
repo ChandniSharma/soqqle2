@@ -213,7 +213,6 @@ export default class UserTaskGroupView extends Component {
   }
   onReceivedMessage(message) {
     let groupDetails = this.state.taskGroup;
-    console.log(' Emails length =====', groupDetails._team.emails);
     let userData = groupDetails._team.emails.find((user) => {
       return user && user.userDetails && user.userDetails._id === message.sender;
     });
