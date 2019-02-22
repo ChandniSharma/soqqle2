@@ -46,3 +46,10 @@ target 'soqqle' do
       pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
 end
+post_in`stall do |installer|
+    installer.pods_project.targets.each do |target|
+        if target.name == "React"
+            target.remove_from_project
+        end
+    end
+end
