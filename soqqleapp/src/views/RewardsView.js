@@ -56,7 +56,6 @@ export default class RewardsView extends React.Component {
         super(props);
 
         this.sortByText = React.createRef();
-        console.log(_.get(this.props, 'user.userRewards', []));
         this.state = {
             activeSections: [],
             sortByClicked: false,
