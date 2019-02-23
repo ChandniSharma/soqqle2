@@ -47,13 +47,13 @@ const styles = StyleSheet.create({
   storyItemImage: {
     alignSelf: 'center',
     width: '100%',
-    height: hp('35%'),
+    height: hp('35%')
   },
   storyItemImageMin:{
     alignSelf: 'center',
     width: '100%',
-    height: hp('20%'),
-  },
+    height: hp('20%')
+      },
   storyItemVideo: {
     alignSelf: 'center',
     width: '100%',

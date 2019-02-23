@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform, Animated } from 'react-native';
 import * as axios from 'axios';
 import { Thumbnail } from 'native-base';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -32,7 +32,9 @@ export default class UserTaskGroupView extends Component {
             messages: [],
             userId: null,
             isReport: false,
-            storyItemTextStyle: styles.storyItemImage
+            storyItemTextStyle: styles.storyItemImage,
+            animatedStyle:{maxHeight: new Animated.Value(styles.contentHeight.maxHeight)},
+            contentHeight: styles.contentHeight
         };
         this.onReceivedMessage = this.onReceivedMessage.bind(this);
         this.onSend = this.onSend.bind(this);
@@ -317,19 +319,19 @@ export default class UserTaskGroupView extends Component {
             <Text style={styles.storyDetailTitle}>{story.name}</Text>
             <Text style={styles.storyDetailXP}>Team 100 XP</Text>
           </View>
-            <View>
+            
+            <Animated.View style={[this.state.contentHeight,this.state.animatedStyle]}>
             <ReadMore
               numberOfLines={2}
               renderTruncatedFooter={this._renderTruncatedFooter}
               renderRevealedFooter={this._renderRevealedFooter}
               onReady={this._handleTextReady}>
-             <Text
-                style={styles.storyDetailText}
-              > 
+
+             <Text>                   
                   {story.description}                
               </Text> 
             </ReadMore>
-            </View>
+            </Animated.View>
           
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
@@ -406,7 +408,10 @@ export default class UserTaskGroupView extends Component {
 
     _renderTruncatedFooter = (handlePress) => {    
     return (
-      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImageMin}); handlePress();}}>
+      <Text style={styles.showOrLess} onPress={() => {handlePress(); Animated.timing(this.state.animatedStyle.maxHeight,{toValue: styles.contentHeightMax.maxHeight,duration:500}).start(function(){
+        
+      });      
+    }}>
         more 
       </Text>      
     );
@@ -414,7 +419,7 @@ export default class UserTaskGroupView extends Component {
 
   _renderRevealedFooter = (handlePress) => {  
     return (
-      <Text style={styles.showOrLess} onPress={() => { this.setState({storyItemTextStyle: styles.storyItemImage}); handlePress();}}>
+      <Text style={styles.showOrLess} onPress={() => { Animated.timing(this.state.animatedStyle.maxHeight,{toValue: styles.contentHeight.maxHeight,duration:500}).start(function(){ handlePress(); });  }}>
         less
       </Text>      
     );
