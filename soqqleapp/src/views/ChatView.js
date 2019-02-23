@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform, Dimensions } from 'react-native';
 import * as axios from 'axios';
 import { Thumbnail } from 'native-base';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, SystemMessage } from 'react-native-gifted-chat';
 import SocketIOClient from 'socket.io-client';
 
 import { API_BASE_URL } from '../config';
@@ -18,23 +18,24 @@ const instance = axios.create({
   headers: { 'Content-type': 'application/json' }
 });
 
+const deviceWidth = Dimensions.get('window').width;
 // TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
-    constructor(props) {
-        super(props);
-        const {navigation: { state : { params: {taskGroup = {}} = {} } = {} } = {} } = props;
-        this.state = {
-            taskGroup,
-            userTask: {},
-            processing: false,
-            messages: [],
-            userId: null,
-            isReport: false
-        };
-        this.onReceivedMessage = this.onReceivedMessage.bind(this);
-        this.onSend = this.onSend.bind(this);
-        this._storeMessages = this._storeMessages.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    const { navigation: { state: { params: { taskGroup = {} } = {} } = {} } = {} } = props;
+    this.state = {
+      taskGroup,
+      userTask: {},
+      processing: false,
+      messages: [],
+      userId: null,
+      isReport: false
+    };
+    this.onReceivedMessage = this.onReceivedMessage.bind(this);
+    this.onSend = this.onSend.bind(this);
+    this._storeMessages = this._storeMessages.bind(this);
+  }
 
   componentWillMount() {
     this.setTaskAndTaskGroup();
@@ -71,19 +72,35 @@ export default class UserTaskGroupView extends Component {
     }
   }
 
-    setTaskAndTaskGroup() {
-        let id = this.props.navigation.state.params.task_group_id;
-        const {navigation: { state : { params: {taskGroup: propsTaskGroup = {}} = {} } = {} } = {} } = this.props;
-        let userTask = {};
-        const {taskGroups: {taskGroups = []}= {}} = this.props;
-        let taskGroup = id && [propsTaskGroup, ...taskGroups].filter(t => t._id === id)[0] || {};
-        if (Object.keys(taskGroup).length && taskGroup._tasks.length) {
-            userTask = taskGroup._tasks.filter(task => {
-                return task.userID == this.props.user._id &&
+  setTaskAndTaskGroup() {
+    let id = this.props.navigation.state.params.task_group_id;
+    const { navigation: { state: { params: { taskGroup: propsTaskGroup = {} } = {} } = {} } = {} } = this.props;
+    let userTask = {};
+    const { taskGroups: { taskGroups = [] } = {} } = this.props;
+    let taskGroup = id && [propsTaskGroup, ...taskGroups].filter(t => t._id === id)[0] || {};
+    if (Object.keys(taskGroup).length && taskGroup._tasks.length) {
+      userTask = taskGroup._tasks.filter(task => {
+        return task.userID == this.props.user._id &&
           task.metaData.subject.skill._id == taskGroup._typeObject._id;
       })[0];
     }
     this.setState({ taskGroup, userTask: userTask || {} });
+  }
+
+  renderSystemMessage(props) {
+    return (
+      <SystemMessage
+        {...props}
+        wrapperStyle={{
+          backgroundColor: '#dd79c9',
+          width: deviceWidth
+        }}
+        textStyle={{
+          textAlign: 'center',
+          color: 'white'
+        }}
+      />
+    );
   }
 
   goToTask = story => {
@@ -95,10 +112,12 @@ export default class UserTaskGroupView extends Component {
     if (!skill) {
       return;
     }
+    // this.socket.disconnect();
     if (Object.keys(this.state.userTask).length) {
       this.props.navigation.navigate('Task', {
         skill, reward,
-        task: this.state.userTask, task_group_id: taskGroupId
+        task: this.state.userTask, task_group_id: taskGroupId,
+        team_id: this.state.taskGroup._team._id,
       });
     }
     else {
@@ -155,7 +174,7 @@ export default class UserTaskGroupView extends Component {
       this.setState({ userTask: response.data });
       this.updateUserTasks(response.data);
       this.updateUserTaskGroup(response.data, taskGroupId);
-    }).catch(err => { alert(err)});
+    }).catch(err => { alert(err) });
   }
 
   updateUserTaskGroup(task, taskGroupId) {
@@ -171,13 +190,14 @@ export default class UserTaskGroupView extends Component {
       });
       this.props.navigation.navigate('Task', {
         skill, reward,
-        task: this.state.userTask, task_group_id: taskGroupId
+        task: this.state.userTask, task_group_id: taskGroupId,
+        team_id: this.state.taskGroup._team._id,
       });
-    }).catch(err => { alert(JSON.stringify(err))});
+    }).catch(err => { alert(JSON.stringify(err)) });
   }
 
   updateUserTasks(task) {
-    const {taskGroups: {taskGroups = []}= {}} = this.props;
+    const { taskGroups: { taskGroups = [] } = {} } = this.props;
     const id = this.props.navigation.state.params.task_group_id;
     let index = id && taskGroups.findIndex(t => t._id === id);
     if (index > -1) {
@@ -194,26 +214,38 @@ export default class UserTaskGroupView extends Component {
   onReceivedMessage(message) {
     let groupDetails = this.state.taskGroup;
     let userData = groupDetails._team.emails.find((user) => {
-      return user.userDetails && user.userDetails._id === message.sender;
+      return user && user.userDetails && user.userDetails._id === message.sender;
     });
     let isUnBlocked = true, blockUserIds = this.props.user.blockUserIds;
-    if (userData.userDetails && blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
+    if (userData && userData.userDetails && blockUserIds.length > 0 && blockUserIds.indexOf(userData.userDetails._id) !== -1) {
       isUnBlocked = false;
     }
     if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
-      let messageReceived = [
-        {
-          _id: Math.random(),
-          text: message.message,
-          createdAt: new Date(),
-          user: {
-            _id: userData.userDetails._id,
-            name: userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : '' + ' ' + userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : '',
-            avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : ''}+${userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : ''}`
+      if(message.message == 'Task is completed'){
+        let messageReceived = [
+          {
+            _id: Math.random(),
+            text: message.message,
+            createdAt: new Date(),
+            system: true,
           },
-        },
-      ];
-      this._storeMessages(messageReceived);
+        ];
+        this._storeMessages(messageReceived);
+      }else{  
+        let messageReceived = [
+          {
+            _id: Math.random(),
+            text: message.message,
+            createdAt: new Date(),
+            user: {
+              _id: userData.userDetails._id,
+              name: userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : '' + ' ' + userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : '',
+              avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName ? userData.userDetails.profile.firstName : ''}+${userData.userDetails.profile.lastName ? userData.userDetails.profile.lastName : ''}`
+            },
+          },
+        ];
+        this._storeMessages(messageReceived);
+      }
     }
   }
   onSend(messages = []) {
@@ -382,6 +414,7 @@ export default class UserTaskGroupView extends Component {
           showUserAvatar={true}
           showAvatarForEveryMessage={true}
           onLongPress={(context, message) => this.reportConfirmation(message)}
+          renderSystemMessage={this.renderSystemMessage.bind(this)}
         />
       </SafeAreaView>
     );

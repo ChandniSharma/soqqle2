@@ -33,18 +33,31 @@ export function getMessages(groupDetails, messages,blockUserIds) {
             isUnBlocked = false;
         }
         if (userData && userData.userDetails && userData.userDetails.profile && isUnBlocked) {
-            messagesWithUserDetails.push(
-                {
-                    _id: message._id,
-                    text: message.message,
-                    createdAt: new Date(message.time),
-                    user: {
-                        _id: userData.userDetails._id,
-                        name: userData.userDetails.profile.firstName+ ' '+ userData.userDetails.profile.firstName,
-                        avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName}+${userData.userDetails.profile.lastName}`
-                    },
-                }
-            );}
+            if(message.message == 'Task is completed'){
+                messagesWithUserDetails.push(
+                    {
+                        _id: message._id,
+                        text: message.message,
+                        createdAt: new Date(message.time),
+                        system: true,
+                    }
+                );
+            }else{
+                messagesWithUserDetails.push(
+                    {
+                        _id: message._id,
+                        text: message.message,
+                        createdAt: new Date(message.time),
+                        user: {
+                            _id: userData.userDetails._id,
+                            name: userData.userDetails.profile.firstName+ ' '+ userData.userDetails.profile.firstName,
+                            avatar: userData.userDetails.profile.pictureURL || `https://ui-avatars.com/api/?name=${userData.userDetails.profile.firstName}+${userData.userDetails.profile.lastName}`
+                        },
+                    }
+                );
+            }
+            
+        }
     });
     return messagesWithUserDetails;
 }

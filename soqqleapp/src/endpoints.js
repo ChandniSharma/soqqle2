@@ -18,3 +18,4 @@ export const MAKE_GROUP_PRIVATE_API = `/updateGroupStatusPrivate/{}`;
 export const GET_MESSAGE_LIST_API = `/fetchConversationByParticipants?chatType=GROUP&ids={team_id}`;
 export const CHAT_SOCKET_URL = API_BASE_URL;
 export const STORY_CHALLENGES_LIST_API_PATH = `/mobile/get-stories-and-challenges`;
+export const SAVE_USER_REWARD_API_PATH = `/saveUserReward`;
