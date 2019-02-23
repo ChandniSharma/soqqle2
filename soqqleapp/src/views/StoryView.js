@@ -197,14 +197,6 @@ export default class StoryView extends Component {
     };
   }
 
-  componentWillMount() {
-    DeviceEventEmitter.addListener('REFRESH_STORIES', (e) => {
-      if (this.props.user) {
-        this.getUserAchievements();
-      }
-    })
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.stories && !_.isEqual(nextProps.stories, this.state.challengesAndStories)) {
       this.setState({challengesAndStories: nextProps.stories})

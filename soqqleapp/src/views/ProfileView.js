@@ -53,7 +53,6 @@ export default class ProfileView extends Component {
   };
 
   goBack = () => {
-    DeviceEventEmitter.emit('REFRESH_STORIES',  {})
     if (this.props.backToUserList) {
           this.props.navigation.navigate('UsersList', { taskGroupData: this.props.navigation.state.params.taskGroupData });
       } else {
