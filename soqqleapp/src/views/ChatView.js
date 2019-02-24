@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform, Dimensions } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ActivityIndicator, Image, Alert, Platform, Dimensions, Animated } from 'react-native';
 import * as axios from 'axios';
 import { Thumbnail } from 'native-base';
 import { GiftedChat, SystemMessage } from 'react-native-gifted-chat';
@@ -11,6 +11,8 @@ import { SAVE_TASK_PATH_API, UPDATE_USER_TASK_GROUP_API_PATH, GET_OBJECTIVE_API_
 import styles from '../stylesheets/chatViewStyles';
 import Header from '../components/Header';
 import { getMessages } from '../utils/common';
+import ReadMore from 'react-native-read-more-text';
+
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -21,21 +23,24 @@ const instance = axios.create({
 const deviceWidth = Dimensions.get('window').width;
 // TODO: Update this class to new Lifecycle methods
 export default class UserTaskGroupView extends Component {
-  constructor(props) {
-    super(props);
-    const { navigation: { state: { params: { taskGroup = {} } = {} } = {} } = {} } = props;
-    this.state = {
-      taskGroup,
-      userTask: {},
-      processing: false,
-      messages: [],
-      userId: null,
-      isReport: false
-    };
-    this.onReceivedMessage = this.onReceivedMessage.bind(this);
-    this.onSend = this.onSend.bind(this);
-    this._storeMessages = this._storeMessages.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        const {navigation: { state : { params: {taskGroup = {}} = {} } = {} } = {} } = props;
+        this.state = {
+            taskGroup,
+            userTask: {},
+            processing: false,
+            messages: [],
+            userId: null,
+            isReport: false,
+            storyItemTextStyle: styles.storyItemImage,
+            animatedStyle:{maxHeight: new Animated.Value(styles.contentHeight.maxHeight)},
+            contentHeight: styles.contentHeight
+        };
+        this.onReceivedMessage = this.onReceivedMessage.bind(this);
+        this.onSend = this.onSend.bind(this);
+        this._storeMessages = this._storeMessages.bind(this);
+    }
 
   componentWillMount() {
     this.setTaskAndTaskGroup();
@@ -346,7 +351,20 @@ export default class UserTaskGroupView extends Component {
             <Text style={styles.storyDetailTitle}>{story.name}</Text>
             <Text style={styles.storyDetailXP}>Team 100 XP</Text>
           </View>
-          <Text style={styles.storyDetailText} numberOfLines={2}>{story.description}</Text>
+            
+            <Animated.View style={[this.state.contentHeight,this.state.animatedStyle]}>
+            <ReadMore
+              numberOfLines={2}
+              renderTruncatedFooter={this._renderTruncatedFooter}
+              renderRevealedFooter={this._renderRevealedFooter}
+              onReady={this._handleTextReady}>
+
+             <Text>                   
+                  {story.description}                
+              </Text> 
+            </ReadMore>
+            </Animated.View>
+          
           <View>
             <Text style={styles.storyDetailTagTitle}>You Gain</Text>
             <View style={styles.storyDetailTags}>
@@ -418,5 +436,30 @@ export default class UserTaskGroupView extends Component {
         />
       </SafeAreaView>
     );
+
+    }
+
+    _renderTruncatedFooter = (handlePress) => {    
+    return (
+      <Text style={styles.showOrLess} onPress={() => {handlePress(); Animated.timing(this.state.animatedStyle.maxHeight,{toValue: styles.contentHeightMax.maxHeight,duration:500}).start(function(){
+        
+      });      
+    }}>
+        more 
+      </Text>      
+    );
   }
+
+  _renderRevealedFooter = (handlePress) => {  
+    return (
+      <Text style={styles.showOrLess} onPress={() => { Animated.timing(this.state.animatedStyle.maxHeight,{toValue: styles.contentHeight.maxHeight,duration:500}).start(function(){ handlePress(); });  }}>
+        less
+      </Text>      
+    );
+  }
+
+  _handleTextReady = () => {
+    // ...
+  }
+
 }

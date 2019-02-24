@@ -1,5 +1,7 @@
 import { Platform, StyleSheet } from 'react-native';
 import { Right } from 'native-base';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : 0;
 const styles = StyleSheet.create({
@@ -26,6 +28,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         backgroundColor: '#F8F8F8',
     },
+
     storyDetailHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -209,6 +212,17 @@ const styles = StyleSheet.create({
     },
     faceButton: {
         alignSelf: 'center',
+    },
+    showOrLess:{
+        color:'#1FBEB8'
+    },
+    contentHeight:{
+        maxHeight: wp('20%'),
+        overflow:'hidden'
+    },
+    contentHeightMax:{
+        maxHeight: wp('43%'),
+        overflow:'hidden'
     }
 });
 

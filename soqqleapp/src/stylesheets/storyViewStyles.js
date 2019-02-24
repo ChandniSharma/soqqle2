@@ -47,8 +47,13 @@ const styles = StyleSheet.create({
   storyItemImage: {
     alignSelf: 'center',
     width: '100%',
-    height: hp('25%'),
+    height: hp('35%')
   },
+  storyItemImageMin:{
+    alignSelf: 'center',
+    width: '100%',
+    height: hp('20%')
+      },
   storyItemVideo: {
     alignSelf: 'center',
     width: '100%',
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
   },
   storyContent: {
     paddingHorizontal: wp('5%'),
-    paddingVertical: hp('2%'),
+    paddingVertical: hp('2%'),  
   },
   challengeItemTitle: {
     color: '#fff',
@@ -260,6 +265,9 @@ const styles = StyleSheet.create({
     color: '#9600A1',
     fontSize: 18,
   },
+  showOrLess:{
+    color:'#ffffff'
+  }
 });
 
 export default styles;

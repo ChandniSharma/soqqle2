@@ -8,7 +8,8 @@ import {
     SafeAreaView,
     Text,
     TouchableOpacity,
-    View
+    View,
+    Animated
 } from 'react-native';
 import Video from 'react-native-video';
 import * as axios from 'axios';
@@ -16,6 +17,7 @@ import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Carousel from 'react-native-snap-carousel';
 import _ from 'lodash';
+import TextImage from './TextImage'
 
 import {CHALLENGE_IMAGE_BASE_URL, STORY_IMAGE_BASE_URL, STORY_VIDEO_BASE_URL, TASK_GROUP_TYPES} from '../constants';
 import {API_BASE_URL} from '../config';
@@ -47,83 +49,13 @@ export default class StoryView extends Component {
   goToProfileScreen = () => this.props.navigation.navigate({routeName: 'Profile'});
   goToUserTasksScreen = () => this.props.navigation.navigate({routeName: 'UserTaskGroup'});
   _renderItem = ({item, index}) => {
+
     const imageBaseUrl = item.type === TASK_GROUP_TYPES.CHALLENGE ? CHALLENGE_IMAGE_BASE_URL : STORY_IMAGE_BASE_URL;
     return (
       <View>
         <View style={item.type === TASK_GROUP_TYPES.CHALLENGE ? styles.challengeContainer : styles.storyContainer}>
-          {item.has_video && this.state.currentSlideIndex === index ? (
-            <Video
-              ref={ref =>
-                this.player = ref}
-              source={{uri: STORY_VIDEO_BASE_URL.replace('{}', item._id)}}
-              resizeMode={'cover'}
-              controls={true}
-              volume={1.0}
-              rate={1.0}
-              style={styles.storyItemVideo}
-            />
-          ) : (
-            <Image
-              source={{uri: imageBaseUrl.replace('{}', item._id)}}
-              style={styles.storyItemImage}
-              resizeMode='cover'
-            />
-          )}
-          {item.type === TASK_GROUP_TYPES.STORY ? (
-            <View style={styles.storyContent}>
-              <Text
-                style={styles.storyItemText}
-                numberOfLines={3}
-              >
-                {item.description}
-              </Text>
-              <View style={styles.storyTagContainer}>
-                {item._objective && (
-                  <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
-                    {`${item.objectiveValue || 0} ${item._objective.name.toUpperCase()}`}
-                  </Text>
-                )}
-                <Text style={{...styles.storyTag, ...styles.quotaTag}}>
-                  {`0/${item.quota || 0} ${item.refresh.toUpperCase()}`}
-                </Text>
-                {item.reward && (
-                  <Text style={{...styles.storyTag, ...styles.rewardTag}}>
-                    {`${item.reward.value || 0} ${item.reward.type.toUpperCase()}`}
-                  </Text>
-                )}
-              </View>
-            </View>
-          ) : (
-            <View style={styles.storyContent}>
-              <Text
-                style={styles.challengeItemTitle}
-                numberOfLines={1}
-              >
-                {item.name}
-              </Text>
-              <Text
-                style={styles.challengeItemText}
-                numberOfLines={4}
-              >
-                {item.description}
-              </Text>
-              <View style={styles.storyTagContainer}>
-                {item.type && (
-                  <Text style={{...styles.storyTag, ...styles.objectiveTag}}>
-                    {item.type.toUpperCase()}
-                  </Text>
-                )}
-                <Text style={{...styles.storyTag, ...styles.quotaTag}}>
-                  {`0/${item.quota || 0} ${(item.refresh || '').toUpperCase()}`}
-                </Text>
-                {item.reward && (
-                  <Text style={{...styles.storyTag, ...styles.rewardTag}}>
-                    {`${item.rewardValue || 0} ${item.reward.toUpperCase()}`}
-                  </Text>
-                )}
-              </View>
-            </View>
-          )}
+          <TextImage item={item} 
+                    itemIndex={index} />
           {item.sequence && <View style={{
             ...styles.storySequence,
             backgroundColor: item.type === TASK_GROUP_TYPES.STORY ? '#7362B0' : '#BA57BC'
@@ -151,7 +83,7 @@ export default class StoryView extends Component {
         </View>
       </View>
     );
-  };
+  };  
 
   getUserAchievements = async () => {
     let {user} = this.props;
@@ -185,7 +117,8 @@ export default class StoryView extends Component {
   };
 
   constructor(props) {
-    super(props);
+    super(props);    
+    
     this.state = {
       challengesFetching: true,
       challengesAndStories: [],
@@ -193,13 +126,24 @@ export default class StoryView extends Component {
       modalVisible: false,
       processing: false,
       tasksFetching: false,
-      userTaskGroups: []
+      userTaskGroups: [],
+      numberOfLines:2,
+      storyItemTextStyle: styles.storyItemImage,
+      animatedStyle:[],
+      animatedHeight:new Animated.Value(styles.storyItemImage.height)
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.stories && !_.isEqual(nextProps.stories, this.state.challengesAndStories)) {
-      this.setState({challengesAndStories: nextProps.stories})
+      let heights = new Array(nextProps.stories.length);
+      heights.fill(new Animated.Value(styles.storyItemImage.height),0);
+      this.setState({challengesAndStories: nextProps.stories,
+        animatedStyle: heights});
+      
+
+
+
     }
   }
 
@@ -362,7 +306,7 @@ export default class StoryView extends Component {
               <Carousel
                 ref={c => this._carousel = c}
                 data={challengesAndStories}
-                renderItem={this._renderItem}
+                renderItem={this._renderItem.bind(this)}
                 sliderWidth={width}
                 itemWidth={wp('90%')}
                 onBeforeSnapToItem={slideIndex => this.setState({currentSlideIndex: slideIndex})}
