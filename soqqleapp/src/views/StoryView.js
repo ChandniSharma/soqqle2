@@ -138,12 +138,17 @@ export default class StoryView extends Component {
     if (nextProps.stories && !_.isEqual(nextProps.stories, this.state.challengesAndStories)) {
       let heights = new Array(nextProps.stories.length);
       heights.fill(new Animated.Value(styles.storyItemImage.height),0);
-      this.setState({challengesAndStories: nextProps.stories,
+      let _storyData =  _.sortBy(nextProps.stories, ['groupName','sequence']);
+      let _story = [];
+      _storyData.map((data)=>{
+        if(data.sequence == 1 ){
+          _story.push(data)
+        } else if (data.sequence == undefined){
+          _story.push(data)
+        }
+      })
+      this.setState({challengesAndStories:_story,
         animatedStyle: heights});
-      
-
-
-
     }
   }
 
